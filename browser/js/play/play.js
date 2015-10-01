@@ -13,7 +13,6 @@ app.controller('PlayCtrl', function($scope, $state, $stateParams) {
     //angular.element(document).ready(init); 
     setTimeout(init,2000);
 
-
     var fg;
     var video;
     var canvas;
@@ -24,6 +23,7 @@ app.controller('PlayCtrl', function($scope, $state, $stateParams) {
         console.log(canvas);
         fg = new frameGrabber(video, canvas);
         displayEffects();
+        setTimeout(changeVideo,3000); // change video source after 3 seconds
     }
 
     function displayEffects() {
@@ -51,4 +51,10 @@ app.controller('PlayCtrl', function($scope, $state, $stateParams) {
         effectsBlock.appendChild(ul);
         effectsBlock.getElementsByTagName('input')[0].checked = true;
     }
+
+    function changeVideo () {
+    	$scope.videoSource = "IMG_2608.MOV"; // ostrich
+    	video.load();
+    }
+
 });
