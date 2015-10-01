@@ -7,9 +7,10 @@ app.config(function($stateProvider) {
     });
 });
 
-app.controller('PlayCtrl', function($scope, $state, $stateParams) {
+app.controller('PlayCtrl', function($scope, $state, $stateParams, InstructionsFactory) {
     //$scope.source = $stateParams.source;
     $scope.videoSource = "dragon.ogg";
+    $scope.instructions = InstructionsFactory.get();
     //angular.element(document).ready(init); 
     setTimeout(init,2000);
 
@@ -23,7 +24,7 @@ app.controller('PlayCtrl', function($scope, $state, $stateParams) {
         console.log(canvas);
         fg = new frameGrabber(video, canvas);
         displayEffects();
-        setTimeout(changeVideo,3000); // change video source after 3 seconds
+        // setTimeout(changeVideo,3000); // change video source after 3 seconds
     }
 
     function displayEffects() {
@@ -39,6 +40,12 @@ app.controller('PlayCtrl', function($scope, $state, $stateParams) {
             input.addEventListener("click",
                 function(evt) {
                     fg.setEffect(this.value);
+                    InstructionsFactory.add({
+                    	file: "dragon.ogg",
+                    	start: video.currentTime,
+                    	filter: this.value
+                    });
+                    console.log($scope.instructions);
                 },
                 false);
             li.appendChild(input);
