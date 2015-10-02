@@ -11,7 +11,7 @@ app.controller('PlayCtrl', function($scope, $state, $stateParams, InstructionsFa
     //$scope.source = $stateParams.source;
     $scope.videoSource = "dragon.ogg";
     $scope.instructions = InstructionsFactory.get();
-    //angular.element(document).ready(init); 
+    //angular.element(document).ready(init);
     setTimeout(init,2000);
 
     var fg;
