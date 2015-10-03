@@ -5,11 +5,11 @@ could/should be moved to a filters.scss file and required here.
 */
 
 @mixin filters-for-all ($filter, $amount) {
-  -webkit-filter: #{$filter} #{$argument};
-  -ms-filter: #{$filter} #{$argument};
-  -moz-filter: #{$filter} #{$argument};
-  -o-filter: #{$filter} #{$argument};
-  filter: #{$filter} #{$argument};
+  -webkit-filter: #{$filter}(#{$amount});
+  -ms-filter: #{$filter}(#{$amount});
+  -moz-filter: #{$filter}(#{$amount});
+  -o-filter: #{$filter}(#{$amount});
+  filter: #{$filter}(#{$amount});
 }
 
 .bw {
