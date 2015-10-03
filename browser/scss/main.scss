@@ -10,7 +10,7 @@
     height: 480px;
 }
 
-#video {
+#hiddenVideo {
     display: none;
     position: absolute;
     top: 50%;
@@ -37,3 +37,4 @@
 @import 'about/main';
 @import 'tutorial/main';
 @import 'login/main';
+@import 'video/main';
