@@ -97,6 +97,7 @@ router.get('/save', function(req, res){
           clips.forEach(function(clipPath){
             proc.input(clipPath)
           })
+
           proc.mergeToFile(finalFilePath);
       }
     })
