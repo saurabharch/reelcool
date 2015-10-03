@@ -7,62 +7,32 @@ app.config(function($stateProvider) {
     });
 });
 
-app.controller('PlayCtrl', function($scope, $state, $stateParams, InstructionsFactory) {
-    //$scope.source = $stateParams.source;
-    console.log("video", document.getElementById("video"));
+app.controller('PlayCtrl', function($scope, $state, InstructionsFactory) {
     $scope.videoSource = "dragon.ogg";
     $scope.instructions = InstructionsFactory.get();
-    //angular.element(document).ready(init);
-    setTimeout(init,2000);
-
-    var fg;
-    var video;
-    var canvas;
-
-    function init(event) {
-        video = document.getElementById("video");
-        canvas = document.getElementById("canvas");
-        console.log(canvas);
-        fg = new frameGrabber(video, canvas);
-        displayEffects();
-        // setTimeout(changeVideo,3000); // change video source after 3 seconds
-    }
-
-    function displayEffects() {
-        var effectsBlock = document.getElementById("effects");
-        var ul = document.createElement("ul");
-        for (var effect in JSManipulate) {
-            var li = document.createElement("li");
-            var input = document.createElement("input");
-            input.type = "radio"
-            input.name = "effects"
-            input.value = effect;
-            input.id = effect;
-            input.addEventListener("click",
-                function(evt) {
-                    fg.setEffect(this.value);
-                    InstructionsFactory.add({
-                    	file: "dragon.ogg",
-                    	start: video.currentTime,
-                    	filter: this.value
-                    });
-                    console.log($scope.instructions);
-                },
-                false);
-            li.appendChild(input);
-            var label = document.createElement("label");
-            label.innerHTML = JSManipulate[effect].name;
-            label.setAttribute("for", input.id);
-            li.appendChild(label);
-            ul.appendChild(li);
-        }
-        effectsBlock.appendChild(ul);
-        effectsBlock.getElementsByTagName('input')[0].checked = true;
-    }
-
+    
     function changeVideo () {
     	$scope.videoSource = "IMG_2608.MOV"; // ostrich
     	video.load();
     }
+
+    var video;
+    // We put init on the scope so that we call it with ng-init from play.html. 
+    // This makes the function able to select the video element when it loads. 
+    // Other methods (like document.ready) were unreliable, sometimes firing too early.
+    $scope.init = function () {
+        video = document.getElementById("video");
+        console.log(video);
+        // setTimeout(changeVideo,3000); // change video source after 3 seconds
+    }
+
+    // This is what we're considering for the instructions object. 
+    // each time a user selects a new video source or changes a filter, 
+    // one of these objects gets added to the list.
+    // InstructionsFactory.add({
+    //                     file: "dragon.ogg",
+    //                     start: video.currentTime,
+    //                     filter: this.value
+    //                 });
 
 });
