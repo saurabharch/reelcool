@@ -27,32 +27,3 @@ could/should be moved to a filters.scss file and required here.
 .invert {
 	@include filters-for-all(invert, 100%);
 }
-
-/*
-.bw {
-	-webkit-filter: grayscale(100%);
-	-moz-filter: grayscale(100%);
-	-ms-filter: grayscale(100%);
-	filter: grayscale(100%);
-}
-.sepia {
-	-webkit-filter: sepia(100%);
-	-moz-filter: sepia(100%);
-	-ms-filter: sepia(100%);
-	filter: sepia(100%);
-}
-
-.blur {
-	-webkit-filter: blur(4px);
-	-moz-filter: blur(4px);
-	-ms-filter: blur(4px);
-	filter: blur(4px);
-}
-
-.invert {
-	-webkit-filter: invert(100%);
-	-moz-filter: invert(100%);
-	-ms-filter: invert(100%);
-	filter: invert(100%);
-}
-*/

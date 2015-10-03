@@ -29,11 +29,7 @@ app.controller('EditCtrl', function($scope, $state, InstructionsFactory) {
     // This is what we're considering for the instructions object. 
     // each time a user selects a new video source or changes a filter, 
     // one of these objects gets added to the list.
-    // InstructionsFactory.add({
-    //                     file: "dragon.ogg",
-    //                     start: video.currentTime,
-    //                     filter: this.value
-    //                 });
+    
 
     // Stuff related to filters and filter actions here
     $scope.filters = [
@@ -46,5 +42,12 @@ app.controller('EditCtrl', function($scope, $state, InstructionsFactory) {
     $scope.currentFilter = $scope.filters[0].CSSclass;
     $scope.changeFilter = function (filter) {
         $scope.currentFilter = filter;
+        // below, a test implementation of how filter changes might be pushed to the instructions list
+        InstructionsFactory.add({
+                        file: "dragon.ogg",
+                        start: video.currentTime,
+                        filter: filter
+                    });
+        console.log($scope.instructions);
     };
 });
