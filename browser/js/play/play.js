@@ -9,6 +9,7 @@ app.config(function($stateProvider) {
 
 app.controller('PlayCtrl', function($scope, $state, $stateParams, InstructionsFactory) {
     //$scope.source = $stateParams.source;
+    console.log("video", document.getElementById("video"));
     $scope.videoSource = "dragon.ogg";
     $scope.instructions = InstructionsFactory.get();
     //angular.element(document).ready(init);
