@@ -23,8 +23,8 @@ app.controller('FourVideosCtrl', ($scope) => {
       filter: 'blur'
     },{
       source: 'dragon.ogg',
-      startTime: '50',
-      endTime: '60',
+      startTime: '155',
+      endTime: '160',
       filter: 'blur'
     }];
 
@@ -42,16 +42,22 @@ app.controller('FourVideosCtrl', ($scope) => {
 
     video.addEventListener('play', ()=> {
       console.log("play happened");
-      if($scope.currentClip + 1 <$scope.instructions.length){
-        var clipDuration = 1000 * ($scope.instructions[$scope.currentClip].endTime - $scope.instructions[$scope.currentClip].startTime);
-        setTimeout(()=>{
+
+      var clipDuration = 1000 * ($scope.instructions[$scope.currentClip].endTime - $scope.instructions[$scope.currentClip].startTime);
+      setTimeout(() => {
+        //stop current video when its clip is done
+        video.pause();
+        //IF there is another one, play it
+        if($scope.currentClip + 1  < $scope.instructions.length){
           $scope.currentClip++;
-          console.log("currentClip ++ = ", $scope.currentClip);
           $scope.$digest();
-          video.currentTime = $scope.instructions[$scope.currentClip].startTime;
           video.load();
-        }, clipDuration);
-      }
+          video.currentTime = $scope.instructions[$scope.currentClip].startTime;
+        }
+        else{
+          video.pause();
+        }
+      }, clipDuration);
     }, false);
 
     // video.addEventListener('ended', ()=> {
