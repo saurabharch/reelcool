@@ -2,8 +2,20 @@
   box-sizing: border-box;
 }
 
-body {
-  background: #fdfdfd;
+#canvas {
+    position: absolute;
+    top: 10em;
+    left: 10em;
+    width: 1120px;
+    height: 480px;
+}
+
+#video {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -180px 0 0 -240px;
 }
 
 @mixin clearfix {
