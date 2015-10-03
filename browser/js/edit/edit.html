@@ -1,0 +1,11 @@
+<video-player video-source=videoSource ng-init="init()" ng-class="currentFilter">
+</video-player>
+
+<div>
+	<h3>Filters</h3>
+	<ul>
+		<li ng-repeat="filter in filters">
+			<button ng-click="changeFilter(filter.CSSclass)">{{filter.name}}</button>
+		</li>
+	</ul>
+</div>
