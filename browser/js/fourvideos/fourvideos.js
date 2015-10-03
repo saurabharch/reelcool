@@ -23,8 +23,8 @@ app.controller('FourVideosCtrl', ($scope) => {
       filter: 'blur'
     },{
       source: 'dragon.ogg',
-      startTime: '155',
-      endTime: '160',
+      startTime: '180',
+      endTime: '184',
       filter: 'blur'
     }];
 
@@ -49,9 +49,11 @@ app.controller('FourVideosCtrl', ($scope) => {
         video.pause();
         //IF there is another one, play it
         if($scope.currentClip + 1  < $scope.instructions.length){
+          console.log('switching stuff');
           $scope.currentClip++;
           $scope.$digest();
           video.load();
+          //video.play();
           video.currentTime = $scope.instructions[$scope.currentClip].startTime;
         }
         else{
@@ -59,12 +61,6 @@ app.controller('FourVideosCtrl', ($scope) => {
         }
       }, clipDuration);
     }, false);
-
-    // video.addEventListener('ended', ()=> {
-    //   $scope.currentClip++;
-    //   $scope.$digest();
-    //   video.load();
-    // }, false);
 
     video.currentTime = $scope.instructions[$scope.currentClip].startTime;
     video.play();
