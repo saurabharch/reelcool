@@ -24,7 +24,7 @@ app.controller('PlayCtrl', function($scope, $state, InstructionsFactory) {
         video = document.getElementById("video");
         console.log(video);
         // setTimeout(changeVideo,3000); // change video source after 3 seconds
-    }
+    };
 
     // This is what we're considering for the instructions object. 
     // each time a user selects a new video source or changes a filter, 

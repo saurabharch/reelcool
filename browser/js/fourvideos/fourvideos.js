@@ -9,7 +9,7 @@ app.config(($stateProvider) => {
 
 app.controller('FourVideosCtrl', ($scope) => {
 
-    var video = document.getElementById('video');
+    var video = document.getElementById('hiddenVideo');
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
     var cw = Math.floor(canvas.clientWidth);
