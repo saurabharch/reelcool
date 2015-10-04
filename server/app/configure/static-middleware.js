@@ -11,7 +11,7 @@ module.exports = function (app) {
     var publicPath = path.join(root, './public');
     var browserPath = path.join(root, './browser');
     var videosPath = path.join(root, './server/files');
-    var depPath = path.join(root, './Dependencies');
+    var depPath = path.join(root, './dependencies');
 
     app.use(favicon(app.getValue('faviconPath')));
     app.use(express.static(npmPath));
