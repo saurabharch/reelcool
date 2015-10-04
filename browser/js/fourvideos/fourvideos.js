@@ -10,7 +10,7 @@ app.config(($stateProvider) => {
 app.controller('FourVideosCtrl', ($scope) => {
     $scope.currentClip = 0;
     $scope.totalCurrentTime = 0;
-    $scope.endTime = 0;
+    $scope.totalEndTime = 0;
     $scope.instructions = [{
       source: 'lego.ogv',
       startTime: '0',
@@ -37,8 +37,8 @@ app.controller('FourVideosCtrl', ($scope) => {
       filter: 'invert'
     }];
     $scope.instructions.forEach(function(instruction){
-      $scope.endTime+=Number(instruction.endTime);
-      $scope.endTime-=Number(instruction.startTime);
+      $scope.totalEndTime+=Number(instruction.endTime);
+      $scope.totalEndTime-=Number(instruction.startTime);
     });
 
     setTimeout(run, 1000);
