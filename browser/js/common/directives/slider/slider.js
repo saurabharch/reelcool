@@ -36,7 +36,6 @@ app.directive("timeSlider", () => {
       })
 
       scope.$on('showSlider', () => {
-        console.log("SHOW SLIDER");
         if(timeoutFade) {
           clearTimeout(timeoutFade);
         }
