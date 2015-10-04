@@ -14,7 +14,7 @@ app.directive("timeSlider", () => {
       slider.style.opacity = "0";
 
       slider.addEventListener('mouseenter', () => {
-        slider.style.opacity = '1';
+        slider.style.opacity = '.7';
       })
 
       slider.addEventListener('mouseleave', () => {
