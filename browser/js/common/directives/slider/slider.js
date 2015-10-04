@@ -8,10 +8,13 @@ app.directive("timeSlider", () => {
       endTime: '='
     },
     link: (scope, elements, attr) => {
-      console.log("elements", elements);
       var slider = elements[0];
-      console.log('slider', slider);
       slider.style.opacity = "0";
+      $(slider).animate({opacity: .7}, 2000);
+      setTimeout(() => {
+        $(slider).animate({opacity: 0}, 1000);
+      }, 3000);
+
       var showSliderWithoutHover = false;
 
       slider.addEventListener('mouseenter', () => {
@@ -23,8 +26,7 @@ app.directive("timeSlider", () => {
           slider.style.opacity = '0';
         }
       })
-      // var sliderBg = document.getElementById('slider-bg');
-      // var sliderMercury = document.getElementById('slider-mercury');
+
       var sliderDot = document.getElementById('slider-dot');
       console.log("sliderDot", sliderDot);
       sliderDot.addEventListener('mousedown', () => {
@@ -59,13 +61,6 @@ app.directive("timeSlider", () => {
         var newMovingTime = (clickedX - 140)/1120 * scope.endTime;
         scope.$emit('newMovingTime', newMovingTime);
       })
-
-      // sliderBg.addEventListener('mouseleave',(e)=> {
-      //   console.log("mouse left");
-      //   sliderBg.style.visibility = "hidden";
-      //   sliderMercury.style.visibility = "hidden";
-      //   sliderDot.style.visibility = "hidden";
-      // });
     }
   }
 });
