@@ -11,25 +11,25 @@ app.controller('FourVideosCtrl', ($scope) => {
     $scope.currentClip = 0;
 
     $scope.instructions = [{
-      source: 'dragon.ogg',
-      startTime: '50',
-      endTime: '54',
-      filter: 'bw'
-    },{
       source: 'lego.ogv',
       startTime: '0',
       endTime: '4',
       filter: 'blur'
     },{
-      source: 'dragon.ogg',
-      startTime: '5',
-      endTime: '10',
-      filter: 'invert'
+      source: 'IMG_2608.MOV',
+      startTime: '30',
+      endTime: '35',
+      filter: 'bw'
     },{
       source: 'lego.ogv',
       startTime: '0',
       endTime: '4',
       filter: 'sepia'
+    },{
+      source: 'IMG_2608.MOV',
+      startTime: '35',
+      endTime: '40',
+      filter: 'invert'
     }];
 
     setTimeout(run, 1000);
@@ -47,15 +47,19 @@ app.controller('FourVideosCtrl', ($scope) => {
       canvas.width = cw;
       canvas.height = ch;
 
+      [].forEach.call(videos, video => video.load());
       [].forEach.call(videos, setUpPause);
 
       function setUpPause(video, index){
-        var playDuration = 1000*($scope.instructions[index].endTime - $scope.instructions[index].startTime);
+
         video.addEventListener('play', ()=> {
+          var playDuration = 1000*($scope.instructions[index].endTime - video.currentTime);
 
-          draw(video, context, cw, ch);
+          if(video.currentSetTimeoutId){
+            clearTimeout(video.currentSetTimeoutId);
+          }
 
-          setTimeout(() => {
+          video.currentSetTimeoutId = setTimeout(() => {
             video.pause();
             if(index+1 < videos.length){
               var nextVideo = videos[index+1];
@@ -65,6 +69,8 @@ app.controller('FourVideosCtrl', ($scope) => {
               $scope.$digest();
             }
           }, playDuration);
+
+          draw(video, context, cw, ch);
 
         }, false);
       }
@@ -77,7 +83,6 @@ app.controller('FourVideosCtrl', ($scope) => {
   function draw(v, c, w, h){
     if(v.paused || v.ended) return false;
     c.drawImage(v,0,0,w,h);
-    console.log("drew stuff");
     setTimeout(draw,20,v,c,w,h);
   }
 
