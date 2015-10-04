@@ -1,5 +1,9 @@
-<video class='box' id="video" controls autoplay>
-  <source ng-src="{{instructions[currentClip].source}}" type='video/ogg; codecs="theora, vorbis"'>
-</video>
+<div>
+  <div ng-repeat="instruction in instructions">
+    <video class='hiddenVideo box' controls>
+      <source ng-src="{{instruction.source}}" type='video/ogg; codecs="theora, vorbis"'>
+    </video>
+  </div>
+</div>
 
-<canvas id="canvas"></canvas>
+<canvas id="canvas" class='{{instructions[currentClip].filter}}'></canvas>

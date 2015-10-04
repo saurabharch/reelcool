@@ -10,7 +10,7 @@
     height: 480px;
 }
 
-#video {
+.hiddenVideo {
     display: none;
     position: absolute;
     top: 50%;
@@ -38,3 +38,4 @@
 @import 'tutorial/main';
 @import 'login/main';
 @import 'directives/rzslider';
+@import 'video/main';

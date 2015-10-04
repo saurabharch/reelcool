@@ -8,14 +8,13 @@ app.config(($stateProvider) => {
 });
 
 app.controller('FourVideosCtrl', ($scope) => {
-
     $scope.currentClip = 0;
 
     $scope.instructions = [{
       source: 'dragon.ogg',
       startTime: '50',
       endTime: '54',
-      filter: 'grayscale'
+      filter: 'bw'
     },{
       source: 'lego.ogv',
       startTime: '0',
@@ -23,51 +22,56 @@ app.controller('FourVideosCtrl', ($scope) => {
       filter: 'blur'
     },{
       source: 'dragon.ogg',
-      startTime: '155',
-      endTime: '160',
-      filter: 'blur'
+      startTime: '5',
+      endTime: '10',
+      filter: 'invert'
+    },{
+      source: 'lego.ogv',
+      startTime: '0',
+      endTime: '4',
+      filter: 'sepia'
     }];
 
-    var video = document.getElementById('video');
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-    var cw = Math.floor(canvas.clientWidth);
-    var ch = Math.floor(canvas.clientHeight);
-    canvas.width = cw;
-    canvas.height = ch;
+    setTimeout(run, 1000);
 
-    video.addEventListener('play', ()=> {
-      draw(video, context, cw, ch);
-    }, false);
+    var videos;
 
-    video.addEventListener('play', ()=> {
-      console.log("play happened");
+    function run() {
+      videos = document.getElementsByClassName('hiddenVideo');
+      console.log("videos", typeof videos);
 
-      var clipDuration = 1000 * ($scope.instructions[$scope.currentClip].endTime - $scope.instructions[$scope.currentClip].startTime);
-      setTimeout(() => {
-        //stop current video when its clip is done
-        video.pause();
-        //IF there is another one, play it
-        if($scope.currentClip + 1  < $scope.instructions.length){
-          $scope.currentClip++;
-          $scope.$digest();
-          video.load();
-          video.currentTime = $scope.instructions[$scope.currentClip].startTime;
-        }
-        else{
-          video.pause();
-        }
-      }, clipDuration);
-    }, false);
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+      var cw = Math.floor(canvas.clientWidth);
+      var ch = Math.floor(canvas.clientHeight);
+      canvas.width = cw;
+      canvas.height = ch;
 
-    // video.addEventListener('ended', ()=> {
-    //   $scope.currentClip++;
-    //   $scope.$digest();
-    //   video.load();
-    // }, false);
+      [].forEach.call(videos, setUpPause);
 
-    video.currentTime = $scope.instructions[$scope.currentClip].startTime;
-    video.play();
+      function setUpPause(video, index){
+        var playDuration = 1000*($scope.instructions[index].endTime - $scope.instructions[index].startTime);
+        video.addEventListener('play', ()=> {
+
+          draw(video, context, cw, ch);
+
+          setTimeout(() => {
+            video.pause();
+            if(index+1 < videos.length){
+              var nextVideo = videos[index+1];
+              nextVideo.currentTime = $scope.instructions[index+1].startTime;
+              nextVideo.play();
+              $scope.currentClip = index+1;
+              $scope.$digest();
+            }
+          }, playDuration);
+
+        }, false);
+      }
+
+      videos[0].currentTime = $scope.instructions[0].startTime;
+      videos[0].play();
+    }
 
 
   function draw(v, c, w, h){
@@ -76,6 +80,5 @@ app.controller('FourVideosCtrl', ($scope) => {
     console.log("drew stuff");
     setTimeout(draw,20,v,c,w,h);
   }
-
 
 });
