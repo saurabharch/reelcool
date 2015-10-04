@@ -71,9 +71,14 @@ app.controller('FourVideosCtrl', ($scope) => {
         setCurrentPlace();
       })
 
-      $scope.$on('startSearch', (event, ...args)=> {
-        videos[$scope.currentClip].pause();
+      $scope.$on('UIpause', (event, ...args) => {
         [].forEach.call(videos, cancelSetUpPauses);
+        videos[$scope.currentClip].pause();
+      })
+
+      $scope.$on('UIplay', (event, ...args) => {
+        [].forEach.call(videos, cancelSetUpPauses);
+        videos[$scope.currentClip].play();
       })
 
       // $scope.$on('previewMovingTime', (event, ...args) => {
@@ -143,23 +148,14 @@ app.controller('FourVideosCtrl', ($scope) => {
           }
         }
         clipToPlay.load();
-        // console.log("+totalCurrentTime", $scope.totalCurrentTime);
-        // console.log("-timeBefore", clipToPlay.timeBefore);
-        // console.log("+startTime", $scope.instructions[$scope.currentClip].startTime);
-        //console.log($scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[$scope.currentClip].startTime);
         clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[$scope.currentClip].startTime;
-        //console.log("SETTING ******** clipToPlay.currentTime for video", $scope.currentClip, "to", clipToPlay.currentTime, "based on +", $scope.instructions[$scope.currentClip].startTime);
+        $scope.$broadcast('CTRLplay');
         clipToPlay.play();
-        // $scope.$broadcast('playClip', clipToPlay);
       }
 
       function addTimeUpdateEvents(video, index){
         video.ontimeupdate = function(){
-          // console.log("+video.timeBefore", video.timeBefore);
-          // console.log("+video.currentTime", video.currentTime);
-          // console.log("-startTime", $scope.instructions[index].startTime);
           $scope.totalCurrentTime = video.timeBefore + video.currentTime -$scope.instructions[index].startTime;
-          // console.log("totalCurrentTime", $scope.totalCurrentTime);
           $scope.$digest();
         };
       }
