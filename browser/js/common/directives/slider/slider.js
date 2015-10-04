@@ -33,13 +33,16 @@ app.directive("timeSlider", () => {
         //wherever the mouse goes, its x value should transfer to the totalCurrentTime
         showSliderWithoutHover = true;
         document.addEventListener('mousemove', moveDot);
-        document.addEventListener('mouseup', (e) => {
+        document.addEventListener('mouseup', mouseUpSaveDot);
+
+        function mouseUpSaveDot(e){
           document.removeEventListener('mousemove', moveDot);
+          document.removeEventListener('mouseup', mouseUpSaveDot);
           showSliderWithoutHover = false;
           var clickedX = e.clientX;
           var newMovingTime = (clickedX - 140)/1120 * scope.endTime;
           scope.$emit('newMovingTime', newMovingTime);
-        });
+        }
 
         function moveDot(e){
           var movedX = e.clientX;
