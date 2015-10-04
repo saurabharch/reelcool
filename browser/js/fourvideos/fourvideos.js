@@ -67,8 +67,16 @@ app.controller('FourVideosCtrl', ($scope) => {
       }
 
       $scope.$on('newMovingTime', (event, ...args) => {
-        $scope.totalCurrentTime = args;
+        $scope.totalCurrentTime = args[0];
         setCurrentPlace();
+      })
+
+      // $scope.$on('previewMovingTime', (event, ...args) => {
+      //   $scope.currentClip
+      // })
+
+      $scope.$on('startSearch', (event, ...args)=> {
+        videos[$scope.currentClip].pause();
       })
 
       function setUpPause(video, index){
