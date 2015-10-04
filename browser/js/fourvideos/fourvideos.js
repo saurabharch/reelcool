@@ -60,7 +60,7 @@ app.controller('FourVideosCtrl', ($scope) => {
       var cumulativeTimeBefore = 0;
 
       for(var i = 0; i < $scope.instructions.length; i++){
-        setUpPause(videos[i],i);
+        setUpPauseAndContinue(videos[i],i);
         addTimeUpdateEvents(videos[i],i);
         videos[i].timeBefore = cumulativeTimeBefore;
         cumulativeTimeBefore += $scope.instructions[i].duration;
@@ -71,15 +71,24 @@ app.controller('FourVideosCtrl', ($scope) => {
         setCurrentPlace();
       })
 
-      // $scope.$on('previewMovingTime', (event, ...args) => {
-      //   $scope.currentClip
-      // })
-
       $scope.$on('startSearch', (event, ...args)=> {
         videos[$scope.currentClip].pause();
+        [].forEach.call(videos, cancelSetUpPauses);
       })
 
-      function setUpPause(video, index){
+      // $scope.$on('previewMovingTime', (event, ...args) => {
+      //   $scope.totalCurrentTime = args[0];
+      //   setCurrentPlace();
+      //   [].forEach.call(videos, cancelSetUpPauses);
+      // })
+
+      function cancelSetUpPauses(video){
+        if(video.currentSetTimeoutId){
+          clearTimeout(video.currentSetTimeoutId);
+        }
+      }
+
+      function setUpPauseAndContinue(video, index){
         video.addEventListener('play', ()=> {
           if(video.currentTime< $scope.instructions[index].startTime){
             video.currentTime = $scope.instructions[index].startTime;
