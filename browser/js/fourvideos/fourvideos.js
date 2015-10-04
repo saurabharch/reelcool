@@ -147,9 +147,9 @@ app.controller('FourVideosCtrl', ($scope) => {
               //console.log('clip to play (from slider)', $scope.currentClip)
           }
         }
-        clipToPlay.load();
+        //clipToPlay.load();
         clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[$scope.currentClip].startTime;
-        $scope.$broadcast('CTRLplay');
+        //$scope.$broadcast('CTRLplay');
         clipToPlay.play();
       }
 
