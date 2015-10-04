@@ -42,16 +42,7 @@ app.directive("timeSlider", () => {
         scope.$emit('newMovingTime', newMovingTime);
         console.log("new moving Time", scope.movingTime);
       })
-      // sliderBg.style.visibility = "hidden";
-      // sliderMercury.style.visibility = "hidden";
-      // sliderDot.style.visibility = "hidden";
-      // console.log("inside link", sliderBg, sliderMercury, sliderDot);
-      // sliderBg.addEventListener('mouseenter', (e)=> {
-      //   console.log("mouse entered");
-      //   sliderBg.style.visibility = "visible";
-      //   sliderMercury.style.visibility = "visible";
-      //   sliderDot.style.visibility = "visible";
-      // });
+      
       // sliderBg.addEventListener('mouseleave',(e)=> {
       //   console.log("mouse left");
       //   sliderBg.style.visibility = "hidden";
