@@ -36,7 +36,7 @@ var filters = {
 
 router.get('/gray/:filename', function(req, res){
   var pathToMovie = path.join(__dirname,"../../../files/",req.params.filename);
-  var outPath = path.join(__dirname,"../../../files/gray/", req.params.filename);
+  var outPath = path.join(__dirname,"../../../files/", "gray"+req.params.filename);
   console.log("path to movie", pathToMovie);
   console.log("out path", outPath);
 
@@ -44,9 +44,11 @@ router.get('/gray/:filename', function(req, res){
   .videoFilters(filters.blur)
   .on('end', function(files){
     console.log("done graying");
+    res.status(201).send();
   })
   .on('error', function(err){
     console.log("error happened:", err.message);
+    res.status(500).send();
   })
   .output(outPath)
   .run();
