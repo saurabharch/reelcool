@@ -41,7 +41,7 @@ router.get('/gray/:filename', function(req, res){
   console.log("out path", outPath);
 
   var proc = ffmpeg(pathToMovie)
-  .videoFilters(blur)
+  .videoFilters(filters.blur)
   .on('end', function(files){
     console.log("done graying");
   })
