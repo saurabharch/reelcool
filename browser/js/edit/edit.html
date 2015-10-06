@@ -1,18 +1,20 @@
 <video-player video-source=videoSource ng-init="init()" ng-class="currentFilter">
 </video-player>
-
 <div>
-	<h3>Filters</h3>
-	<ul>
-		<li ng-repeat="filter in filters">
-			<button ng-click="changeFilter(filter.CSSclass)">{{filter.name}}</button>
-		</li>
-	</ul>
+    <h3>Filters</h3>
+    <ul>
+        <li ng-repeat="filter in filters">
+            <button ng-click="changeFilter(filter.CSSclass)">{{filter.name}}</button>
+        </li>
+    </ul>
 </div>
 <div>
-	<h3>Instructions</h3>
-	<span>Just a little test to see if our instructions are getting built up the way we want.</span>
-	<ol>
-		<li ng-repeat="i in instructions">{{i}}</li>
-	</ol>
+    <h3>Instructions</h3>
+    <span>Just a little test to see if our instructions are getting built up the way we want.</span>
+    <ol>
+        <li ng-repeat="i in instructions">{{i}}</li>
+    </ol>
 </div>
+<md-button ng-click="openBottomSheet()">
+    Open a Bottom Sheet!
+</md-button>
