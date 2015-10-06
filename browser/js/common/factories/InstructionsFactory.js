@@ -1,13 +1,19 @@
 app.factory('InstructionsFactory',function(){
 	var instructions = [];
-	function add (instruction) {
-		instructions.push(instruction);
-	}
-	function get () {
-		return instructions;
-	}
+
 	return {
-		add: add, 
-		get: get
+		filters: [
+			{"CSSclass": "", "name":"No filter"},
+			{"CSSclass": "bw", "name":"Black & White"},
+			{"CSSclass": "sepia", "name":"Sepia"},
+			{"CSSclass": "blur", "name":"Blur"},
+			{"CSSclass": "invert", "name":"Invert"}
+		],
+		add: (instruction) => {
+			instructions.push(instruction);
+		},
+		get: () => {
+			return instructions
+		}
 	}
 });
