@@ -13,168 +13,143 @@ app.controller('FourVideosCtrl', ($scope) => {
     $scope.totalEndTime = 0;
     $scope.videoPlayerWidth;
 
-    $scope.instructions = [
-    {
-      source: 'lego.ogv',
-      startTime: 0,
-      endTime: 4,
-      duration: 4,
-      filter: 'blur'
-     },
-    {
-      source: 'IMG_2608.MOV',
-      startTime: 30,
-      endTime: 35,
-      duration: 5,
-      filter: 'bw'
-    },
-    {
-      source: 'lego.ogv',
-      startTime: 2,
-      endTime: 4,
-      duration: 4,
-      filter: 'sepia'
-    },
-    {
-      source: 'IMG_2608.MOV',
-      startTime: 40,
-      endTime: 45,
-      duration: 5,
-      filter: 'invert'
-    }
-  ];
+    $scope.instructions = [{
+        source: 'lego.ogv',
+        startTime: 0,
+        endTime: 4,
+        filter: 'blur'
+    }, {
+        source: 'IMG_2608.MOV',
+        startTime: 30,
+        endTime: 35,
+        filter: 'bw'
+    }, {
+        source: 'lego.ogv',
+        startTime: 2,
+        endTime: 5,
+        filter: 'sepia'
+    }, {
+        source: 'IMG_2608.MOV',
+        startTime: 40,
+        endTime: 45,
+        filter: 'invert'
+    }];
 
-    $scope.instructions.forEach(function(instruction){
-      $scope.totalEndTime += instruction.endTime - instruction.startTime;
+    $scope.instructions.forEach(function(instruction) {
+        $scope.totalEndTime += instruction.endTime - instruction.startTime;
     });
 
     var videos;
 
-    $scope.run = function () {
-      var videosArrayLike = document.getElementsByTagName('video');
-      var videos = [];
-      for(var i = 0; i<videosArrayLike.length; i++){
-        videos[i] = videosArrayLike[i];
-      }
-
-      setVideoDimensions();
-
-      var cumulativeTimeBefore = 0;
-
-      for(var i = 0; i < $scope.instructions.length; i++){
-        setUpPauseAndContinue(videos[i],i);
-        addTimeUpdateEvents(videos[i],i);
-        videos[i].timeBefore = cumulativeTimeBefore;
-        cumulativeTimeBefore += $scope.instructions[i].duration;
-      }
-
-      $scope.$on('newMovingTime', (event, ...args) => {
-        $scope.totalCurrentTime = args[0];
-        setCurrentPlace();
-      })
-
-      $scope.$on('UIpause', (event, ...args) => {
-        [].forEach.call(videos, cancelSetUpPauses);
-        videos[$scope.currentClip].pause();
-      })
-
-      $scope.$on('UIplay', (event, ...args) => {
-        [].forEach.call(videos, cancelSetUpPauses);
-        videos[$scope.currentClip].play();
-      })
-
-      // $scope.$on('previewMovingTime', (event, ...args) => {
-      //   $scope.totalCurrentTime = args[0];
-      //   setCurrentPlace();
-      //   [].forEach.call(videos, cancelSetUpPauses);
-      // })
-
-      function cancelSetUpPauses(video){
-        if(video.currentSetTimeoutId){
-          clearTimeout(video.currentSetTimeoutId);
+    $scope.run = function() {
+      var timeoutId;
+        var videosArrayLike = document.getElementsByTagName('video');
+        var videos = [];
+        for (var i = 0; i < videosArrayLike.length; i++) {
+            videos[i] = videosArrayLike[i];
         }
-      }
 
-      function setUpPauseAndContinue(video, index){
-        video.addEventListener('play', ()=> {
-          if(video.currentTime< $scope.instructions[index].startTime){
-            video.currentTime = $scope.instructions[index].startTime;
-          }
-          //console.log("START PLAYING video.currentTime", video.currentTime);
-          for(var i = 0; i<videos.length; i++){
-            if(videos[i].currentSetTimeoutId){
-              clearTimeout(videos[i].currentSetTimeoutId);
-              //console.log("cleared timeout for video", index);
-            }
-            if(i!==index){
-              videos[i].pause();
-            }
-          }
-          var playDuration = 1000*($scope.instructions[index].endTime - video.currentTime);
+        setVideoDimensions();
 
-          video.currentSetTimeoutId = setTimeout(() => {
-            console.log("set timeout runs");
-            video.pause();
-            //console.log("stopped video", index);
-            if(index+1 < videos.length){
-              var nextVideo = videos[index+1];
-              nextVideo.currentTime = $scope.instructions[index+1].startTime;
-              //console.log("^**********next current Time, for", index+1, "is", videos[index+1].currentTime)
-              nextVideo.play();
-              $scope.currentClip = index+1;
-              $scope.$digest();
-            }
-          }, playDuration);
+        var cumulativeTimeBefore = 0;
 
-          //console.log("set new timeout for video", index);
-
-        }, false);
-      }
-
-      function setCurrentPlace() {
-        //console.log("SETTING NEW PLACE WITH SCOPE.TOTALCURRENTTIME", $scope.totalCurrentTime)
-        videos[$scope.currentClip].pause();
-        var clipToPlay;
-        for(var i = 0; i< videos.length; i++){
-          if($scope.totalCurrentTime < videos[i].timeBefore){
-              $scope.currentClip = i - 1;
-              clipToPlay = videos[$scope.currentClip];
-              //console.log('clip to play (from slider)', $scope.currentClip)
-              break;
-          }
-          else if(i===videos.length - 1){
-              $scope.currentClip = i;
-              clipToPlay = videos[$scope.currentClip];
-              //console.log('clip to play (from slider)', $scope.currentClip)
-          }
+        for (var i = 0; i < $scope.instructions.length; i++) {
+            //setUpPauseAndContinue(videos[i],i);
+            addTimeUpdateEvents(videos[i], i);
+            videos[i].timeBefore = cumulativeTimeBefore;
+            cumulativeTimeBefore += $scope.instructions[i].endTime - $scope.instructions[i].startTime;
         }
-        //clipToPlay.load();
-        clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[$scope.currentClip].startTime;
-        //$scope.$broadcast('CTRLplay');
-        clipToPlay.play();
-      }
 
-      function addTimeUpdateEvents(video, index){
-        video.ontimeupdate = function(){
-          $scope.totalCurrentTime = video.timeBefore + video.currentTime -$scope.instructions[index].startTime;
-          $scope.$digest();
-        };
-      }
+        $scope.$on('newMovingTime', (event, ...args) => {
+            $scope.totalCurrentTime = args[0];
+            //console.log($scope.totalCurrentTime);
+            console.log(timeoutId);
+            clearTimeout(timeoutId);
+            updateVideo();
+            videos[$scope.currentClip].play();
+            //console.log($scope.totalCurrentTime);
+        })
 
-      var height=300;
-      function setVideoDimensions(){
-          var maxWidth = $("#video-container").width();
-          var maxHeight = Math.max(...videos.map((el) => $(el).height()));
-          videos.forEach(video => {
-            $(video).width(maxWidth);
-            $(video).height(height);
-          })
-          $("svg").width(maxWidth)
-          $scope.videoPlayerWidth = maxWidth;
-      }
+        $scope.$on('UIpause', (event, ...args) => {
+            [].forEach.call(videos, cancelSetUpPauses);
+            videos[$scope.currentClip].pause();
+        })
 
-      videos[0].currentTime = $scope.instructions[0].startTime;
-      videos[0].play();
+        $scope.$on('UIplay', (event, ...args) => {
+            [].forEach.call(videos, cancelSetUpPauses);
+            videos[$scope.currentClip].play();
+        })
+
+        // $scope.$on('previewMovingTime', (event, ...args) => {
+        //   $scope.totalCurrentTime = args[0];
+        //   setCurrentPlace();
+        //   [].forEach.call(videos, cancelSetUpPauses);
+        // })
+
+        function cancelSetUpPauses(video) {
+            if (video.currentSetTimeoutId) {
+                clearTimeout(video.currentSetTimeoutId);
+            }
+        }
+
+        timeoutId = setTimeout(updateVideo, 10);
+
+        function updateVideo() {
+            var ended;
+            if ($scope.totalCurrentTime >= $scope.totalEndTime) {
+                ended=true;
+                videos[$scope.currentClip].pause();
+            } else {
+                for (var i = 0; i < videos.length; i++) {
+                    var oldIndex = $scope.currentClip;
+                    var newIndex;
+                    var shouldBreak = false;
+                    // sets indices
+                  if ($scope.totalCurrentTime < videos[i].timeBefore) {
+                        console.log('found spot at index ',i);
+                        newIndex = i - 1;
+                        console.log(newIndex);
+                        shouldBreak=true;
+                      }
+                  else if (i === videos.length - 1) {
+                      console.log('I am on the last video');
+                        newIndex = i;
+                        shouldBreak=true;
+                    }
+                    // evals whether video should change
+                    if (newIndex && oldIndex !== newIndex) {
+                        console.log('I should be in a different clip!')
+                        var clipToPlay = videos[newIndex];
+                        clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
+                        videos[oldIndex].pause();
+                        videos[newIndex].play();
+                        $scope.currentClip = newIndex;
+                    }
+                    if (shouldBreak) break;
+                }
+                if (!ended) timeoutId = setTimeout(updateVideo, 100);
+            }
+        }
+
+        function addTimeUpdateEvents(video, index) {
+            video.ontimeupdate = function() {
+                $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
+                $scope.$digest();
+            };
+        }
+
+        function setVideoDimensions() {
+            var maxWidth = $("#video-container").width();
+            videos.forEach(video => {
+                $(video).width(maxWidth);
+                $(video).height(300);
+            })
+            $("svg").width(maxWidth)
+            $scope.videoPlayerWidth = maxWidth;
+        }
+
+        videos[0].currentTime = $scope.instructions[0].startTime;
+        videos[0].play();
 
     }
 });

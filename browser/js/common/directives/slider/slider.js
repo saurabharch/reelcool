@@ -97,7 +97,7 @@ app.directive("timeSlider", () => {
         console.log('clicked x', e.clientX);
         var clickedX = e.clientX;
         var newMovingTime = (clickedX)/scope.width * scope.endTime;
-        scope.$emit('newMovingTime', newMovingTime);
+        //scope.$emit('newMovingTime', newMovingTime);
       })
     }
   }
