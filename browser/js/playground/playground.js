@@ -5,7 +5,8 @@ app.directive('playground', () => {
       videoSource: '=',
       filters: '='
     },
-    controller: 'PlaygroundCtrl'
+    controller: 'PlaygroundCtrl',
+    templateUrl: 'js/playground/playground.html'
   }
 });
 
@@ -20,6 +21,7 @@ app.controller('PlaygroundCtrl', ($scope, InstructionsFactory) => {
   $scope.tempInstructions = {};
 
   $scope.cutToInstructions = () => {
+    console.log("cutToInstructions called")
     InstructionsFactory.add($scope.tempInstructions);
   }
 
