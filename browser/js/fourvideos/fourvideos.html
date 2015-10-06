@@ -1,11 +1,10 @@
-<div>
-  <div ng-repeat="instruction in instructions">
-    <video class='hiddenVideo box' controls>
-      <source ng-src="{{instruction.source}}" type='video/ogg; codecs="theora, vorbis"'>
-    </video>
+<div class="row">
+  <div class="col-sm-6" >
+    <div ng-repeat="instruction in instructions" ng-show="currentClip===$index">
+      <video class='box' ng-class='instruction.filter' preload>
+        <source ng-src="{{instruction.source}}" type='video/ogg; codecs="theora, vorbis"'>
+      </video>
+    </div>
+    <time-slider id="slider" moving-time="totalCurrentTime" start-time="0" end-time="totalEndTime" width="videoPlayerWidth"></time-slider>
   </div>
 </div>
-
-
-<canvas id="canvas" class='{{instructions[currentClip].filter}}'></canvas>
-<time-slider id="slider" moving-time="totalCurrentTime" start-time="0" end-time="totalEndTime"></time-slider>

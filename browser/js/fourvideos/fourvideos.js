@@ -11,35 +11,41 @@ app.controller('FourVideosCtrl', ($scope) => {
     $scope.currentClip = 0;
     $scope.totalCurrentTime = 0;
     $scope.totalEndTime = 0;
+    $scope.videoPlayerWidth;
 
-    $scope.instructions = [{
+    $scope.instructions = [
+    {
       source: 'lego.ogv',
       startTime: 0,
       endTime: 4,
       duration: 4,
       filter: 'blur'
-    },{
+     },
+    {
       source: 'IMG_2608.MOV',
       startTime: 30,
       endTime: 35,
       duration: 5,
       filter: 'bw'
-    },{
+    },
+    {
       source: 'lego.ogv',
-      startTime: 0,
+      startTime: 2,
       endTime: 4,
       duration: 4,
       filter: 'sepia'
-    },{
+    },
+    {
       source: 'IMG_2608.MOV',
       startTime: 40,
       endTime: 45,
       duration: 5,
       filter: 'invert'
-    }];
+    }
+  ];
 
     $scope.instructions.forEach(function(instruction){
-      $scope.totalEndTime += instruction.duration;
+      $scope.totalEndTime += instruction.endTime - instruction.startTime;
     });
 
 
@@ -48,15 +54,14 @@ app.controller('FourVideosCtrl', ($scope) => {
     var videos;
 
     function run() {
-      videos = document.getElementsByClassName('hiddenVideo');
+      var videosArrayLike = document.getElementsByTagName('video');
+      var videos = [];
+      for(var i = 0; i<videosArrayLike.length; i++){
+        videos[i] = videosArrayLike[i];
+      }
 
-      var canvas = document.getElementById('canvas');
-      var context = canvas.getContext('2d');
+      setVideoDimensions();
 
-      var cw = Math.floor(canvas.clientWidth);
-      var ch = Math.floor(canvas.clientHeight);
-      canvas.width = cw;
-      canvas.height = ch;
       var cumulativeTimeBefore = 0;
 
       for(var i = 0; i < $scope.instructions.length; i++){
@@ -111,6 +116,7 @@ app.controller('FourVideosCtrl', ($scope) => {
           var playDuration = 1000*($scope.instructions[index].endTime - video.currentTime);
 
           video.currentSetTimeoutId = setTimeout(() => {
+            console.log("set timeout runs");
             video.pause();
             //console.log("stopped video", index);
             if(index+1 < videos.length){
@@ -124,8 +130,6 @@ app.controller('FourVideosCtrl', ($scope) => {
           }, playDuration);
 
           //console.log("set new timeout for video", index);
-
-          draw(video, context, cw, ch);
 
         }, false);
       }
@@ -160,14 +164,22 @@ app.controller('FourVideosCtrl', ($scope) => {
         };
       }
 
+      function setVideoDimensions(){
+          var maxWidth = Math.max(...videos.map((el) => $(el).width()));
+          var maxHeight = Math.max(...videos.map((el) => $(el).height()));
+          //var maxHeight = Math.max(...[].call(map((el) => el.height), videos));
+          videos.forEach(video => {
+            $(video).width(maxWidth);
+            $(video).height(maxHeight);
+          })
+          $("svg").width(maxWidth)
+          $scope.videoPlayerWidth = maxWidth;
+          //console.log("maxWidth", maxWidth);
+      }
+
+
       videos[0].currentTime = $scope.instructions[0].startTime;
       videos[0].play();
-    }
 
-    function draw(v, c, w, h){
-      if(v.paused || v.ended) return false;
-      c.drawImage(v,0,0,w,h);
-      setTimeout(draw,20,v,c,w,h);
     }
-
 });
