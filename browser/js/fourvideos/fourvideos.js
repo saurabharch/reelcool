@@ -48,12 +48,9 @@ app.controller('FourVideosCtrl', ($scope) => {
       $scope.totalEndTime += instruction.endTime - instruction.startTime;
     });
 
-
-    setTimeout(run, 1000);
-
     var videos;
 
-    function run() {
+    $scope.run = function () {
       var videosArrayLike = document.getElementsByTagName('video');
       var videos = [];
       for(var i = 0; i<videosArrayLike.length; i++){
@@ -164,19 +161,17 @@ app.controller('FourVideosCtrl', ($scope) => {
         };
       }
 
+      var height=300;
       function setVideoDimensions(){
-          var maxWidth = Math.max(...videos.map((el) => $(el).width()));
+          var maxWidth = $("#video-container").width();
           var maxHeight = Math.max(...videos.map((el) => $(el).height()));
-          //var maxHeight = Math.max(...[].call(map((el) => el.height), videos));
           videos.forEach(video => {
             $(video).width(maxWidth);
-            $(video).height(maxHeight);
+            $(video).height(height);
           })
           $("svg").width(maxWidth)
           $scope.videoPlayerWidth = maxWidth;
-          //console.log("maxWidth", maxWidth);
       }
-
 
       videos[0].currentTime = $scope.instructions[0].startTime;
       videos[0].play();
