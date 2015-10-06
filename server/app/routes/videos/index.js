@@ -150,4 +150,9 @@ router.get('/violet/:filename', function(req, res){
 
 })
 
+router.post('/upload', function(req,res,next){
+  console.log(req.headers);
+  res.end();
+})
+
 module.exports = router;
