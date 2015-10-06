@@ -5,7 +5,8 @@ app.directive("timeSlider", () => {
     scope: {
       movingTime: '=',
       startTime: '=',
-      endTime: '='
+      endTime: '=',
+      width : '='
     },
     link: (scope, elements, attr) => {
       var slider = elements[0];
@@ -79,13 +80,13 @@ app.directive("timeSlider", () => {
           document.removeEventListener('mouseup', mouseUpSaveDot);
           showSliderWithoutHover = false;
           var clickedX = e.clientX;
-          var newMovingTime = (clickedX - 140)/1120 * scope.endTime;
+          var newMovingTime = (clickedX)/scope.width * scope.endTime;
           scope.$emit('newMovingTime', newMovingTime);
         }
 
         function moveDot(e){
           var movedX = e.clientX;
-          scope.movingTime = (movedX - 140)/1120 * scope.endTime;
+          scope.movingTime = (movedX)/scope.width * scope.endTime;
           scope.$digest();
           scope.$emit('previewMovingTime', scope.movingTime);
         }
@@ -95,8 +96,8 @@ app.directive("timeSlider", () => {
         //x value of coordinate  -> totalCurrentTime
         console.log('clicked x', e.clientX);
         var clickedX = e.clientX;
-        var newMovingTime = (clickedX - 140)/1120 * scope.endTime;
-        scope.$emit('newMovingTime', newMovingTime);
+        var newMovingTime = (clickedX)/scope.width * scope.endTime;
+        //scope.$emit('newMovingTime', newMovingTime);
       })
     }
   }
