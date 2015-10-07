@@ -1,6 +1,8 @@
 .idea
 node_modules
 server/files/dragon.ogg
+server/files/flame.webm
+server/files/ostrich.webm
 npm-debug.log
 public
 .DS_Store

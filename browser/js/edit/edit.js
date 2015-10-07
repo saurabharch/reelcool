@@ -7,9 +7,15 @@ app.config(function($stateProvider) {
     });
 });
 
-app.controller('EditCtrl', function($scope, $state, InstructionsFactory) {
+app.controller('EditCtrl', function($scope, $state, $mdBottomSheet, InstructionsFactory) {
     $scope.videoSource = "dragon.ogg";
     $scope.instructions = InstructionsFactory.get();
+
+    $scope.openBottomSheet = function() {
+    $mdBottomSheet.show({
+      template: '<md-bottom-sheet>Hello!</md-bottom-sheet>'
+    });
+};
     
     function changeVideo () {
     	$scope.videoSource = "IMG_2608.MOV"; // ostrich
