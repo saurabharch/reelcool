@@ -1,14 +1,23 @@
-{{videos.length}}
+{{videos | json}}
 <div id="sourcevids">
 	<ul id="vidslist">
 		<li ng-repeat="video in videos">
-			<video width="200px" id="{{video.id}}" controls>
+			<video width="200px" id="{{video.id}}" controls></video>
+				<button ng-click="onmain(video.arrayBuffer)">put on main</button>
 		</li>
 	</ul>
 	<input type="file" style="display:none" id="videofileinput" accept="video/*">
 	<button ng-click="addVideo()">add</button>
 </div>
 
+
+
+<!-- <div>
+	<canvas id="canvas" width="600px"></canvas>
+</div>
+ -->
+
+
 <div>
-	<video id="mainplayer" width="600px" controls>
+	<video id="mainplayer" width="600px" controls></video>
 </div>

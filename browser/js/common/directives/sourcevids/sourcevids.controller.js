@@ -13,21 +13,47 @@ app.controller("SourceVidsCtrl", function ($scope) {
 	fileInput.addEventListener('change', function(e) {
 		var file = fileInput.files[0];
 		var videoId = "video_" + videoIdCounter++;
-		$scope.videos.push({
-			id: videoId
-		});
+		var mediaSource = new MediaSource();
+		var objUrl = window.URL.createObjectURL(mediaSource);
+		var videoObj = {
+			id: videoId,
+			objUrl: objUrl
+		};
+		$scope.videos.push(videoObj);
 		$scope.$digest();
-		addVideoToList(file, videoId);
-
+		var video = document.querySelector('#' + videoId);
+		video.addEventListener("seeked", function (e) {
+			console.log("readystate changed:" , e);
+		});
+		//var video = document.querySelector('#' + videoId);
+		video.src = objUrl;
+		addVideoToList(file, mediaSource, videoObj);
     });
 
 
-
-	var addVideoToList = function (file, videoId) {
-
+	$scope.onmain = function (arrayBuffer) {
 		var mediaSource = new MediaSource();
-		var video = document.querySelector('#' + videoId);
-		video.src = window.URL.createObjectURL(mediaSource);
+		mediaSource.addEventListener("sourceopen", function () {
+			console.log("source open");
+	        var sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
+	        console.log("???");
+	        sourceBuffer.addEventListener('updateend', function(_) {
+	            mediaSource.endOfStream();
+	        });
+	        console.log("???????????");
+	        sourceBuffer.appendBuffer(arrayBuffer);
+		});
+		var objUrl = window.URL.createObjectURL(mediaSource);
+		var video = document.getElementById('mainplayer');
+		video.src = objUrl;
+
+	};
+
+	var addVideoToList = function (file, mediaSource, videoObj) {
+
+		// var mediaSource = new MediaSource();
+		// //var video = document.querySelector('#' + videoId);
+		// video.src = window.URL.createObjectURL(mediaSource);
         var reader = new FileReader();
         console.log(file);
         console.log("file size:", Math.round(file.size / 1000) / 1000, "MB");
@@ -40,6 +66,7 @@ app.controller("SourceVidsCtrl", function ($scope) {
                 console.log("ended");
                 console.log("size now", $scope.videos.length);
             });
+            videoObj.arrayBuffer = reader.result;
             sourceBuffer.appendBuffer(reader.result);
         };
 
