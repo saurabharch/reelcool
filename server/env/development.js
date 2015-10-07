@@ -2,9 +2,9 @@ module.exports = {
   "DATABASE_URI": "mongodb://localhost:27017/reelcool",
   "SESSION_SECRET": "Optimus Prime is my real dad",
   "TWITTER": {
-    "consumerKey": "INSERT_TWITTER_CONSUMER_KEY_HERE",
-    "consumerSecret": "INSERT_TWITTER_CONSUMER_SECRET_HERE",
-    "callbackUrl": "INSERT_TWITTER_CALLBACK_HERE"
+    "consumerKey": "Hw3GnG8A1PpzxcW7aCKLWxvpN",
+    "consumerSecret": "IcJvqO5zGNtuS7qB08q3P3RdegsJEI8Rj2uyLkIla0YcHwG7zD",
+    "callbackUrl": "http://127.0.0.1:1337/auth/twitter/callback" // twitter doesn't like localhost. to test it locally you'll need to have 127.0.0.1 in your address bar as well (instead of localhost).
   },
   "FACEBOOK": {
     "clientID": "187534398246831",
