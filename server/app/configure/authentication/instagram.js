@@ -14,7 +14,6 @@ module.exports = function (app) {
         clientSecret: instagramConfig.clientSecret,
         callbackURL: instagramConfig.callbackURL
     };
-    console.log(instagramCredentials);
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {
 
