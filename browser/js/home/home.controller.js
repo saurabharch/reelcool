@@ -1,25 +1,27 @@
 app.controller('homeCtrl', function ($http, $scope, $state, VideoFactory){
 	var theFileInput = document.getElementById('fileupload');
 
-	console.log(theFileInput);
 	$scope.upload = function(){
 
 
 		var file = theFileInput.files[0];
 		var reader = new FileReader();
 
-		reader.readAsDataURL(file);
+		// reader.readAsArrayBuffer(file);
+		var formData = new FormData();
+		formData.append("uploadedFile",file);
 
-		reader.onloadend = function () {
-			console.log('hey');
-			$.ajax({
+		$.ajax({
 				method: 'POST',
 				url: '/api/videos/upload',
-				data: {
-					name: file.name
-				}
+				enctype:'multipart/form-data',
+				data: formData,
+				processData:false,
+				contentType:false
+			}).done(function(data){
+				console.log('done!');
 			});
-		};
+
 	};
 
 });
