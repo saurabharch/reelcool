@@ -2,6 +2,7 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
 
 	$scope.videos = [];
 
+	// should be moved to videofactory
 	var VideoElement = function (videoSource) {
 		this.id = IdGenerator();
 		this.sourceAttached = false;
@@ -24,6 +25,8 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
 			$scope.$digest();
 			return VideoFactory.attachVideoSource(videoSource, videoElement.id);
 		}).then(function () {
+			videoElement.sourceAttached = true;
+			$scope.$digest();
 			console.log("Video source attached to video element");
 		}).then(null, function (error) {
 			//TODO show error on video tag and provide delete function

@@ -1,9 +1,7 @@
-{{videos | json}}
 <div id="sourcevids">
 	<ul id="vidslist">
 		<li ng-repeat="video in videos">
-			<video width="200px" height="150px" id="{{video.id}}" controls></video>
-				<button ng-click="onmain(video)">put on main</button>
+			<list-video video="video"></list-video>
 		</li>
 	</ul>
 	<input type="file" style="display:none" id="videofileinput" accept="video/*">
