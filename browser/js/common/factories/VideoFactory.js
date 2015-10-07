@@ -4,6 +4,13 @@ app.factory("VideoFactory", function (IdGenerator) {
 		videoSources = [];
 
 
+	var VideoElement = function (videoSource) {
+		this.id = IdGenerator();
+		this.sourceAttached = false;
+		this.videoSource = videoSource;
+	};
+
+
 	var VideoSource = function (fileName, mimeType, arrayBuffer) {
 		this.id = IdGenerator();
 		this.fileName = fileName;
@@ -18,6 +25,11 @@ app.factory("VideoFactory", function (IdGenerator) {
 	// do ajax polling for uplodaed videos
 	// load new video + create VideoObject
 	// and add new videos to list + send event of new videos
+
+	vidFactoy.createVideoElement = function (videoSource) {
+		return new VideoElement(videoSource);
+	};
+
 
 
 	vidFactoy.getVideoSources = function () {
@@ -35,6 +47,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
 				videoSources.push(videoSrc);
 				// TODO emit event about new video
+				// TODO do ajax POST with video
 				resolve(videoSrc);
 			};
 			reader.readAsArrayBuffer(file);
