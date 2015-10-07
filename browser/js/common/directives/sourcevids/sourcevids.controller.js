@@ -4,6 +4,7 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
 
 	var VideoElement = function (videoSource) {
 		this.id = IdGenerator();
+		this.sourceAttached = false;
 		this.videoSource = videoSource;
 	};
 
@@ -14,16 +15,18 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
 	};
 
 	fileInput.addEventListener('change', function(e) {
-		var file = fileInput.files[0];
+		var file = fileInput.files[0],
+			videoElement;
 		VideoFactory.addVideoSource(file).then(function (videoSource) {
 			console.log("Video source received:", videoSource);
-			var videoElement = new VideoElement(videoSource);
+			videoElement = new VideoElement(videoSource);
 			$scope.videos.push(videoElement);
 			$scope.$digest();
 			return VideoFactory.attachVideoSource(videoSource, videoElement.id);
 		}).then(function () {
 			console.log("Video source attached to video element");
 		}).then(null, function (error) {
+			//TODO show error on video tag and provide delete function
 			console.error("Error occured when attaching video source", error);
 		});
     });

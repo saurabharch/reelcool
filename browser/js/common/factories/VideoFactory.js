@@ -4,9 +4,10 @@ app.factory("VideoFactory", function (IdGenerator) {
 		videoSources = [];
 
 
-	var VideoSource = function (fileName, arrayBuffer) {
+	var VideoSource = function (fileName, mimeType, arrayBuffer) {
 		this.id = IdGenerator();
 		this.fileName = fileName;
+		this.mimeType = mimeType;
 		this.arrayBuffer = arrayBuffer;
 	};
 
@@ -31,7 +32,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 			console.log("file size:", Math.round(file.size / 1000) / 1000, "MB");
 			reader.onloadend = function() {
 				console.log("reading file finished");
-				var videoSrc = new VideoSource(file.name, reader.result);
+				var videoSrc = new VideoSource(file.name, file.type, reader.result);
 				videoSources.push(videoSrc);
 				// TODO emit event about new video
 				resolve(videoSrc);
@@ -39,6 +40,18 @@ app.factory("VideoFactory", function (IdGenerator) {
 			reader.readAsArrayBuffer(file);
 		});
 	};
+
+	var mimeTypes = {
+		//'video/mp4': 'video/mp4; codecs="avc1.64001F, mp4a.40.2"',
+		//'video/mp4': 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"',
+		//'video/mp4':  'video/mp4; codecs="avc1.58A01E, mp4a.40.2"',
+		//'video/mp4':  'video/mp4; codecs="avc1.4D401E, mp4a.40.2"',
+		//'video/mp4':  'video/mp4; codecs="avc1.64001E, mp4a.40.2"',
+		//'video/mp4':  'video/mp4; codecs="mp4v.20.8, mp4a.40.2"',
+		//'video/mp4':  'video/mp4; codecs="mp4v.20.240, mp4a.40.2"',
+		'video/webm': 'video/webm; codecs="vp8, vorbis"'
+	};
+
 
 
 	//TODO maybe attach info about which video elements are using a videoObj
@@ -48,12 +61,20 @@ app.factory("VideoFactory", function (IdGenerator) {
 			var mediaSource = new MediaSource();
 			mediaSource.addEventListener("sourceopen", function () {
 				console.log("source open");
-				var sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
+				var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
 				sourceBuffer.addEventListener('updateend', function(_) {
-					mediaSource.endOfStream();
-					resolve();
+					try {
+						mediaSource.endOfStream();
+						resolve();
+					} catch (error) {
+						return reject(error);
+					}
 				});
-				sourceBuffer.appendBuffer(videoSource.arrayBuffer);
+				try {
+					sourceBuffer.appendBuffer(videoSource.arrayBuffer);
+				} catch (error) {
+					return reject(error);
+				}
 			});
 			var objUrl = window.URL.createObjectURL(mediaSource);
 			var video = document.getElementById(videoElementId);
@@ -65,3 +86,6 @@ app.factory("VideoFactory", function (IdGenerator) {
 	return vidFactoy;
 
 });
+
+
+
