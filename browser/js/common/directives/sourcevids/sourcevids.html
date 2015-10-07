@@ -1,0 +1,9 @@
+<div id="sourcevids">
+	<ul id="vidslist">
+		<li ng-repeat="video in videos">
+			<list-video video="video"></list-video>
+		</li>
+	</ul>
+	<input type="file" style="display:none" id="videofileinput" accept="video/*">
+	<button ng-click="selectVideoFile()">add</button>
+</div>
