@@ -15,5 +15,10 @@ module.exports = {
     "clientID": "762218954684-qcmnv52fe0ivcvb12vr24hqdcepjj7v5.apps.googleusercontent.com",
     "clientSecret": "e5pFlmGOXCn-jB_lLHiufE4M",
     "callbackURL": "http://localhost:1337/auth/google/callback"
+  }, 
+  "INSTAGRAM": {
+    "clientID": "4405115650ae467f8ae4b7a7dd936320", 
+    "clientSecret": "be8088c1a6f447fa9fa2bb7c8eac154e", 
+    "callbackURL": "http://localhost:1337/auth/instagram/callback"
   }
 };
