@@ -1,17 +1,32 @@
 var ffmpeg = require('fluent-ffmpeg');
+var Video = require('mongoose').model('Video');
 
 var fs = require('fs');
 var path = require('path');
+var bodyParser = require('body-parser');
 
 var express = require('express');
 var router = express.Router();
+var multer = require('multer');
+var fs = require('fs');
+var storage = multer.diskStorage({
+    destination: function (req,file,cb){
+      cb(null, path.join(__dirname, "..","..","..","temp"));
+    },
+    filename: function (req,file,cb){
+      cb(null, file.originalname);
+    }
+});
+
+var upload = multer({ storage: storage });
+router.use(bodyParser.raw());
 
 //var command = ffmpeg(fs.createReadStream(path.join(__dirname, 'IMG_2608.MOV')));
 
 //app.use(express.static(__dirname + '/flowplayer'));
 
 // router.get('/:filename', function(req, res){
-//   var pathToMovie = path.join(__dirname,"../../files/",req.params.filename);
+//   var pathToMovie = path.josin(__dirname,"../../files/",req.params.filename);
 //   var proc = ffmpeg(pathToMovie)
 //       .preset('flashvideo')
 //       .on('error', function(err,stdout,stderr) {
@@ -32,7 +47,7 @@ var filters = {
   grayscale: 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
   sepia: 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
   blur: 'boxblur=luma_radius=5:luma_power=3'
-}
+};
 
 router.get('/gray/:filename', function(req, res){
   var pathToMovie = path.join(__dirname,"../../../files/",req.params.filename);
@@ -97,8 +112,8 @@ router.get('/save', function(req, res){
         console.log("tryna merge");
 
           clips.forEach(function(clipPath){
-            proc.input(clipPath)
-          })
+            proc.input(clipPath);
+          });
 
           proc.mergeToFile(finalFilePath);
       }
@@ -108,51 +123,33 @@ router.get('/save', function(req, res){
   });
 });
 
-router.get('/combine/:filename', function(req, res) {
-  //res.send(ffmpeg.toString());
-  //res.contentType('flv');
-  // make sure you set the correct path to your video file storage
-  var pathToMovie = path.join(__dirname,"../../files/",req.params.filename);
-  var outPath = path.join(__dirname,"../../files/","output.avi");
-  var proc = ffmpeg(pathToMovie)
-    .input(pathToMovie)
-    .setStartTime(2)
-    .input(pathToMovie)
-    .setStartTime(2)
-    //use the 'flashvideo' preset (located in /lib/presets/flashvideo.js)
-    //.preset('flashvideo')
-    // setup event handlers
-    .on('end', function() {
-     console.log('file has been converted succesfully');
-    })
-    .on('error', function(err) {
-     console.log('an error happened: ' + err.message);
-    })
-    .mergeToFile(outPath)
-    // save to stream
-    //.pipe(res, {end:true});
-    res.send("done");
+
+router.post('/upload', upload.single('uploadedFile'),function(req,res,next){
+    var outName = req.file.originalname.split('.')[0]+".ogv";
+    var outPath = path.join(__dirname,"../../../files/");
+    var proc = ffmpeg(req.file.path)
+      .on('end', function() {
+        console.log('file has been converted succesfully, creating video in Mongo...');
+        Video.create({
+          fileName: outName,
+          path: outPath,
+          editor: req.user._id
+        }).then(function(vid){
+          res.status(201).end();
+        }, function(err){
+          console.log(err);
+          res.json(err);
+        });
+        // if(req.file.originalname.split('.')[0]!==".webm"){           <---- for sending a file back if it wasn't webm
+
+        // }
+      })
+      .on('error', function(err) {
+        console.log('an error happened: ' + err.message);
+      })
+      .output(path.join(__dirname,"../../../files/",outName))
+      .run();
+
 });
-
-router.get('/violet/:filename', function(req, res){
-  var pathToMovie = path.join(__dirname,"../../files/",req.params.filename);
-  var outPath =  path.join(__dirname,"../../files/",'outpurple.avi');
-  var outStream = fs.createWriteStream(outPath);
-
-  var proc = ffmpeg(pathToMovie)
-  .setStartTime(2)
-  .videoFilters('pad=640:480:0:40:violet')
-  .on('end', function(){
-    console.log('finished processing');
-  })
-  .saveToFile(outPath);
-  res.send("done");
-
-})
-
-router.post('/upload', function(req,res,next){
-  console.log(req.headers);
-  res.end();
-})
 
 module.exports = router;
