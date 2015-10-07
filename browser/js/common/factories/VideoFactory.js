@@ -10,6 +10,10 @@ app.factory("VideoFactory", function (IdGenerator) {
 		this.arrayBuffer = arrayBuffer;
 	};
 
+	//TODO
+	// remove videos (incl. removing arrayBuffer/mediasources/ObjURLs)
+	// ajax upload
+
 	// do ajax polling for uplodaed videos
 	// load new video + create VideoObject
 	// and add new videos to list + send event of new videos
@@ -37,7 +41,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 	};
 
 
-	//TODO maybe attack info about which video elements are using a videoObj
+	//TODO maybe attach info about which video elements are using a videoObj
 	// and the mediasource objects
 	vidFactoy.attachVideoSource = function (videoSource, videoElementId) {
 		return new Promise(function (resolve, reject) {
