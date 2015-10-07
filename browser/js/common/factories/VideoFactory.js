@@ -18,9 +18,32 @@ app.factory("VideoFactory", function (IdGenerator) {
 		this.arrayBuffer = arrayBuffer;
 	};
 
+
+	var uploadVideoToServer = function(file){
+
+		//var file = theFileInput.files[0];
+		var reader = new FileReader();
+
+		// reader.readAsArrayBuffer(file);
+		var formData = new FormData();
+		formData.append("uploadedFile",file);
+
+		$.ajax({
+				method: 'POST',
+				url: '/api/videos/upload',
+				enctype:'multipart/form-data',
+				data: formData,
+				processData:false,
+				contentType:false
+			}).done(function(data){
+				console.log('done!');
+		});
+
+	};
+
+
 	//TODO
 	// remove videos (incl. removing arrayBuffer/mediasources/ObjURLs)
-	// ajax upload
 
 	// do ajax polling for uplodaed videos
 	// load new video + create VideoObject
@@ -47,10 +70,10 @@ app.factory("VideoFactory", function (IdGenerator) {
 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
 				videoSources.push(videoSrc);
 				// TODO emit event about new video
-				// TODO do ajax POST with video
 				resolve(videoSrc);
 			};
 			reader.readAsArrayBuffer(file);
+			uploadVideoToServer(file);
 		});
 	};
 
@@ -94,6 +117,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 			video.src = objUrl;
 		});
 	};
+
 
 
 	return vidFactoy;
