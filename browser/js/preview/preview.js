@@ -2,7 +2,7 @@ app.config(($stateProvider) => {
 
     $stateProvider.state('testplayground', {
         url: '/preview',
-        templateUrl: 'js/playground/test-playground.html',
+        templateUrl: 'js/preview/preview.html',
         controller: ($scope) => {
           $scope.instructions = [{
               source: 'lego.ogv',

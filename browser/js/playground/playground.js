@@ -16,7 +16,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   var $video;
 
   $scope.updatedTimeRange = () => {
-    $scope.$broadcast('updatedTimeRange',$scope.instructions)
+    $scope.$broadcast('updatedTimeRange')
   }
 
   $scope.run = () => {
