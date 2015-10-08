@@ -10,7 +10,7 @@ app.directive('sharing', () => {
     }
 });
 
-app.controller('ShareCtrl', function($scope, $mdDialog) {
+app.controller('ShareCtrl', function ($scope, $mdDialog) {
 	$scope.socialNetworks = ['Twitter', 'Facebook', 'Instagram'];
     $scope.isOpen = false;
     $scope.openDialog = function($event, item) {
@@ -29,18 +29,7 @@ app.controller('ShareCtrl', function($scope, $mdDialog) {
             };
           },
           controllerAs: 'dialog',
-          template: 
-          	`<md-dialog>
-		      <md-dialog-content>Hello User! Share your video on {{dialog.item}}!</md-dialog-content>
-		      <div class="md-actions">
-		        <md-button aria-label="Close dialog" ng-click="dialog.close()" class="md-primary">
-		          No thanks, still playing with it.
-		        </md-button>
-		        <md-button aria-label="Submit dialog" ng-click="dialog.submit()" class="md-primary">
-		          Yeah share it!
-		        </md-button>
-		      </div>
-		    </md-dialog>`,
+          templateUrl: "js/common/directives/dialog/dialog.html",
           targetEvent: $event
         });
     }
