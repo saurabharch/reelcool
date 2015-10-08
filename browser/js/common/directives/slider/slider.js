@@ -11,8 +11,12 @@ app.directive("timeSlider", () => {
     link: (scope, elements, attr) => {
       var slider = elements[0];
       var sliderBar = document.getElementById('slider-bar');
+      var sliderDot = document.getElementById('slider-dot');
       var pauseButton = document.getElementById('pause-button');
       var playButton = document.getElementById('play-button');
+      var $svg = $('svg');
+      var svgLeftOffset = $svg.offset().left;
+      console.log("svgPosition", svgLeftOffset);
 
       //opening slider animation
       slider.style.opacity = "0";
@@ -21,84 +25,95 @@ app.directive("timeSlider", () => {
         scope.$emit('hideSlider');
       }, 3000);
 
-      var showSliderWithoutHover = false;
+      //var showSliderWithoutHover = false;
       scope.paused = false;
 
-      scope.$on('UIpause', () => {
+      scope.$on('pauseButton', () => {
         scope.paused = true;
       });
 
-      scope.$on('UIplay', () => {
+      scope.$on('playButton', () => {
         scope.paused = false;
       })
 
-      scope.$on('CTRLplay',() => {
+      scope.$on('pauseCurrentVideo',() => {
+        scope.paused = true;
+      })
+
+      scope.$on('playCurrentVideo',() => {
         scope.paused = false;
-      })
-
-      scope.$on('showSlider', () => {
-        if(timeoutFade) {
-          clearTimeout(timeoutFade);
-        }
-        slider.style.opacity = '.7';
-      })
-
-      scope.$on('hideSlider', () => {
-        // console.log("HIDE SLIDER");
-        // $(slider).animate({opacity: 0}, 2000);
       })
 
       pauseButton.addEventListener('click', () => {
-        scope.$emit('UIpause');
+        scope.$emit('pauseButton');
       });
 
       playButton.addEventListener('click', () => {
-        scope.$emit('UIplay');
+        scope.$emit('playButton');
       });
 
-      slider.addEventListener('mouseover', () => {
-        scope.$emit('showSlider');
-      })
+      sliderBar.addEventListener('click', moveDotFromClick);
 
-      slider.addEventListener('mouseout', () => {
-        if(!showSliderWithoutHover && !scope.paused){
-          scope.$emit('hideSlider');
-        }
-      })
-
-      var sliderDot = document.getElementById('slider-dot');
-      console.log("sliderDot", sliderDot);
       sliderDot.addEventListener('mousedown', () => {
-        scope.$emit('UIpause');
+        console.log("mousedown");
+        sliderBar.removeEventListener('click', moveDotFromClick);
+        scope.$emit('pauseButton');
         //wherever the mouse goes, its x value should transfer to the totalCurrentTime
-        showSliderWithoutHover = true;
+        //showSliderWithoutHover = true;
         document.addEventListener('mousemove', moveDot);
         document.addEventListener('mouseup', mouseUpSaveDot);
+      });
 
-        function mouseUpSaveDot(e){
+        function mouseUpSaveDot(e) {
           document.removeEventListener('mousemove', moveDot);
           document.removeEventListener('mouseup', mouseUpSaveDot);
-          showSliderWithoutHover = false;
-          var clickedX = e.clientX;
+          setTimeout(() => {
+            sliderBar.addEventListener('click', moveDotFromClick);
+          },1);
+          //showSliderWithoutHover = false;
+          var clickedX = e.clientX -svgLeftOffset;
+          console.log('save dot x', clickedX);
           var newMovingTime = (clickedX)/scope.width * scope.endTime;
-          scope.$emit('newMovingTime', newMovingTime);
+          console.log('slider says newMovingTime', newMovingTime);
+          scope.$emit('newMovingTime', {time: newMovingTime, paused: scope.paused});
         }
 
         function moveDot(e){
           var movedX = e.clientX;
           scope.movingTime = (movedX)/scope.width * scope.endTime;
           scope.$digest();
-          scope.$emit('previewMovingTime', scope.movingTime);
+          //scope.$emit('previewMovingTime', scope.movingTime);
         }
-      })
 
-      sliderBar.addEventListener('click', (e) => {
-        //x value of coordinate  -> totalCurrentTime
-        console.log('clicked x', e.clientX);
-        var clickedX = e.clientX;
-        var newMovingTime = (clickedX)/scope.width * scope.endTime;
-        //scope.$emit('newMovingTime', newMovingTime);
-      })
+        function moveDotFromClick(e) {
+          //x value of coordinate  -> totalCurrentTime
+          console.log('clicked x', e.clientX);
+          var clickedX = e.clientX - svgLeftOffset;
+          var newMovingTime = (clickedX)/scope.width * scope.endTime;
+          console.log('clicked slider says newMovingTime', newMovingTime);
+          scope.$emit('newMovingTime', {time: newMovingTime, paused: scope.paused});
+        }
+
+        // slider.addEventListener('mouseover', () => {
+        //   scope.$emit('showSlider');
+        // })
+        //
+        // slider.addEventListener('mouseout', () => {
+        //   if(!showSliderWithoutHover && !scope.paused){
+        //     scope.$emit('hideSlider');
+        //   }
+        // })
+        // scope.$on('showSlider', () => {
+        //   if(timeoutFade) {
+        //     clearTimeout(timeoutFade);
+        //   }
+        //   slider.style.opacity = '.7';
+        // })
+        //
+        // scope.$on('hideSlider', () => {
+        //   // console.log("HIDE SLIDER");
+        //   // $(slider).animate({opacity: 0}, 2000);
+        // })
     }
   }
 });

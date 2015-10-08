@@ -1,0 +1,6 @@
+<div class="list-video">
+	<video ng-mouseleave="pause()" ng-mouseover="play()" ng-click="onmain()" ng-show="video.sourceAttached" width="200px" height="150px" id="{{video.id}}" loop muted></video>
+	<div>{{video.videoSource.fileName}} ({{getSizeMb()}} MB)</div>
+	<img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
+	<button ng-click="remove(video.videoSource.id)">delete</button>
+</div>
