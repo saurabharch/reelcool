@@ -96,7 +96,7 @@ router.post('/download', function(req, res) {
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
-    if (parsedFile.ext === ".webm") res.send(parsedFile.name);
+    if (parsedFile.ext === ".webm") res.status(201).send(parsedFile.name);
     else {
         var dest = req.file.destination + '/' + parsedFile.name + '.webm';
         console.log(req.file.path); // original file
