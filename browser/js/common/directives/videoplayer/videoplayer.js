@@ -11,17 +11,12 @@ app.directive('videoPlayer', () => {
 
 app.controller('VideoPlayerCtrl', ($scope) => {
     $scope.currentClip = 0;
-    $scope.totalCurrentTime = 0;
-    $scope.totalEndTime = 0;
     $scope.videoPlayerWidth;
-
-    $scope.instructions.forEach(function(instruction) {
-        $scope.totalEndTime += instruction.endTime - instruction.startTime;
-    });
 
     var videos;
 
     $scope.run = function() {
+
         var timeoutId;
         var videosArrayLike = document.getElementsByTagName('video');
         var videos = [];
@@ -30,6 +25,7 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             videos[i].index = i;
         }
 
+        initializeTimes();
         setVideoDimensions();
 
         var cumulativeTimeBefore = 0;
@@ -44,6 +40,7 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             clearTimeout(timeoutId);
             videos[$scope.currentClip].pause();
             $scope.totalCurrentTime = args[0].time;
+            console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime)
             updateVideo();
             if(!args[0].paused){
               videos[$scope.currentClip].play();
@@ -53,13 +50,20 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             //console.log($scope.totalCurrentTime);
         })
 
+        $scope.$on('updatedTimeRange', (event, ...args) => {
+          initializeTimes();
+        })
+
         $scope.$on('UIpause', (event, ...args) => {
             videos[$scope.currentClip].pause();
             clearTimeout(timeoutId);
         })
 
         $scope.$on('UIplay', (event, ...args) => {
-            console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip);
+            if($scope.totalCurrentTime >= $scope.totalEndTime){
+              $scope.totalCurrentTime = 0;
+            }
+            console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip, "current time is", $scope.totalCurrentTime);
             clearTimeout(timeoutId);
             updateVideo();
             videos[$scope.currentClip].play();
@@ -73,10 +77,15 @@ app.controller('VideoPlayerCtrl', ($scope) => {
         timeoutId = setTimeout(updateVideo, 10);
 
         function updateVideo() {
+          console.log("totalCurrentTime @ update", $scope.totalCurrentTime);
             var ended;
             if ($scope.totalCurrentTime >= $scope.totalEndTime) {
                 ended=true;
+                clearTimeout(timeoutId);
+                console.log("end of video");
                 videos[$scope.currentClip].pause();
+                $scope.$broadcast('CTRLpause');
+                return;
             }
             else {
                 var foundSpot = false;
@@ -85,16 +94,17 @@ app.controller('VideoPlayerCtrl', ($scope) => {
                 for (var i = 0; i < videos.length; i++) {
                     // sets indices
                   if ($scope.totalCurrentTime < videos[i].timeBefore) {
+                      console.log("i", i, "timeBefore", videos[i].timeBefore, "totalCurrentTime", $scope.totalCurrentTime)
                         newIndex = i - 1;
                         foundSpot=true;
                   }
                   else if (i === videos.length - 1) {
                         newIndex = i;
                         foundSpot=true;
-                        console.log("on last video, so newIndex=",newIndex);
                   }
                     // evaluates whether video should change
                   if (foundSpot && oldIndex !== newIndex) {
+                      console.log("oldIndex", oldIndex, "newIndex", newIndex);
                         var clipToPlay = videos[newIndex];
                         clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
                         if(!videos[oldIndex].paused){
@@ -130,6 +140,14 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             })
             $("svg").width(maxWidth)
             $scope.videoPlayerWidth = maxWidth;
+        }
+
+        function initializeTimes() {
+          $scope.totalEndTime = 0;
+          $scope.totalCurrentTime = 0;
+          $scope.instructions.forEach(function(instruction) {
+              $scope.totalEndTime += instruction.endTime - instruction.startTime;
+          });
         }
 
         videos[0].currentTime = $scope.instructions[0].startTime;
