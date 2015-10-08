@@ -38,13 +38,12 @@ app.controller('VideoPlayerCtrl', ($scope) => {
 
         $scope.$on('newMovingTime', (event, ...args) => {
             clearTimeout(timeoutId);
-            videos[$scope.currentClip].pause();
+            pauseCurrentVideo();
             $scope.totalCurrentTime = args[0].time;
-            console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime)
+            console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime, "args", args)
             updateVideo();
             if(!args[0].paused){
-              videos[$scope.currentClip].play();
-              $scope.$broadcast('CTRLplay');
+              playCurrentVideo();
             }
         })
 
@@ -52,12 +51,12 @@ app.controller('VideoPlayerCtrl', ($scope) => {
           initializeTimes();
         })
 
-        $scope.$on('UIpause', (event, ...args) => {
+        $scope.$on('pauseButton', (event, ...args) => {
             clearTimeout(timeoutId);
-            videos[$scope.currentClip].pause();
+            pauseCurrentVideo();
         })
 
-        $scope.$on('UIplay', (event, ...args) => {
+        $scope.$on('playButton', (event, ...args) => {
             if($scope.totalCurrentTime >= $scope.totalEndTime){
               //video is over
               $scope.currentClip =0;
@@ -65,9 +64,8 @@ app.controller('VideoPlayerCtrl', ($scope) => {
               videos[$scope.currentClip].currentTime = $scope.instructions[$scope.currentClip].startTime;
             }
             console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip, "total current time is", $scope.totalCurrentTime);
-            videos[$scope.currentClip].play();
+            playCurrentVideo();
             updateVideo();
-            console.log('played video', $scope.currentClip);
         })
 
         timeoutId = setTimeout(updateVideo, 10);
@@ -78,8 +76,7 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             if ($scope.totalCurrentTime >= $scope.totalEndTime) {
                 ended=true;
                 console.log("end of video");
-                videos[$scope.currentClip].pause();
-                $scope.$broadcast('CTRLpause');
+                pauseCurrentVideo();
                 return;
             }
             else {
@@ -144,13 +141,23 @@ app.controller('VideoPlayerCtrl', ($scope) => {
         function initializeTimes() {
           $scope.totalEndTime = 0;
           $scope.totalCurrentTime = 0;
+          $scope.currentClip = 0;
+          videos[0].currentTime = $scope.instructions[0].startTime;
           $scope.instructions.forEach(function(instruction) {
               $scope.totalEndTime += instruction.endTime - instruction.startTime;
           });
         }
 
-        videos[0].currentTime = $scope.instructions[0].startTime;
-        videos[0].play();
+        function pauseCurrentVideo() {
+          videos[$scope.currentClip].pause();
+          $scope.$broadcast('pauseCurrentVideo');
+        }
 
+        function playCurrentVideo() {
+          videos[$scope.currentClip].play();
+          $scope.$broadcast('playCurrentVideo');
+        }
+
+        playCurrentVideo();
     }
 });

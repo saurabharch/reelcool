@@ -11,6 +11,7 @@ app.directive("timeSlider", () => {
     link: (scope, elements, attr) => {
       var slider = elements[0];
       var sliderBar = document.getElementById('slider-bar');
+      var sliderDot = document.getElementById('slider-dot');
       var pauseButton = document.getElementById('pause-button');
       var playButton = document.getElementById('play-button');
       var $svg = $('svg');
@@ -24,67 +25,41 @@ app.directive("timeSlider", () => {
         scope.$emit('hideSlider');
       }, 3000);
 
-      var showSliderWithoutHover = false;
+      //var showSliderWithoutHover = false;
       scope.paused = false;
 
-      scope.$on('UIpause', () => {
+      scope.$on('pauseButton', () => {
         scope.paused = true;
       });
 
-      scope.$on('UIplay', () => {
+      scope.$on('playButton', () => {
         scope.paused = false;
       })
 
-      scope.$on('CTRLplay',() => {
-        scope.paused = false;
-        scope.$digest();
-      })
-
-      scope.$on('CTRLpause',() => {
+      scope.$on('pauseCurrentVideo',() => {
         scope.paused = true;
       })
 
-      // scope.$on('showSlider', () => {
-      //   if(timeoutFade) {
-      //     clearTimeout(timeoutFade);
-      //   }
-      //   slider.style.opacity = '.7';
-      // })
-      //
-      // scope.$on('hideSlider', () => {
-      //   // console.log("HIDE SLIDER");
-      //   // $(slider).animate({opacity: 0}, 2000);
-      // })
+      scope.$on('playCurrentVideo',() => {
+        scope.paused = false;
+      })
 
       pauseButton.addEventListener('click', () => {
-        scope.$emit('UIpause');
+        scope.$emit('pauseButton');
       });
 
       playButton.addEventListener('click', () => {
-        scope.$emit('UIplay');
+        scope.$emit('playButton');
       });
-
-      slider.addEventListener('mouseover', () => {
-        scope.$emit('showSlider');
-      })
-
-      slider.addEventListener('mouseout', () => {
-        if(!showSliderWithoutHover && !scope.paused){
-          scope.$emit('hideSlider');
-        }
-      })
-
-      var sliderDot = document.getElementById('slider-dot');
 
       sliderBar.addEventListener('click', moveDotFromClick);
 
       sliderDot.addEventListener('mousedown', () => {
         console.log("mousedown");
         sliderBar.removeEventListener('click', moveDotFromClick);
-        var wasPaused = scope.paused;
-        scope.$emit('UIpause');
+        scope.$emit('pauseButton');
         //wherever the mouse goes, its x value should transfer to the totalCurrentTime
-        showSliderWithoutHover = true;
+        //showSliderWithoutHover = true;
         document.addEventListener('mousemove', moveDot);
         document.addEventListener('mouseup', mouseUpSaveDot);
       });
@@ -95,7 +70,7 @@ app.directive("timeSlider", () => {
           setTimeout(() => {
             sliderBar.addEventListener('click', moveDotFromClick);
           },1);
-          showSliderWithoutHover = false;
+          //showSliderWithoutHover = false;
           var clickedX = e.clientX -svgLeftOffset;
           console.log('save dot x', clickedX);
           var newMovingTime = (clickedX)/scope.width * scope.endTime;
@@ -118,6 +93,27 @@ app.directive("timeSlider", () => {
           console.log('clicked slider says newMovingTime', newMovingTime);
           scope.$emit('newMovingTime', {time: newMovingTime, paused: scope.paused});
         }
+
+        // slider.addEventListener('mouseover', () => {
+        //   scope.$emit('showSlider');
+        // })
+        //
+        // slider.addEventListener('mouseout', () => {
+        //   if(!showSliderWithoutHover && !scope.paused){
+        //     scope.$emit('hideSlider');
+        //   }
+        // })
+        // scope.$on('showSlider', () => {
+        //   if(timeoutFade) {
+        //     clearTimeout(timeoutFade);
+        //   }
+        //   slider.style.opacity = '.7';
+        // })
+        //
+        // scope.$on('hideSlider', () => {
+        //   // console.log("HIDE SLIDER");
+        //   // $(slider).animate({opacity: 0}, 2000);
+        // })
     }
   }
 });
