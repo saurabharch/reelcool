@@ -1,14 +1,15 @@
-var ffmpeg = require('fluent-ffmpeg');
-var Video = require('mongoose').model('Video');
+// utilities
 var spawn = require('child_process').spawn;
 var fs = require('fs');
 var path = require('path');
-var bodyParser = require('body-parser');
+var ffmpeg = require('fluent-ffmpeg');
 
-var express = require('express');
-var router = express.Router();
+// express and models
+var router = require('express').Router();
+var Video = require('mongoose').model('Video');
+
+// multer file handling
 var multer = require('multer');
-var fs = require('fs');
 var storage = multer.diskStorage({
     destination: function (req,file,cb){
       cb(null, path.join(__dirname, "..","..","..","temp"));
@@ -23,13 +24,10 @@ var storage = multer.diskStorage({
         });
     }
 });
-
 var upload = multer({ storage: storage });
-router.use(bodyParser.raw());
+
 
 //var command = ffmpeg(fs.createReadStream(path.join(__dirname, 'IMG_2608.MOV')));
-
-//app.use(express.static(__dirname + '/flowplayer'));
 
 
 var filters = {
