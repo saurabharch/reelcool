@@ -17,6 +17,8 @@ app.controller('VideoPlayerCtrl', ($scope) => {
 
     $scope.run = function() {
 
+        $scope.$emit('videoPlayerLoaded');
+
         var timeoutId;
         var videosArrayLike = document.getElementsByTagName('video');
         var videos = [];

@@ -15,6 +15,10 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   var video;
   var $video;
 
+  $scope.$on('videoPlayerLoaded', (e, ...args) => {
+    $scope.run();
+  })
+
   $scope.updatedTimeRange = () => {
     $scope.$broadcast('updatedTimeRange')
   }
