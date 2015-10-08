@@ -1,5 +1,6 @@
 var ffmpeg = require('fluent-ffmpeg');
 var Video = require('mongoose').model('Video');
+var spawn = require('child_process').spawn;
 
 var fs = require('fs');
 var path = require('path');
@@ -25,23 +26,6 @@ router.use(bodyParser.raw());
 
 //app.use(express.static(__dirname + '/flowplayer'));
 
-// router.get('/:filename', function(req, res){
-//   var pathToMovie = path.josin(__dirname,"../../files/",req.params.filename);
-//   var proc = ffmpeg(pathToMovie)
-//       .preset('flashvideo')
-//       .on('error', function(err,stdout,stderr) {
-//         console.log('an error happened: ' + err.message);
-//         console.log('ffmpeg stdout: ' + stdout);
-//         console.log('ffmpeg stderr: ' + stderr);
-//       })
-//       .on('end', function() {
-//         console.log('Processing finished !');
-//       })
-//       .on('progress', function(progress) {
-//         console.log('Processing: ' + progress.percent + '% done');
-//       })
-//       .pipe(res, {end: true});
-// });
 
 var filters = {
   grayscale: 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
@@ -49,84 +33,65 @@ var filters = {
   blur: 'boxblur=luma_radius=5:luma_power=3'
 };
 
-router.get('/gray/:filename', function(req, res){
-  var pathToMovie = path.join(__dirname,"../../../files/",req.params.filename);
-  var outPath = path.join(__dirname,"../../../files/", "gray"+req.params.filename);
-  console.log("path to movie", pathToMovie);
-  console.log("out path", outPath);
+// instructions= [
+//   {
+//     vid_id: 
+//     startTime:
+//     endTime:
+//     filters: []
+//   }
+// ]
 
-  var proc = ffmpeg(pathToMovie)
-  .videoFilters(filters.blur)
-  .on('end', function(files){
-    console.log("done graying");
-    res.status(201).send();
-  })
-  .on('error', function(err){
-    console.log("error happened:", err.message);
-    res.status(500).send();
-  })
-  .output(outPath)
-  .run();
-  //.takeScreenshots({count:2, timemarks: ['1','3']}, outPath);
-})
 
-router.get('/save', function(req, res){
+router.post('/download', function(req, res){
+  // var outPath = path.join(__dirname,"../../../files/");
+  // var finalFilePath = path.join(__dirname,"../../../files/final.avi");
+  var ffmpeg = spawn('ffmpeg', ['-i', 'server/files/snowgroomer.webm','-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/converted.mp4', '-y']);
+    ffmpeg.on('exit',function(code,signal){
+      console.log('hey!!!, done!');
+      req.resume();
+      res.end();
+    });
+    // req.connection.pipe(ffmpeg.stdin);
+  // var instructions = req.body.data;
+  // instructions.forEach(function(instruction, ind){
+  //   instruction.path = path.join(outPath,ind.toString()+'.avi');
+  // });
+  // console.log(instructions);
+  // var numClips = instructions.length;
+  // var clipsAdded = 0;
+  // var clips = [];
+  // var proc = ffmpeg()
+  //     .on('end', function() {
+  //      console.log('file has been converted succesfully');
+  //     });
+     //  .on('error', function(err) {
+     //   console.log('an error happened: ' + err.message);
+     // });
 
-  var outPath = path.join(__dirname,"../../../files/out/");
-  var finalFilePath = path.join(__dirname,"../../../files/out/final.ogv");
-  var instructions = [
-    {
-      source: "lego.ogv",
-      clipStartTime: '1',
-      filter: 'grayscale'
-    },
-    {
-      source: "lego.ogv",
-      clipStartTime: '1',
-      filter: 'blur'
-    }
-  ];
+  // instructions.forEach(function(step, index){
+  //   var duration = step.endTime-step.startTime;
+  //   var clip = ffmpeg().input(step.path)
+  //   .output(outPath+index.toString()+'.ogv')
+  //   .on('end', function(){
+  //     clips[index]=(outPath+index.toString()+'.ogv');
+  //     clipsAdded++;
+  //     if(clipsAdded===numClips){
 
-  var numClips = instructions.length;
-  var clipsAdded = 0;
-  var clips = [];
-
-  var proc = ffmpeg()
-      .on('end', function() {
-       console.log('file has been converted succesfully');
-      })
-      .on('error', function(err) {
-       console.log('an error happened: ' + err.message);
-     });
-
-  instructions.forEach(function(step, index){
-
-    var clip = ffmpeg().input(path.join(__dirname,"../../../files/",step.source))
-    .setStartTime(step.clipStartTime)
-    .videoFilter(filters[step.filter])
-    .output(`${outPath}${index}.ogv`)
-    .on('end', function(){
-      clips[index]=(`${outPath}${index}.ogv`);
-      clipsAdded++;
-      if(clipsAdded===numClips){
-        console.log("tryna merge");
-
-          clips.forEach(function(clipPath){
-            proc.input(clipPath);
-          });
-
-          proc.mergeToFile(finalFilePath);
-      }
-    })
-    .run();
-
-  });
+  // //         clips.forEach(function(clipPath){
+  //   instructions.forEach(function(clip){
+  //           proc.input(clip.path);
+  //   });
+    // proc.input(path.join(__dirname,"../../../temp","1.mp4"));
+    // proc.input(path.join(__dirname,"../../../temp","2.mp4"));
+    // proc.input(path.join(__dirname,"../../../files","c.avi"));
+    // proc.mergeToFile(finalFilePath);
 });
 
 
 router.post('/upload', upload.single('uploadedFile'),function(req,res,next){
-    var outName = req.file.originalname.split('.')[0]+".ogv";
-    var outPath = path.join(__dirname,"../../../files/");
+    var outName = req.file.originalname.split('.')[0]+".mp4";
+    var outPath = path.join(__dirname,"../../../files");
     var proc = ffmpeg(req.file.path)
       .on('end', function() {
         console.log('file has been converted succesfully, creating video in Mongo...');
@@ -135,7 +100,10 @@ router.post('/upload', upload.single('uploadedFile'),function(req,res,next){
           path: outPath,
           editor: req.user._id
         }).then(function(vid){
-          res.status(201).end();
+          if (!req.session.videoPaths) req.session.videoPaths = [vid.path+vid.fileName];
+          else req.session.videoPaths.push(vid.path+vid.fileName);
+          console.log(req.session.videoPaths);
+          res.status(201).json(vid._id);
         }, function(err){
           console.log(err);
           res.json(err);
@@ -147,7 +115,8 @@ router.post('/upload', upload.single('uploadedFile'),function(req,res,next){
       .on('error', function(err) {
         console.log('an error happened: ' + err.message);
       })
-      .output(path.join(__dirname,"../../../files/",outName))
+      .inputOptions(['-strict experimental','-preset ultrafast','-vcodec libx264'])
+      .output(path.join(outPath,outName))
       .run();
 
 });
