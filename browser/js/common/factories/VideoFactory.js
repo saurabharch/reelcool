@@ -4,6 +4,9 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 		videoSources = {};
 
 
+	//TODO do ajax polling for uplodaed videos
+	//TODO sent ajax call to delete on back-end
+
 	var VideoElement = function (videoSource) {
 		this.id = IdGenerator();
 		this.sourceAttached = false;
@@ -21,11 +24,7 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 
 
 	var uploadVideoToServer = function(file){
-
-		//var file = theFileInput.files[0];
 		var reader = new FileReader();
-
-		// reader.readAsArrayBuffer(file);
 		var formData = new FormData();
 		formData.append("uploadedFile",file);
 
@@ -39,25 +38,11 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 			}).done(function(data){
 				console.log('done!');
 		});
-
 	};
 
-
-	//TODO
-	// remove videos (incl. removing arrayBuffer/mediasources/ObjURLs)
-
-	// do ajax polling for uplodaed videos
-	// load new video + create VideoObject
-	// and add new videos to list + send event of new videos
 
 	vidFactory.createVideoElement = function (videoSource) {
 		return new VideoElement(videoSource);
-	};
-
-
-
-	vidFactory.getVideoSources = function () {
-		return videoSources;
 	};
 
 
@@ -70,7 +55,6 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 				console.log("reading file finished");
 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
 				videoSources[videoSrc.id] = videoSrc;
-				// TODO emit event about new video
 				resolve(videoSrc);
 			};
 			reader.readAsArrayBuffer(file);
@@ -90,9 +74,6 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 	};
 
 
-
-	//TODO maybe attach info about which video elements are using a videoObj
-	// and the mediasource objects
 	vidFactory.attachVideoSource = function (videoSource, videoElementId) {
 		return new Promise(function (resolve, reject) {
 			var mediaSource = new MediaSource();
@@ -116,6 +97,7 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 			var objUrl = window.URL.createObjectURL(mediaSource);
 			var video = document.getElementById(videoElementId);
 			video.src = objUrl;
+			video.reelCoolVideoSourceId = videoSource.id;
 			videoSource.objUrls.push(objUrl);
 		});
 	};
@@ -133,8 +115,6 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 
 		console.log("video source terminated!");
 	};
-
-
 
 	return vidFactory;
 
