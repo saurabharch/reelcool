@@ -1,30 +1,33 @@
-var ffmpeg = require('fluent-ffmpeg');
-var Video = require('mongoose').model('Video');
+// utilities
 var spawn = require('child_process').spawn;
-
 var fs = require('fs');
 var path = require('path');
-var bodyParser = require('body-parser');
+var ffmpeg = require('fluent-ffmpeg');
 
-var express = require('express');
-var router = express.Router();
+// express and models
+var router = require('express').Router();
+var Video = require('mongoose').model('Video');
+
+// multer file handling
 var multer = require('multer');
-var fs = require('fs');
 var storage = multer.diskStorage({
     destination: function (req,file,cb){
       cb(null, path.join(__dirname, "..","..","..","temp"));
     },
     filename: function (req,file,cb){
-      cb(null, file.originalname);
+      var parsedFile = path.parse(file.originalname);
+      var video = {title: parsedFile.name, ext: parsedFile.ext};
+      if (req.user) video.editor = req.user._id; // if user is not logged in, we won't remember who uploaded the video. sorry.
+      Video.create(video)
+        .then(function (created) {
+          cb(null, created._id+parsedFile.ext);
+        });
     }
 });
-
 var upload = multer({ storage: storage });
-router.use(bodyParser.raw());
+
 
 //var command = ffmpeg(fs.createReadStream(path.join(__dirname, 'IMG_2608.MOV')));
-
-//app.use(express.static(__dirname + '/flowplayer'));
 
 
 var filters = {
@@ -89,36 +92,40 @@ router.post('/download', function(req, res){
 });
 
 
-router.post('/upload', upload.single('uploadedFile'),function(req,res,next){
-    var outName = req.file.originalname.split('.')[0]+".mp4";
-    var outPath = path.join(__dirname,"../../../files");
-    var proc = ffmpeg(req.file.path)
-      .on('end', function() {
-        console.log('file has been converted succesfully, creating video in Mongo...');
-        Video.create({
-          fileName: outName,
-          path: outPath,
-          editor: req.user._id
-        }).then(function(vid){
-          if (!req.session.videoPaths) req.session.videoPaths = [vid.path+vid.fileName];
-          else req.session.videoPaths.push(vid.path+vid.fileName);
-          console.log(req.session.videoPaths);
-          res.status(201).json(vid._id);
-        }, function(err){
-          console.log(err);
-          res.json(err);
-        });
-        // if(req.file.originalname.split('.')[0]!==".webm"){           <---- for sending a file back if it wasn't webm
+// router.post('/upload', upload.single('uploadedFile'),function(req,res,next){
+//     var outName = req.file.originalname.split('.')[0]+".mp4";
+//     var outPath = path.join(__dirname,"../../../files");
+//     var proc = ffmpeg(req.file.path)
+//       .on('end', function() {
+//         console.log('file has been converted succesfully, creating video in Mongo...');
+//         Video.create({
+//           fileName: outName,
+//           path: outPath,
+//           editor: req.user._id
+//         }).then(function(vid){
+//           if (!req.session.videoPaths) req.session.videoPaths = [vid.path+vid.fileName];
+//           else req.session.videoPaths.push(vid.path+vid.fileName);
+//           console.log(req.session.videoPaths);
+//           res.status(201).json(vid._id);
+//         }, function(err){
+//           console.log(err);
+//           res.json(err);
+//         });
+//         // if(req.file.originalname.split('.')[0]!==".webm"){           <---- for sending a file back if it wasn't webm
 
-        // }
-      })
-      .on('error', function(err) {
-        console.log('an error happened: ' + err.message);
-      })
-      .inputOptions(['-strict experimental','-preset ultrafast','-vcodec libx264'])
-      .output(path.join(outPath,outName))
-      .run();
+//         // }
+//       })
+//       .on('error', function(err) {
+//         console.log('an error happened: ' + err.message);
+//       })
+//       .inputOptions(['-strict experimental','-preset ultrafast','-vcodec libx264'])
+//       .output(path.join(outPath,outName))
+//       .run();
 
+// });
+
+router.post('/upload', upload.single('uploadedFile'), function(req, res) {
+  res.send(path.parse(req.file.filename).name);
 });
 
 module.exports = router;
