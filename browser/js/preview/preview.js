@@ -1,8 +1,8 @@
 app.config(($stateProvider) => {
 
     $stateProvider.state('testplayground', {
-        url: '/test',
-        templateUrl: 'js/playground/test-playground.html',
+        url: '/preview',
+        templateUrl: 'js/preview/preview.html',
         controller: ($scope) => {
           $scope.instructions = [{
               source: 'lego.ogv',
@@ -10,7 +10,7 @@ app.config(($stateProvider) => {
               endTime: 4,
               filter: 'blur'
           }, {
-              source: 'IMG_2608.MOV',
+              source: 'ost.ogv',
               startTime: 30,
               endTime: 35,
               filter: 'bw'
@@ -20,11 +20,20 @@ app.config(($stateProvider) => {
               endTime: 5,
               filter: 'sepia'
           }, {
-              source: 'IMG_2608.MOV',
+              source: 'ost.ogv',
               startTime: 40,
               endTime: 45,
               filter: 'invert'
           }];
+
+          // $scope.instructions = [
+          //     {
+          //         source: 'ost.ogv',
+          //         startTime: 30,
+          //         endTime: 35,
+          //         filter: 'bw'
+          //     }
+          // ]
 
         }
     });
