@@ -37,23 +37,24 @@ app.directive("timeSlider", () => {
 
       scope.$on('CTRLplay',() => {
         scope.paused = false;
+        scope.$digest();
       })
 
       scope.$on('CTRLpause',() => {
         scope.paused = true;
       })
 
-      scope.$on('showSlider', () => {
-        if(timeoutFade) {
-          clearTimeout(timeoutFade);
-        }
-        slider.style.opacity = '.7';
-      })
-
-      scope.$on('hideSlider', () => {
-        // console.log("HIDE SLIDER");
-        // $(slider).animate({opacity: 0}, 2000);
-      })
+      // scope.$on('showSlider', () => {
+      //   if(timeoutFade) {
+      //     clearTimeout(timeoutFade);
+      //   }
+      //   slider.style.opacity = '.7';
+      // })
+      //
+      // scope.$on('hideSlider', () => {
+      //   // console.log("HIDE SLIDER");
+      //   // $(slider).animate({opacity: 0}, 2000);
+      // })
 
       pauseButton.addEventListener('click', () => {
         scope.$emit('UIpause');
@@ -91,7 +92,9 @@ app.directive("timeSlider", () => {
         function mouseUpSaveDot(e) {
           document.removeEventListener('mousemove', moveDot);
           document.removeEventListener('mouseup', mouseUpSaveDot);
-          sliderBar.addEventListener('click', moveDotFromClick);
+          setTimeout(() => {
+            sliderBar.addEventListener('click', moveDotFromClick);
+          },1);
           showSliderWithoutHover = false;
           var clickedX = e.clientX -svgLeftOffset;
           console.log('save dot x', clickedX);
@@ -108,12 +111,11 @@ app.directive("timeSlider", () => {
         }
 
         function moveDotFromClick(e) {
-          var wasPaused = scope.paused;
           //x value of coordinate  -> totalCurrentTime
           console.log('clicked x', e.clientX);
           var clickedX = e.clientX - svgLeftOffset;
           var newMovingTime = (clickedX)/scope.width * scope.endTime;
-          console.log('slider says newMovingTime', newMovingTime);
+          console.log('clicked slider says newMovingTime', newMovingTime);
           scope.$emit('newMovingTime', {time: newMovingTime, paused: scope.paused});
         }
     }

@@ -1,7 +1,7 @@
 app.config(($stateProvider) => {
 
     $stateProvider.state('testplayground', {
-        url: '/test',
+        url: '/preview',
         templateUrl: 'js/playground/test-playground.html',
         controller: ($scope) => {
           $scope.instructions = [{
@@ -25,6 +25,15 @@ app.config(($stateProvider) => {
               endTime: 45,
               filter: 'invert'
           }];
+
+          // $scope.instructions = [
+          //     {
+          //         source: 'ost.ogv',
+          //         startTime: 30,
+          //         endTime: 35,
+          //         filter: 'bw'
+          //     }
+          // ]
 
         }
     });
