@@ -1,8 +1,11 @@
-app.factory("VideoFactory", function (IdGenerator) {
+app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 
-	var vidFactoy = {},
-		videoSources = [];
+	var vidFactory = {},
+		videoSources = {};
 
+
+	//TODO do ajax polling for uplodaed videos
+	//TODO sent ajax call to delete on back-end
 
 	var VideoElement = function (videoSource) {
 		this.id = IdGenerator();
@@ -16,15 +19,12 @@ app.factory("VideoFactory", function (IdGenerator) {
 		this.fileName = fileName;
 		this.mimeType = mimeType;
 		this.arrayBuffer = arrayBuffer;
+		this.objUrls = [];
 	};
 
 
 	var uploadVideoToServer = function(file){
-
-		//var file = theFileInput.files[0];
 		var reader = new FileReader();
-
-		// reader.readAsArrayBuffer(file);
 		var formData = new FormData();
 		formData.append("uploadedFile",file);
 
@@ -38,38 +38,20 @@ app.factory("VideoFactory", function (IdGenerator) {
 			}).done(function(data){
 				console.log('done!');
 		});
-
 	};
 
 
-	//TODO
-	// remove videos (incl. removing arrayBuffer/mediasources/ObjURLs)
-
-	// do ajax polling for uplodaed videos
-	// load new video + create VideoObject
-	// and add new videos to list + send event of new videos
-
-	vidFactoy.createVideoElement = function (videoSource) {
+	vidFactory.createVideoElement = function (videoSource) {
 		return new VideoElement(videoSource);
 	};
 
 
-
-	vidFactoy.getVideoSources = function () {
-		return videoSources;
-	};
-
-
-	vidFactoy.addVideoSource = function(file) {
+	vidFactory.addVideoSource = function(file) {
 		return new Promise(function (resolve, reject) {
 			var reader = new FileReader();
-			console.log(file);
-			console.log("file size:", Math.round(file.size / 1000) / 1000, "MB");
 			reader.onloadend = function() {
-				console.log("reading file finished");
 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
-				videoSources.push(videoSrc);
-				// TODO emit event about new video
+				videoSources[videoSrc.id] = videoSrc;
 				resolve(videoSrc);
 			};
 			reader.readAsArrayBuffer(file);
@@ -89,14 +71,10 @@ app.factory("VideoFactory", function (IdGenerator) {
 	};
 
 
-
-	//TODO maybe attach info about which video elements are using a videoObj
-	// and the mediasource objects
-	vidFactoy.attachVideoSource = function (videoSource, videoElementId) {
+	vidFactory.attachVideoSource = function (videoSource, videoElementId) {
 		return new Promise(function (resolve, reject) {
 			var mediaSource = new MediaSource();
 			mediaSource.addEventListener("sourceopen", function () {
-				console.log("source open");
 				var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
 				sourceBuffer.addEventListener('updateend', function(_) {
 					try {
@@ -115,12 +93,26 @@ app.factory("VideoFactory", function (IdGenerator) {
 			var objUrl = window.URL.createObjectURL(mediaSource);
 			var video = document.getElementById(videoElementId);
 			video.src = objUrl;
+			video.reelCoolVideoSourceId = videoSource.id;
+			videoSource.objUrls.push(objUrl);
 		});
 	};
 
 
+	vidFactory.deleteVideoSource = function (videoSourceId) {
+		var videoSource = videoSources[videoSourceId];
 
-	return vidFactoy;
+		$rootScope.$broadcast("videosource-deleted", videoSourceId);
+
+		videoSource.objUrls.forEach(window.URL.revokeObjectURL);
+		delete videoSource.arrayBuffer;
+
+		//TODO sent ajax call to delete on back-end
+
+		console.log("video source terminated!");
+	};
+
+	return vidFactory;
 
 });
 

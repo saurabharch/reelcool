@@ -11,17 +11,14 @@ app.directive('videoPlayer', () => {
 
 app.controller('VideoPlayerCtrl', ($scope) => {
     $scope.currentClip = 0;
-    $scope.totalCurrentTime = 0;
-    $scope.totalEndTime = 0;
     $scope.videoPlayerWidth;
-
-    $scope.instructions.forEach(function(instruction) {
-        $scope.totalEndTime += instruction.endTime - instruction.startTime;
-    });
 
     var videos;
 
     $scope.run = function() {
+
+        $scope.$emit('videoPlayerLoaded');
+
         var timeoutId;
         var videosArrayLike = document.getElementsByTagName('video');
         var videos = [];
@@ -30,6 +27,7 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             videos[i].index = i;
         }
 
+        initializeTimes();
         setVideoDimensions();
 
         var cumulativeTimeBefore = 0;
@@ -42,41 +40,46 @@ app.controller('VideoPlayerCtrl', ($scope) => {
 
         $scope.$on('newMovingTime', (event, ...args) => {
             clearTimeout(timeoutId);
-            videos[$scope.currentClip].pause();
+            pauseCurrentVideo();
             $scope.totalCurrentTime = args[0].time;
+            console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime, "args", args)
             updateVideo();
             if(!args[0].paused){
-              videos[$scope.currentClip].play();
-              $scope.$broadcast('CTRLplay');
+              playCurrentVideo();
             }
-            //videos[$scope.currentClip].play();
-            //console.log($scope.totalCurrentTime);
         })
 
-        $scope.$on('UIpause', (event, ...args) => {
-            videos[$scope.currentClip].pause();
-            clearTimeout(timeoutId);
+        $scope.$on('updatedTimeRange', (event, ...args) => {
+          initializeTimes();
         })
 
-        $scope.$on('UIplay', (event, ...args) => {
-            console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip);
+        $scope.$on('pauseButton', (event, ...args) => {
             clearTimeout(timeoutId);
+            pauseCurrentVideo();
+        })
+
+        $scope.$on('playButton', (event, ...args) => {
+            if($scope.totalCurrentTime >= $scope.totalEndTime){
+              //video is over
+              $scope.currentClip =0;
+              $scope.totalCurrentTime = 0;
+              videos[$scope.currentClip].currentTime = $scope.instructions[$scope.currentClip].startTime;
+            }
+            console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip, "total current time is", $scope.totalCurrentTime);
+            playCurrentVideo();
             updateVideo();
-            videos[$scope.currentClip].play();
         })
-
-        // $scope.$on('previewMovingTime', (event, ...args) => {
-        //   $scope.totalCurrentTime = args[0];
-        //   setCurrentPlace();
-        // })
 
         timeoutId = setTimeout(updateVideo, 10);
 
         function updateVideo() {
+          //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
             var ended;
             if ($scope.totalCurrentTime >= $scope.totalEndTime) {
                 ended=true;
-                videos[$scope.currentClip].pause();
+                console.log("end of video");
+                pauseCurrentVideo();
+                return;
             }
             else {
                 var foundSpot = false;
@@ -91,10 +94,12 @@ app.controller('VideoPlayerCtrl', ($scope) => {
                   else if (i === videos.length - 1) {
                         newIndex = i;
                         foundSpot=true;
-                        console.log("on last video, so newIndex=",newIndex);
                   }
+
+                  //console.log("i", i, "timeBefore", videos[i].timeBefore, "totalCurrentTime", $scope.totalCurrentTime)
                     // evaluates whether video should change
                   if (foundSpot && oldIndex !== newIndex) {
+                      //console.log("oldIndex", oldIndex, "newIndex", newIndex);
                         var clipToPlay = videos[newIndex];
                         clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
                         if(!videos[oldIndex].paused){
@@ -103,20 +108,23 @@ app.controller('VideoPlayerCtrl', ($scope) => {
                         }
                         $scope.currentClip = newIndex;
                   }
-                  if(i===2){
-                    console.log("i",i);
-                  }
                   if(foundSpot) break;
                 }
-                if (!ended) timeoutId = setTimeout(updateVideo, 10);
+                if (!ended && !videos[$scope.currentClip].paused) {
+                  timeoutId = setTimeout(updateVideo, 10);
+                }
             }
         }
 
         function addTimeUpdateEvents(video, index) {
             video.ontimeupdate = function() {
                 //move the slider as video plays
+                console.log("video.currentTime", this.currentTime);
                 if(this.index===$scope.currentClip){
                   $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
+                }
+                else {
+                  console.log("video", this.index, "played but it didn't affect the time");
                 }
                 $scope.$digest();
             };
@@ -132,8 +140,26 @@ app.controller('VideoPlayerCtrl', ($scope) => {
             $scope.videoPlayerWidth = maxWidth;
         }
 
-        videos[0].currentTime = $scope.instructions[0].startTime;
-        videos[0].play();
+        function initializeTimes() {
+          $scope.totalEndTime = 0;
+          $scope.totalCurrentTime = 0;
+          $scope.currentClip = 0;
+          videos[0].currentTime = $scope.instructions[0].startTime;
+          $scope.instructions.forEach(function(instruction) {
+              $scope.totalEndTime += instruction.endTime - instruction.startTime;
+          });
+        }
 
+        function pauseCurrentVideo() {
+          videos[$scope.currentClip].pause();
+          $scope.$broadcast('pauseCurrentVideo');
+        }
+
+        function playCurrentVideo() {
+          videos[$scope.currentClip].play();
+          $scope.$broadcast('playCurrentVideo');
+        }
+
+        playCurrentVideo();
     }
 });

@@ -1,5 +1,6 @@
 <div class="row">
   <div id="video-container" class="col-sm-6" >
+    INSTRUCTIONS FOR VIDEO PLAYER {{instructions}}
     <div ng-repeat="instruction in instructions" ng-show="currentClip===$index">
       <video class='box' ng-class='instruction.filter' preload>
         <source ng-src="{{instruction.source}}" type='video/ogg; codecs="theora, vorbis"'>

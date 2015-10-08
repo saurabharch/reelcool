@@ -15,6 +15,21 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   var video;
   var $video;
 
+  $scope.$on("videosource-deleted", function (event, videoSourceId) {
+    var video = document.getElementById("mainplayer");
+    if (video.reelCoolVideoSourceId === videoSourceId) {
+      video.src = null;
+    }
+  });
+
+  $scope.$on('videoPlayerLoaded', (e, ...args) => {
+    $scope.run();
+  })
+
+  $scope.updatedTimeRange = () => {
+    $scope.$broadcast('updatedTimeRange')
+  }
+
   $scope.run = () => {
     $scope.filters = FilterFactory.filters.map(filter => {
         filter.applied = false;
