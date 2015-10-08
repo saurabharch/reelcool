@@ -46,7 +46,7 @@ var filters = {
 router.post('/download', function(req, res){
   // var outPath = path.join(__dirname,"../../../files/");
   // var finalFilePath = path.join(__dirname,"../../../files/final.avi");
-  var ffmpeg = spawn('ffmpeg', ['-i', 'server/temp/newflower.webm','-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/converted.mp4']);
+  var ffmpeg = spawn('ffmpeg', ['-i', 'server/files/snowgroomer.webm','-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/converted.mp4', '-y']);
     ffmpeg.on('exit',function(code,signal){
       console.log('hey!!!, done!');
       req.resume();
