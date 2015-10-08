@@ -2,7 +2,7 @@ app.directive('playground', () => {
   return {
     restrict: 'E',
     scope: {
-      videoSource: '=',
+      instructions: '=',
       filters: '='
     },
     controller: 'PlaygroundCtrl',
