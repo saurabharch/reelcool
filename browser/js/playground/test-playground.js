@@ -10,7 +10,7 @@ app.config(($stateProvider) => {
               endTime: 4,
               filter: 'blur'
           }, {
-              source: 'IMG_2608.MOV',
+              source: 'ost.ogv',
               startTime: 30,
               endTime: 35,
               filter: 'bw'
@@ -20,7 +20,7 @@ app.config(($stateProvider) => {
               endTime: 5,
               filter: 'sepia'
           }, {
-              source: 'IMG_2608.MOV',
+              source: 'ost.ogv',
               startTime: 40,
               endTime: 45,
               filter: 'invert'
