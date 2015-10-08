@@ -49,10 +49,7 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 	vidFactory.addVideoSource = function(file) {
 		return new Promise(function (resolve, reject) {
 			var reader = new FileReader();
-			console.log(file);
-			console.log("file size:", Math.round(file.size / 1000) / 1000, "MB");
 			reader.onloadend = function() {
-				console.log("reading file finished");
 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
 				videoSources[videoSrc.id] = videoSrc;
 				resolve(videoSrc);
@@ -78,7 +75,6 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 		return new Promise(function (resolve, reject) {
 			var mediaSource = new MediaSource();
 			mediaSource.addEventListener("sourceopen", function () {
-				console.log("source open");
 				var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
 				sourceBuffer.addEventListener('updateend', function(_) {
 					try {

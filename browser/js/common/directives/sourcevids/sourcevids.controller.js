@@ -21,7 +21,6 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory) {
 		var file = fileInput.files[0],
 			videoElement;
 		VideoFactory.addVideoSource(file).then(function (videoSource) {
-			console.log("Video source received:", videoSource);
 			videoElement = VideoFactory.createVideoElement(videoSource);
 			$scope.videos.push(videoElement);
 			$scope.$digest();
@@ -29,7 +28,6 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory) {
 		}).then(function () {
 			videoElement.sourceAttached = true;
 			$scope.$digest();
-			console.log("Video source attached to video element");
 		}).then(null, function (error) {
 			//TODO show error on video tag
 			console.error("Error occured when attaching video source", error);
