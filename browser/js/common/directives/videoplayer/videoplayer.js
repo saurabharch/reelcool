@@ -9,11 +9,43 @@ app.directive('videoPlayer', () => {
   };
 });
 
-app.controller('VideoPlayerCtrl', ($scope) => {
+app.controller('VideoPlayerCtrl', ($scope, VideoFactory) => {
     $scope.currentClip = 0;
     $scope.videoPlayerWidth;
 
     var videos;
+
+
+    // $scope.$watch("instructions", function (newValue, oldValue) {
+
+    //   var newNewValue = newValue.map(x =>_.omit(x, '$$hashKey'));
+
+    //   if (_.isEqual(newNewValue, oldValue)) return;
+
+
+
+
+    //   console.log("watch start", newValue, newNewValue, oldValue);
+    //   if(!newValue || newValue.length === 0) return;
+
+    //   setTimeout(function () {
+    //     console.log("the instructions:", $scope.instructions[0].videoSource, $scope.instructions[0].id);
+    //     VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id);
+    //     console.log("video", $("video"));
+    //   },0);
+
+    //   console.log("in watch", document.getElementById($scope.instructions[0].id));
+    // }, true);
+
+    $scope.$on("changePlaygroundVideo", function (e, instruction) {
+      console.log("in video player event receivuibg function", e, instruction);
+      $scope.instructions = [instruction];
+      setTimeout(function () {
+        console.log("the instructions:", $scope.instructions[0].videoSource, $scope.instructions[0].id);
+        VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id);
+        console.log("video", $("video"));
+      },0);
+    });
 
     $scope.run = function() {
 

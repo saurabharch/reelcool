@@ -92,6 +92,7 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 			});
 			var objUrl = window.URL.createObjectURL(mediaSource);
 			var video = document.getElementById(videoElementId);
+			console.log("videoElementId", videoElementId);
 			video.src = objUrl;
 			video.reelCoolVideoSourceId = videoSource.id;
 			videoSource.objUrls.push(objUrl);

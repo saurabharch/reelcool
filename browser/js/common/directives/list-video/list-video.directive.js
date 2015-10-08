@@ -1,4 +1,4 @@
-app.directive("listVideo", function (VideoFactory) {
+app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootScope) {
 	return {
 		restrict: "E",
 		templateUrl: "js/common/directives/list-video/list-video.html",
@@ -13,8 +13,11 @@ app.directive("listVideo", function (VideoFactory) {
 				return scope.video.element;
 			};
 
-			scope.onmain = function () {
-				VideoFactory.attachVideoSource(scope.video.videoSource, "mainplayer");
+			scope.sendToPlayground = function () {
+				var instructions = InstructionsFactory.generate(scope.video.videoSource, getVideoElement.duration);
+				$rootScope.$broadcast("changePlaygroundVideo", instructions);
+				console.log("instructions", instructions);
+				//VideoFactory.attachVideoSource(scope.video.videoSource, "mainplayer");
 			};
 			scope.play = function () {
 				getVideoElement().play();
