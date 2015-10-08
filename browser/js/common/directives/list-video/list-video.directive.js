@@ -27,6 +27,10 @@ app.directive("listVideo", function (VideoFactory) {
 				return Math.round(scope.video.videoSource.arrayBuffer.byteLength / 1024) / 1000;
 			};
 
+			scope.remove = function (videoSourceId) {
+				VideoFactory.deleteVideoSource(videoSourceId);
+			};
+
 		}
 	};
 });

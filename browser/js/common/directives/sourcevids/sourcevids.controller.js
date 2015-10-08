@@ -1,4 +1,4 @@
-app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
+app.controller("SourceVidsCtrl", function ($scope, VideoFactory) {
 
 	$scope.videos = [];
 
@@ -7,6 +7,15 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
 	$scope.selectVideoFile = function () {
 		fileInput.click();
 	};
+
+	$scope.$on("videosource-deleted", function (event, videoSourceId) {
+		$scope.videos.some(function (videoElement, index) {
+			if (videoElement.videoSource.id === videoSourceId) {
+				$scope.videos.splice(index, 1);
+				return true;
+			}
+		});
+	});
 
 	fileInput.addEventListener('change', function(e) {
 		var file = fileInput.files[0],
@@ -26,11 +35,6 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, IdGenerator) {
 			console.error("Error occured when attaching video source", error);
 		});
     });
-
-
-	$scope.onmain = function (videoElement) {
-		VideoFactory.attachVideoSource(videoElement.videoSource, "mainplayer");
-	};
 
 
 });

@@ -1,7 +1,7 @@
-app.factory("VideoFactory", function (IdGenerator) {
+app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 
-	var vidFactoy = {},
-		videoSources = [];
+	var vidFactory = {},
+		videoSources = {};
 
 
 	var VideoElement = function (videoSource) {
@@ -16,6 +16,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 		this.fileName = fileName;
 		this.mimeType = mimeType;
 		this.arrayBuffer = arrayBuffer;
+		this.objUrls = [];
 	};
 
 
@@ -49,18 +50,18 @@ app.factory("VideoFactory", function (IdGenerator) {
 	// load new video + create VideoObject
 	// and add new videos to list + send event of new videos
 
-	vidFactoy.createVideoElement = function (videoSource) {
+	vidFactory.createVideoElement = function (videoSource) {
 		return new VideoElement(videoSource);
 	};
 
 
 
-	vidFactoy.getVideoSources = function () {
+	vidFactory.getVideoSources = function () {
 		return videoSources;
 	};
 
 
-	vidFactoy.addVideoSource = function(file) {
+	vidFactory.addVideoSource = function(file) {
 		return new Promise(function (resolve, reject) {
 			var reader = new FileReader();
 			console.log(file);
@@ -68,7 +69,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 			reader.onloadend = function() {
 				console.log("reading file finished");
 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
-				videoSources.push(videoSrc);
+				videoSources[videoSrc.id] = videoSrc;
 				// TODO emit event about new video
 				resolve(videoSrc);
 			};
@@ -92,7 +93,7 @@ app.factory("VideoFactory", function (IdGenerator) {
 
 	//TODO maybe attach info about which video elements are using a videoObj
 	// and the mediasource objects
-	vidFactoy.attachVideoSource = function (videoSource, videoElementId) {
+	vidFactory.attachVideoSource = function (videoSource, videoElementId) {
 		return new Promise(function (resolve, reject) {
 			var mediaSource = new MediaSource();
 			mediaSource.addEventListener("sourceopen", function () {
@@ -115,12 +116,27 @@ app.factory("VideoFactory", function (IdGenerator) {
 			var objUrl = window.URL.createObjectURL(mediaSource);
 			var video = document.getElementById(videoElementId);
 			video.src = objUrl;
+			videoSource.objUrls.push(objUrl);
 		});
 	};
 
 
+	vidFactory.deleteVideoSource = function (videoSourceId) {
+		var videoSource = videoSources[videoSourceId];
 
-	return vidFactoy;
+		$rootScope.$broadcast("videosource-deleted", videoSourceId);
+
+		videoSource.objUrls.forEach(window.URL.revokeObjectURL);
+		delete videoSource.arrayBuffer;
+
+		//TODO sent ajax call to delete on back-end
+
+		console.log("video source terminated!");
+	};
+
+
+
+	return vidFactory;
 
 });
 
