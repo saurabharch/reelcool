@@ -1,8 +1,6 @@
 var ffmpeg = require('fluent-ffmpeg');
-var User = require('mongoose').model('User');
 var Video = require('mongoose').model('Video');
 var spawn = require('child_process').spawn;
-
 var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
