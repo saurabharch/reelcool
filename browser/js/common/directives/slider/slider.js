@@ -67,38 +67,47 @@ app.directive("timeSlider", () => {
       })
 
       var sliderDot = document.getElementById('slider-dot');
-      console.log("sliderDot", sliderDot);
+
+      sliderBar.addEventListener('click', moveDotFromClick);
+
       sliderDot.addEventListener('mousedown', () => {
+        sliderBar.removeEventListener('click', moveDotFromClick);
+        var wasPaused = scope.paused;
         scope.$emit('UIpause');
         //wherever the mouse goes, its x value should transfer to the totalCurrentTime
         showSliderWithoutHover = true;
         document.addEventListener('mousemove', moveDot);
         document.addEventListener('mouseup', mouseUpSaveDot);
+      });
 
         function mouseUpSaveDot(e){
           document.removeEventListener('mousemove', moveDot);
           document.removeEventListener('mouseup', mouseUpSaveDot);
+          sliderBar.addEventListener('click', moveDotFromClick);
           showSliderWithoutHover = false;
           var clickedX = e.clientX;
+          console.log('clicked x', clickedX);
           var newMovingTime = (clickedX)/scope.width * scope.endTime;
-          scope.$emit('newMovingTime', newMovingTime);
+          console.log('slider says newMovingTime', newMovingTime);
+          scope.$emit('newMovingTime', {time: newMovingTime, paused: wasPaused});
         }
 
         function moveDot(e){
           var movedX = e.clientX;
           scope.movingTime = (movedX)/scope.width * scope.endTime;
           scope.$digest();
-          scope.$emit('previewMovingTime', scope.movingTime);
+          //scope.$emit('previewMovingTime', scope.movingTime);
         }
-      })
 
-      sliderBar.addEventListener('click', (e) => {
-        //x value of coordinate  -> totalCurrentTime
-        console.log('clicked x', e.clientX);
-        var clickedX = e.clientX;
-        var newMovingTime = (clickedX)/scope.width * scope.endTime;
-        //scope.$emit('newMovingTime', newMovingTime);
-      })
+        function moveDotFromClick(e) {
+          var wasPaused = scope.paused;
+          //x value of coordinate  -> totalCurrentTime
+          console.log('clicked x', e.clientX);
+          var clickedX = e.clientX;
+          var newMovingTime = (clickedX)/scope.width * scope.endTime;
+          console.log('slider says newMovingTime', newMovingTime);
+          scope.$emit('newMovingTime', {time: newMovingTime, paused: wasPaused});
+        }
     }
   }
 });
