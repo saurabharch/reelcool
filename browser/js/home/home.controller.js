@@ -25,13 +25,9 @@ app.controller('homeCtrl', function ($http, $scope, $state, VideoFactory){
 	};
 
 	$scope.download = function(){
-		console.log('yo');
 		$.ajax({
 			method: 'POST',
-			url:'/api/videos/download',
-			beforeSend: function(jqXHR,settings){
-				jqXHR.setRequestHeader("Connection", "Keep-Alive");
-			},
+			url:'/api/videos/makeit',
 			data:  {data:[
 			{
 				startTime: 2,
@@ -50,7 +46,8 @@ app.controller('homeCtrl', function ($http, $scope, $state, VideoFactory){
 			}
 			]}
 		}).done(function(vid){
-			console.log('downloaded that shit!');
+			var src = '/api/videos/download/' + vid;
+			$("body").append("<iframe src=" + src + " style='display: none;' ></iframe>");
 		});
 	};
 

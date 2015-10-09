@@ -56,24 +56,24 @@ var filters = {
     blur: 'boxblur=luma_radius=5:luma_power=3'
 };
 
-router.post('/download', function(req, res) {
+router.post('/makeit', function(req, res) {
     var instructions = [{
         videoSource: {
-            _id: '56180ce49981701c489bce10',
+            _id: '56181e289587587d4b028688',
             startTime: '0',
             endTime: '3',
             filter: filters.sepia
         }
     }, {
         videoSource: {
-            _id: '56180d159981701c489bce11',
+            _id: '56181e459587587d4b02868a',
             startTime: '2',
             endTime: '5',
             filter: filters.grayscale
         }
     }, {
         videoSource: {
-            _id: '56180deceedca13e4862cddc',
+            _id: '56181ea2ecdacf994b5b5d36',
             startTime: '5',
             endTime: '10',
             filter: filters.blur
@@ -109,7 +109,7 @@ router.post('/download', function(req, res) {
             })
             .on('end', function() {
                 console.log('Finished!');
-                deleteStagedFiles().then(() => sendMovie(res, createdVidName));
+                deleteStagedFiles().then(() => res.status(201).send(createdVidName));
             });
     }
 
@@ -118,13 +118,15 @@ router.post('/download', function(req, res) {
             .then(arrayOfFiles => Promise.map(arrayOfFiles, function (file) { return fs.unlinkAsync(path.join(stagingAreaPath, file)); }));
     }
 
-    function sendMovie (res, fileName) {
-        res.setHeader('Content-disposition', 'attachment; filename=reelcoolmovie.mp4');
-        res.setHeader('Content-type', 'video/mp4');
-        var pathToMovie = path.join(createdFilePath,fileName);
-        fs.createReadStream(pathToMovie).pipe(res);
-    }
+    
+});
 
+router.get('/download/:videoId',function (req,res) {
+    res.setHeader('Content-disposition', 'attachment; filename=reelcoolmovie.mp4');
+    res.setHeader('Content-type', 'video/mp4');
+
+    var pathToMovie = path.join(createdFilePath,req.params.videoId);
+    fs.createReadStream(pathToMovie).pipe(res);
 });
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
