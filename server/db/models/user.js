@@ -1,6 +1,10 @@
 'use strict';
 var crypto = require('crypto');
 var mongoose = require('mongoose');
+var Promise = require('bluebird');
+var fs = require('fs');
+Promise.promisifyAll(fs);
+var path = require('path')
 
 var schema = new mongoose.Schema({
     email: {
@@ -59,5 +63,20 @@ schema.statics.encryptPassword = encryptPassword;
 schema.method('correctPassword', function (candidatePassword) {
     return encryptPassword(candidatePassword, this.salt) === this.password;
 });
+
+schema.post('save',function (user) {
+    var pathToUserDir = path.join(__dirname,"..","..","files",user._id.toString());
+    var userSubDirs = ['created', 'staging', 'uploaded', 'temp'];
+    fs.statAsync(pathToUserDir) // will err if the directory doesn't exist
+        .then(
+            stats => console.log(stats), // no need to make dirs, bc user and his/her dirs exist already
+            err => fs.mkdirAsync(pathToUserDir) // will create the user's directory
+            )
+        .then(
+            () => Promise.map(userSubDirs, subDir => fs.mkdirAsync(path.join(pathToUserDir,subDir))), 
+            (err) => console.error(err)
+            )
+        .catch(err => console.error(err));
+})
 
 mongoose.model('User', schema);
