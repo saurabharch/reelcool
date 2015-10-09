@@ -2,8 +2,7 @@ app.directive('playground', () => {
   return {
     restrict: 'E',
     scope: {
-      instructions: '=',
-      filters: '='
+      instructions: '='
     },
     controller: 'PlaygroundCtrl',
     templateUrl: 'js/playground/playground.html'
@@ -15,7 +14,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   var video, $video;
 
   var getMainVideoPlayer = function () {
-    return document.getElementById($scope.instructions.id);
+    return document.getElementById($scope.instructions[0].id);
   };
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
@@ -41,6 +40,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   $scope.run = () => {
 
     video = getMainVideoPlayer();
+    console.log("video", video);
     $video = $(video);
     // $scope.duration = video.duration;
     // $scope.startTime = 0;
@@ -57,13 +57,15 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
         el.applied = false;
       }
     });
-
-    filter.applied = !filter.applied;
+    if (filter.code !== '') {
+      filter.applied = !filter.applied;
+    }
     $scope.updateFilterString();
   };
 
   $scope.updateFilterString = () => {
     let newFilterStr = FilterFactory.createFilterString($scope.filters);
+    console.log("video element:", $video);
     $video.attr('style', `-webkit-filter:${newFilterStr}`);
   };
 

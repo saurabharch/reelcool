@@ -8,7 +8,7 @@
       <button ng-click="updatedTimeRange()">Update Times</button>
     </div>
     <div class="row">
-      <button class="btn btn-default" ng-click="toggleFilter(filter) && updateFilters()" ng-repeat="filter in filters">{{filter.displayName}}</button>
+      <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn" ng-click="toggleFilter(filter) && updateFilters()" ng-repeat="filter in filters">{{filter.displayName}}</button>
     </div>
     <br>
     <div class="row">

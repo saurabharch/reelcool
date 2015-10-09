@@ -56,6 +56,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   $scope.$on("changePlaygroundVideo", function(e, instruction) {
     $scope.instructions = [instruction];
     setTimeout(function() {
+      console.log("attached ain player with id", $scope.instructions[0].id);
       VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id)
       .then(function () {
         $scope.reInit();
