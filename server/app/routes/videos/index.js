@@ -39,24 +39,43 @@ var filters = {
     blur: 'boxblur=luma_radius=5:luma_power=3'
 };
 
-// instructions= [
-//   {
-//     vid_id: 
-//     startTime:
-//     endTime:
-//     filters: []
-//   }
-// ]
 
 
 router.post('/download', function(req, res) {
     // var outPath = path.join(__dirname,"../../../files/");
     // var finalFilePath = path.join(__dirname,"../../../files/final.avi");
-    var ffmpeg = spawn('ffmpeg', ['-i', 'server/files/snowgroomer.webm', '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/converted.mp4', '-y']);
-    ffmpeg.on('exit', function(code, signal) {
-        console.log('hey!!!, done!');
-        req.resume();
-        res.end();
+
+    var instructions = [
+    {
+      videoSource: { _id: '56171642a6722ae811bf80e4', startTime: '20', endTime: '30', filter: filters.sepia}
+    },
+    {
+      videoSource: { _id: '5617165ba6722ae811bf80e5', startTime: '121', endTime: '131', filter: filters.grayscale}
+    },
+    {
+      videoSource: { _id: '56171665a6722ae811bf80e6', startTime: '10', endTime: '20', filter: filters.blur}
+    }
+    ];
+    var vidsDone = 0;
+    var folder = (new Date()).getTime().toString();
+    fs.mkdirSync(path.join(__dirname,'..','..','..','temp',folder));
+
+    instructions.forEach(function(instruction, ind){
+      var vid = instruction.videoSource;
+      var duration = (Number(vid.endTime)-Number(vid.startTime)).toString();
+
+      var ffmpeg = spawn('ffmpeg', ['-ss', vid.startTime, '-i', 'server/temp/'+vid._id+".webm",'-t',duration, '-vf',vid.filter,'-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/'+folder+'/'+ind+'.mp4', '-y']);
+      ffmpeg.on('exit', function(code, signal) {
+          console.log('hey!!!, done!');
+          vidsDone++;
+          if(vidsDone==instructions.length){
+            console.log('yay!');
+          res.end();
+          }
+          req.resume();
+      });
+
+      
     });
     // req.connection.pipe(ffmpeg.stdin);
     // var instructions = req.body.data;
