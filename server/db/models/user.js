@@ -66,22 +66,15 @@ schema.method('correctPassword', function (candidatePassword) {
 
 schema.post('save',function (user) {
     var pathToUserDir = path.join(__dirname,"..","..","files",user._id.toString());
+    var userSubDirs = ['created', 'staging', 'uploaded', 'temp'];
     fs.statAsync(pathToUserDir) // will err if the directory doesn't exist
         .then(
             stats => console.log(stats), // no need to make dir, bc one exists already
             err => fs.mkdirAsync(pathToUserDir) // will create the directory
             )
         .then(
-            function () { 
-                return Promise.map([
-                    fs.mkdirAsync(path.join(pathToUserDir,'created')), 
-                    fs.mkdirAsync(path.join(pathToUserDir,'staging')), 
-                    fs.mkdirAsync(path.join(pathToUserDir,'uploaded')), 
-                    fs.mkdirAsync(path.join(pathToUserDir, 'temp'))
-                    ]); 
-                }, 
-            //() => fs.mkdirAsync(pathToUserDir+'/uploaded'), 
-            function (err) {console.log('in the error handler'); console.error(err); }
+            () => Promise.map(userSubDirs, subDir => fs.mkdirAsync(path.join(pathToUserDir,subDir))), 
+            (err) => console.error(err)
             )
         .catch(err => console.error("I'm in the catch!"));
 })
