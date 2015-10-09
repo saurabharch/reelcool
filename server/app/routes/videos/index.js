@@ -1,6 +1,8 @@
 // utilities
 var spawn = require('child_process').spawn;
+var Promise = require('bluebird');
 var fs = require('fs');
+Promise.promisifyAll(fs);
 var path = require('path');
 var ffmpeg = require('fluent-ffmpeg');
 
@@ -102,22 +104,36 @@ router.post('/download', function(req, res) {
             if (vidsDone == instructions.length) {
                 console.log('filters done, now going to merge');
                 mergeVids(mergedVideo, createdFilePath);
-                //res.end();
             }
             req.resume();
         });
     });
 
     function mergeVids(mergedVideo) {
-        var mergedVideoDest = createdFilePath + '/' + Date.now() + '.mp4'; // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
+        var createdVidName = Date.now() + '.mp4';
+        var mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err) {
                 console.log('Error ' + err.message);
             })
             .on('end', function() {
                 console.log('Finished!');
+                deleteStagedFiles().then(() => sendMovie(res, createdVidName));
             });
     }
+
+    function deleteStagedFiles () {
+        return fs.readdirAsync(stagingAreaPath)
+            .then(arrayOfFiles => Promise.map(arrayOfFiles, function (file) { return fs.unlinkAsync(path.join(stagingAreaPath, file)); }));
+    }
+
+    function sendMovie (res, fileName) {
+        res.setHeader('Content-disposition', 'attachment; filename=reelcoolmovie.mp4');
+        res.setHeader('Content-type', 'video/mp4');
+        var pathToMovie = path.join(createdFilePath,fileName);
+        fs.createReadStream(pathToMovie).pipe(res);
+    }
+
 });
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
