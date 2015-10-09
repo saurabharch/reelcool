@@ -8,6 +8,9 @@ app.directive("timeSlider", () => {
       endTime: '=',
       width : '='
     },
+    controller: function () {
+
+    },
     link: (scope, elements, attr) => {
       var slider = elements[0];
       var sliderBar = document.getElementById('slider-bar');
@@ -17,6 +20,12 @@ app.directive("timeSlider", () => {
       var $svg = $('svg');
       var svgLeftOffset = $svg.offset().left;
       console.log("svgPosition", svgLeftOffset);
+
+      // scope.movingTime = scope.movingTime || 0;
+      // scope.endTime = scope.endTime || 1;
+
+      // console.log("moving time", scope.movingTime);
+      // console.log("moving time", typeof scope.movingTime);
 
       //opening slider animation
       slider.style.opacity = "0";

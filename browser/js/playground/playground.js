@@ -7,16 +7,19 @@ app.directive('playground', () => {
     },
     controller: 'PlaygroundCtrl',
     templateUrl: 'js/playground/playground.html'
-  }
+  };
 });
 
 app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) => {
 
-  var video;
-  var $video;
+  var video, $video;
+
+  var getMainVideoPlayer = function () {
+    return document.getElementById($scope.instructions.id);
+  };
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
-    var video = document.getElementById("mainplayer");
+    var video = getMainVideoPlayer();
     if (video.reelCoolVideoSourceId === videoSourceId) {
       video.src = null;
     }
@@ -24,24 +27,25 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
 
   $scope.$on('videoPlayerLoaded', (e, ...args) => {
     $scope.run();
-  })
+  });
 
   $scope.updatedTimeRange = () => {
-    $scope.$broadcast('updatedTimeRange')
-  }
+    $scope.$broadcast('updatedTimeRange');
+  };
+
+  $scope.filters = FilterFactory.filters.map(filter => {
+      filter.applied = false;
+      return filter;
+  });
 
   $scope.run = () => {
-    $scope.filters = FilterFactory.filters.map(filter => {
-        filter.applied = false;
-        return filter;
-    });
 
-    video = document.getElementsByTagName('video')[0];
+    video = getMainVideoPlayer();
     $video = $(video);
-    $scope.duration = video.duration;
-    $scope.startTime = 0;
-    $scope.endTime = $scope.duration;
-  }
+    // $scope.duration = video.duration;
+    // $scope.startTime = 0;
+    // $scope.endTime = $scope.duration;
+  };
 
   $scope.toggleFilter = (filter) => {
 
@@ -52,20 +56,20 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
       else if(el.code !== filter.code && el.type === filter.type && el.applied){
         el.applied = false;
       }
-    })
+    });
 
     filter.applied = !filter.applied;
     $scope.updateFilterString();
-  }
+  };
 
   $scope.updateFilterString = () => {
     let newFilterStr = FilterFactory.createFilterString($scope.filters);
     $video.attr('style', `-webkit-filter:${newFilterStr}`);
-  }
+  };
 
   $scope.cutToInstructions = () => {
     console.log("cutToInstructions called")
     InstructionsFactory.add($scope.instructions);
-  }
+  };
 
 });
