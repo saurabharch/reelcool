@@ -21,10 +21,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   var videos = [];
   var timeoutId;
 
-
-  // $scope.init = function() {
-  // };
-
   $scope.reInit = function() {
 
     if (!$scope.instructions.length) {
@@ -41,7 +37,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     }
 
     initializeTimes();
-    setVideoDimensions();
 
     var cumulativeTimeBefore = 0;
 
@@ -51,13 +46,12 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       cumulativeTimeBefore += $scope.instructions[i].endTime - $scope.instructions[i].startTime;
     }
 
-  };
-
-    $scope.reInit();
-    if (videos.length) {
       timeoutId = setTimeout(updateVideo, 10);
       playCurrentVideo();
-    }
+
+  };
+
+  $scope.reInit();
 
   $scope.$on("changePlaygroundVideo", function(e, instruction) {
     $scope.instructions = [instruction];
@@ -68,8 +62,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       });
     }, 0);
   });
-
-
 
   $scope.$on('newMovingTime', (event, ...args) => {
     clearTimeout(timeoutId);
@@ -158,14 +150,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     };
   }
 
-  function setVideoDimensions() {
-    videos.forEach(video => {
-      $(video).width($scope.width);
-      $(video).height($scope.height);
-    })
-    $("svg").width($scope.width)
-    $scope.videoPlayerWidth = $scope.width;
-  }
 
   function initializeTimes() {
     $scope.totalEndTime = 0;

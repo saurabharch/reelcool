@@ -14,7 +14,7 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 			};
 
 			scope.sendToPlayground = function () {
-				var instructions = InstructionsFactory.generate(scope.video.videoSource, getVideoElement.duration);
+				var instructions = InstructionsFactory.generate(scope.video.videoSource, getVideoElement().duration);
 				$rootScope.$broadcast("changePlaygroundVideo", instructions);
 				console.log("instructions", instructions);
 				//VideoFactory.attachVideoSource(scope.video.videoSource, "mainplayer");
