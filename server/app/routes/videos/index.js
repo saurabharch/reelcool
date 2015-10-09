@@ -36,7 +36,8 @@ var upload = multer({
 var filters = {
     grayscale: 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
     sepia: 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-    blur: 'boxblur=luma_radius=5:luma_power=3'
+    blur: 'boxblur=luma_radius=5:luma_power=3',
+    invert: 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val'
 };
 
 
@@ -53,7 +54,7 @@ router.post('/download', function(req, res) {
       videoSource: { _id: '5617165ba6722ae811bf80e5', startTime: '121', endTime: '131', filter: filters.grayscale}
     },
     {
-      videoSource: { _id: '56171665a6722ae811bf80e6', startTime: '10', endTime: '20', filter: filters.blur}
+      videoSource: { _id: '56171665a6722ae811bf80e6', startTime: '10', endTime: '20', filter: filters.invert}
     }
     ];
     var vidsDone = 0;
@@ -64,9 +65,9 @@ router.post('/download', function(req, res) {
       var vid = instruction.videoSource;
       var duration = (Number(vid.endTime)-Number(vid.startTime)).toString();
 
-      var ffmpeg = spawn('ffmpeg', ['-ss', vid.startTime, '-i', 'server/temp/'+vid._id+".webm",'-t',duration, '-vf',vid.filter,'-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/'+folder+'/'+ind+'.mp4', '-y']);
+      var ffmpeg = spawn('ffmpeg', ['-ss', vid.startTime, '-i', 'server/temp/'+vid._id+".webm",'-t',duration, '-filter_complex',vid.filter,'-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', 'server/temp/'+folder+'/'+ind+'.mp4', '-y']);
       ffmpeg.on('exit', function(code, signal) {
-          console.log('hey!!!, done!');
+          console.log(ind, 'hey!!!, done!');
           vidsDone++;
           if(vidsDone==instructions.length){
             console.log('yay!');
