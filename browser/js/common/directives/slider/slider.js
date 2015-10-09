@@ -9,6 +9,8 @@ app.directive("timeSlider", () => {
       width : '='
     },
     link: (scope, elements, attr) => {
+
+      console.log('SLIDER WIDTH IS ',scope.width);
       var slider = elements[0];
       var sliderBar = document.getElementById('slider-bar');
       var sliderDot = document.getElementById('slider-dot');
@@ -60,7 +62,7 @@ app.directive("timeSlider", () => {
       sliderDot.addEventListener('mousedown', () => {
         console.log("mousedown");
         sliderBar.removeEventListener('click', moveDotFromClick);
-        scope.$emit('pauseButton');
+        //scope.$emit('pauseButton');
         //wherever the mouse goes, its x value should transfer to the totalCurrentTime
         //showSliderWithoutHover = true;
         document.addEventListener('mousemove', moveDot);
@@ -82,9 +84,11 @@ app.directive("timeSlider", () => {
         }
 
         function moveDot(e){
-          var movedX = e.clientX;
+          //svgLeftOffset = $svg.offset().left;
+          var movedX = e.clientX - svgLeftOffset;
           scope.movingTime = (movedX)/scope.width * scope.endTime;
           scope.$digest();
+
           //scope.$emit('previewMovingTime', scope.movingTime);
         }
 

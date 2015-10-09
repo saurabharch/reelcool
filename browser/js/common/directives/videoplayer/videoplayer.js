@@ -96,7 +96,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   })
 
   function updateVideo() {
-    //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
+    console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
       ended = true;
@@ -119,7 +119,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
 
         //console.log("i", i, "timeBefore", videos[i].timeBefore, "totalCurrentTime", $scope.totalCurrentTime)
         // evaluates whether video should change
-        if (foundSpot && oldIndex !== newIndex) {
+        if (foundSpot && videos[$scope.currentClip].paused) {
           //console.log("oldIndex", oldIndex, "newIndex", newIndex);
           var clipToPlay = videos[newIndex];
           clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
@@ -140,7 +140,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   function addTimeUpdateEvents(video, index) {
     video.ontimeupdate = function() {
       //move the slider as video plays
-      console.log("video.currentTime", this.currentTime);
+      //console.log("video.currentTime", this.currentTime);
       if (this.index === $scope.currentClip) {
         $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
       } else {
