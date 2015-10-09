@@ -8,11 +8,25 @@ var ffmpeg = require('fluent-ffmpeg');
 var router = require('express').Router();
 var Video = require('mongoose').model('Video');
 
-// multer file handling
-var uploadedFilesPath = path.join(__dirname, "..", "..", "..", "files", "uploaded"); // this should be an app.value
-var stagingAreaPath = path.join(__dirname, "..", "..", "..", "files", "staging"); // also should be app.value
-var createdFilePath = path.join(__dirname, "..", "..", "..", "files", "created");
+// file paths setup
+var filesPath = path.join(__dirname, "..", "..", "..", "files");
+var userDir;
+var uploadedFilesPath;
+var stagingAreaPath;
+var createdFilePath;
+var tempFilePath;
 
+router.use(function (req,res,next) {
+    // all this has to be inside of router.use (or at least the userDir part) so that we have access to req
+    userDir = req.user ? req.user._id.toString() : 'anon'; // to prevent errors/crashes in case we somehow fail to enforce login
+    uploadedFilesPath = path.join(filesPath,userDir,"uploaded"); 
+    stagingAreaPath = path.join(filesPath,userDir,"staging");
+    createdFilePath = path.join(filesPath,userDir,"created");
+    tempFilePath = path.join(filesPath,userDir,"temp");
+    next();   
+});
+
+// multer file handling
 var multer = require('multer');
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -52,35 +66,33 @@ router.post('/download', function(req, res) {
 
     var instructions = [{
         videoSource: {
-            _id: '5617e99360bd313c4349ae49',
+            _id: '56180ce49981701c489bce10',
             startTime: '0',
-            endTime: '4',
+            endTime: '3',
             filter: filters.sepia
         }
     }, {
         videoSource: {
-            _id: '5617e99960bd313c4349ae4a',
-            startTime: '7',
-            endTime: '14',
+            _id: '56180d159981701c489bce11',
+            startTime: '2',
+            endTime: '5',
             filter: filters.grayscale
         }
     }, {
         videoSource: {
-            _id: '5617e99d60bd313c4349ae4b',
+            _id: '56180deceedca13e4862cddc',
             startTime: '5',
-            endTime: '8',
+            endTime: '10',
             filter: filters.blur
         }
     }];
     var vidsDone = 0;
-    var userStagingFolder = path.join(stagingAreaPath, req.user._id.toString());
-     
     var mergedVideo = ffmpeg();
 
     instructions.forEach(function(instruction, ind) {
         var vid = instruction.videoSource;
         var sourceVid = uploadedFilesPath + '/' + vid._id + '.webm';
-        var destVid = userStagingFolder + '/' + vid._id + '.mp4';
+        var destVid = stagingAreaPath + '/' + vid._id + '.mp4';
         var duration = (Number(vid.endTime) - Number(vid.startTime)).toString();
         var filtersProc = spawn('ffmpeg', ['-ss', vid.startTime, '-i', sourceVid, '-t', duration, '-vf', vid.filter, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
         filtersProc.on('exit', function(code, signal) {
@@ -97,9 +109,8 @@ router.post('/download', function(req, res) {
     });
 
     function mergeVids(mergedVideo) {
-        var pathToTempDir = path.join(userStagingFolder, 'temp'); // fluent-ffmpeg requires a temp folder to do work in
         var mergedVideoDest = createdFilePath + '/' + Date.now() + '.mp4'; // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
-        mergedVideo.mergeToFile(mergedVideoDest, pathToTempDir)
+        mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err) {
                 console.log('Error ' + err.message);
             })

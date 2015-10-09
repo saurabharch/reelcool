@@ -65,13 +65,25 @@ schema.method('correctPassword', function (candidatePassword) {
 });
 
 schema.post('save',function (user) {
-    var pathToStagingArea = path.join(__dirname,"..","..","files","staging",user._id.toString());
-    fs.statAsync('pathToStagingArea') // will err if the directory doesn't exist
+    var pathToUserDir = path.join(__dirname,"..","..","files",user._id.toString());
+    fs.statAsync(pathToUserDir) // will err if the directory doesn't exist
         .then(
             stats => console.log(stats), // no need to make dir, bc one exists already
-            err => fs.mkdirAsync(pathToStagingArea) // will create the directory
+            err => fs.mkdirAsync(pathToUserDir) // will create the directory
             )
-        .catch(err => console.error(err.stack));
+        .then(
+            function () { 
+                return Promise.map([
+                    fs.mkdirAsync(path.join(pathToUserDir,'created')), 
+                    fs.mkdirAsync(path.join(pathToUserDir,'staging')), 
+                    fs.mkdirAsync(path.join(pathToUserDir,'uploaded')), 
+                    fs.mkdirAsync(path.join(pathToUserDir, 'temp'))
+                    ]); 
+                }, 
+            //() => fs.mkdirAsync(pathToUserDir+'/uploaded'), 
+            function (err) {console.log('in the error handler'); console.error(err); }
+            )
+        .catch(err => console.error("I'm in the catch!"));
 })
 
 mongoose.model('User', schema);
