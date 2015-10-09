@@ -50,22 +50,13 @@ var upload = multer({
     storage: storage
 });
 
-
-//var command = ffmpeg(fs.createReadStream(path.join(__dirname, 'IMG_2608.MOV')));
-
-
 var filters = {
     grayscale: 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
     sepia: 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
     blur: 'boxblur=luma_radius=5:luma_power=3'
 };
 
-
-
 router.post('/download', function(req, res) {
-    // var outPath = path.join(__dirname,"../../../files/");
-    // var finalFilePath = path.join(__dirname,"../../../files/final.avi");
-
     var instructions = [{
         videoSource: {
             _id: '56180ce49981701c489bce10',
@@ -141,9 +132,6 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     if (parsedFile.ext === ".webm") res.status(201).send(parsedFile.name);
     else {
         var dest = req.file.destination + '/' + parsedFile.name + '.webm';
-        console.log(req.file.path); // original file
-        console.log(dest); // new file
-
         var ffmpeg = spawn('ffmpeg', ['-i', req.file.path, '-c:v', 'libvpx', '-crf', '10', '-b:v', '1M', '-c:a', 'libvorbis', dest, '-y']);
         ffmpeg.on('message', function(msg) {
             console.log(msg);
@@ -152,9 +140,7 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
             console.error(err);
         });
         ffmpeg.on('exit', function(code, signal) {
-            console.log('converted to .webm');
             fs.unlink(req.file.path, function(err) {
-                console.log('deleted that old file with the dumb extension');
                 req.resume();
                 res.status(201).send(parsedFile.name);
             });

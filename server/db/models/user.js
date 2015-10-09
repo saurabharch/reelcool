@@ -69,14 +69,14 @@ schema.post('save',function (user) {
     var userSubDirs = ['created', 'staging', 'uploaded', 'temp'];
     fs.statAsync(pathToUserDir) // will err if the directory doesn't exist
         .then(
-            stats => console.log(stats), // no need to make dir, bc one exists already
-            err => fs.mkdirAsync(pathToUserDir) // will create the directory
+            stats => console.log(stats), // no need to make dirs, bc user and his/her dirs exist already
+            err => fs.mkdirAsync(pathToUserDir) // will create the user's directory
             )
         .then(
             () => Promise.map(userSubDirs, subDir => fs.mkdirAsync(path.join(pathToUserDir,subDir))), 
             (err) => console.error(err)
             )
-        .catch(err => console.error("I'm in the catch!"));
+        .catch(err => console.error(err));
 })
 
 mongoose.model('User', schema);
