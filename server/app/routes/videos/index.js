@@ -53,7 +53,8 @@ var upload = multer({
 var filters = {
     grayscale: 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
     sepia: 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-    blur: 'boxblur=luma_radius=5:luma_power=3'
+    blur: 'boxblur=luma_radius=5:luma_power=3',
+    invert: 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val'
 };
 
 router.post('/makeit', function(req, res) {
@@ -87,7 +88,7 @@ router.post('/makeit', function(req, res) {
         var sourceVid = uploadedFilesPath + '/' + vid._id + '.webm';
         var destVid = stagingAreaPath + '/' + vid._id + '.mp4';
         var duration = (Number(vid.endTime) - Number(vid.startTime)).toString();
-        var filtersProc = spawn('ffmpeg', ['-ss', vid.startTime, '-i', sourceVid, '-t', duration, '-vf', vid.filter, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
+        var filtersProc = spawn('ffmpeg', ['-ss', vid.startTime, '-i', sourceVid, '-t', duration, '-filter_complex', vid.filter, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
         filtersProc.on('exit', function(code, signal) {
             console.log('I filtered and converted', vid._id);
             vidsDone++;
@@ -120,6 +121,7 @@ router.post('/makeit', function(req, res) {
 
     
 });
+
 
 router.get('/download/:videoId',function (req,res) {
     res.setHeader('Content-disposition', 'attachment; filename=reelcoolmovie.mp4');
