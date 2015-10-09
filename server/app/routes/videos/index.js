@@ -59,21 +59,21 @@ var filters = {
 router.post('/makeit', function(req, res) {
     var instructions = [{
         videoSource: {
-            _id: '56181e289587587d4b028688',
+            _id: '56182b7f25ba9a8e4c48b46a',
             startTime: '0',
             endTime: '3',
             filter: filters.sepia
         }
     }, {
         videoSource: {
-            _id: '56181e459587587d4b02868a',
+            _id: '56182b8325ba9a8e4c48b46b',
             startTime: '2',
             endTime: '5',
             filter: filters.grayscale
         }
     }, {
         videoSource: {
-            _id: '56181ea2ecdacf994b5b5d36',
+            _id: '56182b8825ba9a8e4c48b46c',
             startTime: '5',
             endTime: '10',
             filter: filters.blur

@@ -24,34 +24,6 @@ app.controller('homeCtrl', function ($http, $scope, $state, VideoFactory){
 
 	};
 
-	$scope.download = function(){
-		$.ajax({
-			method: 'POST',
-			url:'/api/videos/makeit',
-			data:  {data:[
-			{
-				startTime: 2,
-				endTime: 3,
-				filters: ["blur"]
-			},
-			{
-				startTime: 4,
-				endTime: 6,
-				filters: ["sepia"]
-			},
-			{
-				startTime: 3,
-				endTime: 4,
-				filters: ["grayscale"]
-			}
-			]}
-		}).done(function(vid){
-			var src = '/api/videos/download/' + vid;
-			$("body").append("<iframe src=" + src + " style='display: none;' ></iframe>");
-		});
-	};
-
-
 
 	//temporarily setting instructions here to test the playground
 	$scope.instructions = [{
