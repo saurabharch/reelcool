@@ -34,17 +34,68 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 		});
 	});
 
+
 	$scope.previewVideo = () => {
 		console.log("tryina preview");
-		var previewInstructions = $scope.videos.map(video => {
+
+		var getRandomElement = function (array) {
+			if (!array.length) {
+				return;
+			}
+			return array[Math.round(Math.random() * (array.length - 1))];
+		};
+
+		var filters = ["invert", "blur", "bw", "sepia"];
+
+		var getRange = function (duration, cutLength) {
+			var start = Math.round(Math.random() * (duration - cutLength));
+			return [start, start + cutLength];
+		};
+
+
+		var createCuts = function (video, duration, cutsNumber) {
+
+				var cuts = [],
+				instr,
+				range,
+				i;
+
+			for (i = 0; i < cutsNumber; i++) {
+				instr = InstructionsFactory.generate(video.videoSource, duration);
+				range = getRange(duration, 2);
+				instr.startTime = range[0];
+				instr.endTime = range[1];
+				instr.filter = getRandomElement(filters);
+				cuts.push(instr);
+			}
+
+			return cuts;
+
+		};
+
+		var shuffle = function (arr){
+			for(var j, x, i = arr.length; i; j = Math.floor(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
+			return arr;
+		};
+
+
+		var allInstructions = [];
+
+		$scope.videos.forEach(video => {
 			var duration = document.getElementById(video.id).duration;
-			console.log("when generating instructions for preview, video.duration", duration)
-			return InstructionsFactory.generate(video.videoSource, duration);
+			var cuts = createCuts(video, duration, 15);
+			allInstructions = allInstructions.concat(cuts);
+			// var instr = InstructionsFactory.generate(video.videoSource, duration);
+			// instr.filter = getRandomElement(filters);
 		});
-		PreviewFactory.setInstructions(previewInstructions);
+		shuffle(allInstructions);
+		PreviewFactory.setInstructions(allInstructions);
 		//then load /preview state
 		$state.go('preview');
-	}
+	};
+
+
+
 
 	fileInput.addEventListener('change', function(e) {
 		var file = fileInput.files[0],

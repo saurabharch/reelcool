@@ -2,6 +2,6 @@
   <div class="col-sm-12">
     <!-- <video id="mainplayer" width="600px" height="350px" ng-init="run()" src='{{videoSource}}' controls></video> -->
     <video-player width="600" height="350" instructions="instructions" id='previewer'></video-player>
-    CURRENT INSTRUCTIONS<br>{{instructions}}
+    CURRENT INSTRUCTIONS<br>{{instructions | json}}
   </div>
 </div>
