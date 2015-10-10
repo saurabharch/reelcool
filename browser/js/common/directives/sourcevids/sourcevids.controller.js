@@ -17,24 +17,6 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 		});
 	});
 
-	$scope.videos = [];
-
-	var fileInput = document.getElementById("videofileinput");
-
-	$scope.selectVideoFile = function () {
-		fileInput.click();
-	};
-
-	$scope.$on("videosource-deleted", function (event, videoSourceId) {
-		$scope.videos.some(function (videoElement, index) {
-			if (videoElement.videoSource.id === videoSourceId) {
-				$scope.videos.splice(index, 1);
-				return true;
-			}
-		});
-	});
-
-
 	fileInput.addEventListener('change', function(e) {
 		var filesArr = Array.prototype.slice.call(fileInput.files, 0);
 		filesArr.forEach(function (file) {
