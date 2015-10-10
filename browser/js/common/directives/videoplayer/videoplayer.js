@@ -13,16 +13,24 @@ app.directive('videoPlayer', () => {
 });
 
 app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
-  $scope.currentClip = 0;
-  $scope.instructions = $scope.instructions || [];
-
-  $scope.videoContainerId = "video-container" + IdGenerator();
-
   var videos = [],
       timeoutId,
       instructionVideoMap = {};
+  $scope.currentClip = 0;
+  $scope.instructions = $scope.instructions || [];
+  $scope.videoContainerId = "video-container" + IdGenerator();
 
-  $scope.reInit = function() {
+
+
+ //  _____       _ _   _       _ _          _   _
+ // |_   _|     (_) | (_)     | (_)        | | (_)
+ //   | |  _ __  _| |_ _  __ _| |_ ______ _| |_ _  ___  _ __
+ //   | | | '_ \| | __| |/ _` | | |_  / _` | __| |/ _ \| '_ \
+ //  _| |_| | | | | |_| | (_| | | |/ / (_| | |_| | (_) | | | |
+ // |_____|_| |_|_|\__|_|\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
+
+
+  $scope.prepareVideoElements = function() {
 
     if (!$scope.instructions.length) {
       return;
@@ -37,6 +45,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
           promisedAttachments.push(promise);
       });
 
+      // TODO this is probably necessary when the player is initializing many video elements
       // Promise.all(promisedAttachments)
       // .then(()=> {
       //     $scope.$emit('videoPlayerLoaded');
@@ -53,7 +62,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
 
     var cumulativeTimeBefore = 0;
 
-    for (var i = 0; i < $scope.instructions.length; i++) {
+    for (i = 0; i < $scope.instructions.length; i++) {
       addTimeUpdateEvents(videos[i], i);
       videos[i].timeBefore = cumulativeTimeBefore;
       cumulativeTimeBefore += $scope.instructions[i].endTime - $scope.instructions[i].startTime;
@@ -64,16 +73,50 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
 
   };
 
-  function loadVideoElements() {
+  // this lets prepareVideoElements run after ng-repeat is done
+  // with adding the video elements to the dom
+  function init() {
     console.log("LOADING VIDEO ELEMENTS");
     setTimeout(()=> {
-        $scope.reInit();
+        $scope.prepareVideoElements();
     },0);
   }
 
-  loadVideoElements();
+  init();
 
-  var counter = 0;
+  $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
+    console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
+    if($scope.videoPlayerId === targetVideoplayerId){
+      $scope.instructions = instructions;
+      init();
+    }
+  });
+
+
+  function initializeTimes() {
+    $scope.totalEndTime = 0;
+    $scope.totalCurrentTime = 0;
+    $scope.currentClip = 0;
+    videos[0].currentTime = $scope.instructions[0].startTime;
+    $scope.instructions.forEach(function(instruction) {
+      $scope.totalEndTime += instruction.endTime - instruction.startTime;
+    });
+  }
+
+
+  function addTimeUpdateEvents(video, index) {
+    video.ontimeupdate = function() {
+      //move the slider as video plays
+      //console.log("video.currentTime", this.currentTime);
+      if (this.index === $scope.currentClip) {
+        $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
+      } else {
+        console.log("video", this.index, "played but it didn't affect the time");
+      }
+      $scope.$digest(); // this gets triggered very often
+    };
+  }
+
   $scope.getIdForVideo = function (instructionId) {
     if (instructionVideoMap[instructionId]) {
       return instructionVideoMap[instructionId];
@@ -84,59 +127,35 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   };
 
 
-  // if($scope.instructions.length>0){
-  //   setTimeout(() => {
-  //     VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id)
-  //     .then(function () {
-  //       $scope.reInit();
-  //     });
-  //   },0);
-  // }
-  //
-  // setTimeout(() => {
-  //   if($scope.instructions.length===0) return;
-  //
-  //   VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id)
-  //   .then(function () {
-  //     $scope.reInit();
-  //   });
-  // },0);
 
-  $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
-    console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
-    if($scope.videoPlayerId === targetVideoplayerId){
-      $scope.instructions = instructions;
-      loadVideoElements();
-      // setTimeout(function() {
-      //   // console.log("attached ain player with id", $scope.instructions[0].id);
-      //   // VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id)
-      //   // .then(function () {
-      //     $scope.reInit();
-      //   // });
-      // }, 0);
-    }
-  });
+ //  ______               _
+ // |  ____|             | |
+ // | |____   _____ _ __ | |_ ___
+ // |  __\ \ / / _ \ '_ \| __/ __|
+ // | |___\ V /  __/ | | | |_\__ \
+ // |______\_/ \___|_| |_|\__|___/
+
 
   $scope.$on('newMovingTime', (event, ...args) => {
     clearTimeout(timeoutId);
     pauseCurrentVideo();
     $scope.totalCurrentTime = args[0].time;
-    console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime, "args", args)
+    //console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime, "args", args);
     updateVideo();
     if (!args[0].paused) {
       playCurrentVideo();
     }
-  })
+  });
 
   $scope.$on('updatedTimeRange', (event, ...args) => {
     initializeTimes();
-  })
+  });
 
   $scope.$on('pauseButton', (event, ...args) => {
     console.log("pauseButton event got")
     clearTimeout(timeoutId);
     pauseCurrentVideo();
-  })
+  });
 
   $scope.$on('playButton', (event, ...args) => {
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
@@ -148,7 +167,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip, "total current time is", $scope.totalCurrentTime);
     playCurrentVideo();
     updateVideo();
-  })
+  });
 
   function updateVideo() {
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
@@ -194,29 +213,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     }
   }
 
-  function addTimeUpdateEvents(video, index) {
-    video.ontimeupdate = function() {
-      //move the slider as video plays
-      //console.log("video.currentTime", this.currentTime);
-      if (this.index === $scope.currentClip) {
-        $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
-      } else {
-        console.log("video", this.index, "played but it didn't affect the time");
-      }
-      $scope.$digest();// maybe replace by a watch for totalCurrentTime in the slider
-    };
-  }
-
-
-  function initializeTimes() {
-    $scope.totalEndTime = 0;
-    $scope.totalCurrentTime = 0;
-    $scope.currentClip = 0;
-    videos[0].currentTime = $scope.instructions[0].startTime;
-    $scope.instructions.forEach(function(instruction) {
-      $scope.totalEndTime += instruction.endTime - instruction.startTime;
-    });
-  }
 
   function pauseCurrentVideo() {
     videos[$scope.currentClip].pause();
