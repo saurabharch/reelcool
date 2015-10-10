@@ -1,0 +1,3 @@
+current issues:
+- digest runs ngrepeat in the videoplayer directive
+- event handler on the video elements in the videplayer call digest continuesly (-> watch)

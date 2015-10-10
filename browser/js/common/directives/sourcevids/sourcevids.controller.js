@@ -96,23 +96,47 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 
 
 
-
 	fileInput.addEventListener('change', function(e) {
-		var file = fileInput.files[0],
-			videoElement;
-		VideoFactory.addVideoSource(file).then(function (videoSource) {
-			videoElement = VideoFactory.createVideoElement(videoSource);
-			$scope.videos.push(videoElement);
-			$scope.$digest();
-			return VideoFactory.attachVideoSource(videoSource, videoElement.id);
-		}).then(function () {
-			videoElement.sourceAttached = true;
-			$scope.$digest();
-		}).then(null, function (error) {
-			//TODO show error on video tag
-			console.error("Error occured when attaching video source", error);
+		var filesArr = Array.prototype.slice.call(fileInput.files, 0);
+		filesArr.forEach(function (file) {
+			var videoElement;
+			VideoFactory.addVideoSource(file).then(function (videoSource) {
+				videoElement = VideoFactory.createVideoElement(videoSource);
+				$scope.videos.push(videoElement);
+				$scope.$digest();
+				return VideoFactory.attachVideoSource(videoSource, videoElement.id);
+			}).then(function () {
+				videoElement.sourceAttached = true;
+				$scope.$digest();
+			}).then(null, function (error) {
+				//TODO show error on video tag
+				console.error("Error occured when attaching video source", error);
+			});
 		});
-  });
+
+	});
+
+
+
+
+
+
+	// fileInput.addEventListener('change', function(e) {
+	// 	var file = fileInput.files[0],
+	// 		videoElement;
+	// 	VideoFactory.addVideoSource(file).then(function (videoSource) {
+	// 		videoElement = VideoFactory.createVideoElement(videoSource);
+	// 		$scope.videos.push(videoElement);
+	// 		$scope.$digest();
+	// 		return VideoFactory.attachVideoSource(videoSource, videoElement.id);
+	// 	}).then(function () {
+	// 		videoElement.sourceAttached = true;
+	// 		$scope.$digest();
+	// 	}).then(null, function (error) {
+	// 		//TODO show error on video tag
+	// 		console.error("Error occured when attaching video source", error);
+	// 	});
+ //  	});
 
 
 });
