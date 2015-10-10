@@ -16,8 +16,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   $scope.currentClip = 0;
   $scope.videoPlayerWidth;
   $scope.instructions = $scope.instructions || [];
-  console.log("CONTROLLER LOADED WITH PLAYER ID", $scope.videoPlayerId);
-  console.log("Instructions", $scope.instructions);
+
   $scope.videoContainerId = "video-container" + IdGenerator();
 
   var videos = [];
@@ -28,6 +27,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     if (!$scope.instructions.length) {
       return;
     }
+
+    $scope.$emit('videoPlayerLoaded');
 
       var promisedAttachments = [];
       $scope.instructions.forEach((el) => {

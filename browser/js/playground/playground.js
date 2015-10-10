@@ -14,7 +14,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   var video, $video;
 
   var getMainVideoPlayer = function () {
-    return document.getElementById("editor");
+    return document.getElementById($scope.instructions[0].id);
   };
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
@@ -25,6 +25,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   });
 
   $scope.$on('videoPlayerLoaded', (e, ...args) => {
+    console.log("got event videoPlayerLoaded");
     $scope.run();
   });
 
@@ -40,7 +41,6 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
 
   $scope.run = () => {
     video = getMainVideoPlayer();
-    console.log("video", video);
     $video = $(video);
   };
 
@@ -50,7 +50,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
       if(filter.code ===""){
         el.applied = false;
       }
-      else if(el.code === filter.code){
+      else if(el.code === filter.code || el.applied){
         el.applied = !el.applied;
       }
     });
@@ -58,8 +58,8 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   };
 
   $scope.updateFilterString = () => {
+    console.log("scope.filters", $scope.filters);
     let newFilterStr = FilterFactory.createFilterString($scope.filters);
-    console.log("video element:", $video);
     $video.attr('style', `-webkit-filter:${newFilterStr}`);
   };
 
