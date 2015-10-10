@@ -2,45 +2,39 @@ app.directive('playground', () => {
   return {
     restrict: 'E',
     scope: {
-      instructions: '=',
-      filters: '='
+      instructions: '='
     },
     controller: 'PlaygroundCtrl',
     templateUrl: 'js/playground/playground.html'
-  }
+  };
 });
 
-app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) => {
+app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, PreviewFactory) => {
 
-  var video;
-  var $video;
+  var video, $video, videoPlayerId;
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
-    var video = document.getElementById("mainplayer");
     if (video.reelCoolVideoSourceId === videoSourceId) {
       video.src = null;
     }
   });
 
-  $scope.$on('videoPlayerLoaded', (e, ...args) => {
-    $scope.run();
-  })
+  $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
+    video = document.getElementById(instructionVideoMap[$scope.instructions[0].id]);
+    $video = $(video);
+    initFilters();
+  });
 
   $scope.updatedTimeRange = () => {
-    $scope.$broadcast('updatedTimeRange')
-  }
+    $scope.$broadcast('updatedTimeRange');
+  };
 
-  $scope.run = () => {
+  function initFilters () {
+    //get the available filters, none of them are applied
     $scope.filters = FilterFactory.filters.map(filter => {
         filter.applied = false;
         return filter;
     });
-
-    video = document.getElementsByTagName('video')[0];
-    $video = $(video);
-    $scope.duration = video.duration;
-    $scope.startTime = 0;
-    $scope.endTime = $scope.duration;
   }
 
   $scope.toggleFilter = (filter) => {
@@ -49,23 +43,28 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
       if(filter.code ===""){
         el.applied = false;
       }
-      else if(el.code !== filter.code && el.type === filter.type && el.applied){
-        el.applied = false;
+      else if(el.code === filter.code || el.applied){
+        el.applied = !el.applied;
       }
-    })
+    });
+    saveFilterToInstructions();
+    updateFilterString();
+  };
 
-    filter.applied = !filter.applied;
-    $scope.updateFilterString();
-  }
+  $scope.cutToInstructions = () => {
+    console.log("cutToInstructions called")
+    PreviewFactory.addToInstructions($scope.instructions);
+    console.log("new preview instructions", PreviewFactory.getInstructions());
+  };
 
-  $scope.updateFilterString = () => {
+  function updateFilterString() {
     let newFilterStr = FilterFactory.createFilterString($scope.filters);
     $video.attr('style', `-webkit-filter:${newFilterStr}`);
   }
 
-  $scope.cutToInstructions = () => {
-    console.log("cutToInstructions called")
-    InstructionsFactory.add($scope.instructions);
+  function saveFilterToInstructions (){
+    console.log("will save",  $scope.filters.filter(el => el.applied)[0].code);
+    $scope.instructions[0].filter = $scope.filters.filter(el => el.applied)[0].code;
   }
 
 });

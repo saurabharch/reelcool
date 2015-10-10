@@ -1,0 +1,4 @@
+current issues:
+- error after setting custom time interval in the video player after playing finished
+- event handler on the video elements in the videplayer call digest continuesly when video plays
+	- works so far

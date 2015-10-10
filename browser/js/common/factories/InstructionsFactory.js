@@ -1,4 +1,4 @@
-app.factory('InstructionsFactory',function(){
+app.factory('InstructionsFactory',function(IdGenerator){
 	var instructions = [];
 
 	return {
@@ -6,7 +6,15 @@ app.factory('InstructionsFactory',function(){
 			instructions.push(instruction);
 		},
 		get: () => {
-			return instructions
+			return instructions;
+		},
+		generate: (videoSource, endTime) => {
+			return {
+				id: IdGenerator(),
+				videoSource: videoSource,
+				startTime: 0,
+				endTime: endTime,
+			};
 		}
-	}
-});
+	};
+})

@@ -4,6 +4,11 @@
 			<list-video video="video"></list-video>
 		</li>
 	</ul>
-	<input type="file" style="display:none" id="videofileinput" accept="video/*">
-	<button ng-click="selectVideoFile()">add</button>
+	<input type="file" style="display:none" id="videofileinput" accept="video/*" multiple>
+	<p><button ng-click="selectVideoFile()">add</button></p>
+		<br>
+		<br>
+		<br>
+		<br>
+	<p><button ng-show="videos.length" ng-click="previewVideo()">Random Cuts</button></p>
 </div>
