@@ -14,8 +14,7 @@ app.factory('InstructionsFactory',function(IdGenerator){
 				videoSource: videoSource,
 				startTime: 0,
 				endTime: endTime,
-				filters: []
 			};
 		}
 	};
-});
+})

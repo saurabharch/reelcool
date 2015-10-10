@@ -25,6 +25,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
   });
 
   $scope.$on('videoPlayerLoaded', (e, ...args) => {
+    console.log("got event videoPlayerLoaded");
     $scope.run();
   });
 
@@ -32,19 +33,15 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
     $scope.$broadcast('updatedTimeRange');
   };
 
+  //get the available filters, none of them are applied
   $scope.filters = FilterFactory.filters.map(filter => {
       filter.applied = false;
       return filter;
   });
 
   $scope.run = () => {
-
     video = getMainVideoPlayer();
-    console.log("video", video);
     $video = $(video);
-    // $scope.duration = video.duration;
-    // $scope.startTime = 0;
-    // $scope.endTime = $scope.duration;
   };
 
   $scope.toggleFilter = (filter) => {
@@ -53,19 +50,16 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
       if(filter.code ===""){
         el.applied = false;
       }
-      else if(el.code !== filter.code && el.type === filter.type && el.applied){
-        el.applied = false;
+      else if(el.code === filter.code || el.applied){
+        el.applied = !el.applied;
       }
     });
-    if (filter.code !== '') {
-      filter.applied = !filter.applied;
-    }
     $scope.updateFilterString();
   };
 
   $scope.updateFilterString = () => {
+    console.log("scope.filters", $scope.filters);
     let newFilterStr = FilterFactory.createFilterString($scope.filters);
-    console.log("video element:", $video);
     $video.attr('style', `-webkit-filter:${newFilterStr}`);
   };
 

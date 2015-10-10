@@ -5,7 +5,7 @@ app.directive('videoPlayer', () => {
       instructions: '=',
       width: "=",
       height: "=",
-      videoplayerId: '=id'
+      videoPlayerId: '='
     },
     templateUrl: 'js/common/directives/videoplayer/videoplayer.html',
     controller: 'VideoPlayerCtrl'
@@ -27,6 +27,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     if (!$scope.instructions.length) {
       return;
     }
+
+    $scope.$emit('videoPlayerLoaded');
 
       var promisedAttachments = [];
       $scope.instructions.forEach((el) => {
@@ -65,7 +67,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     setTimeout(()=> {
 
         $scope.reInit();
-
     },0);
   }
 
@@ -90,8 +91,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   // },0);
 
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
-    console.log("videoplayer got changeVideo", instructions, targetVideoplayerId);
-    if($scope.videoplayerId === targetVideoplayerId){
+    console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
+    if($scope.videoPlayerId === targetVideoplayerId){
       $scope.instructions = instructions;
       setTimeout(function() {
         console.log("attached ain player with id", $scope.instructions[0].id);
