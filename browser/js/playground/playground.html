@@ -7,7 +7,10 @@
       <button ng-click="updatedTimeRange()">Update Times</button>
     </div>
     <div class="row">
-      <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn" ng-click="toggleFilter(filter) && updateFilters()" ng-repeat="filter in filters">{{filter.displayName}}</button>
+      <div ng-repeat="filter in filters">
+        <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn" ng-click="toggleFilter(filter) && updateFilters()" >{{filter.displayName}}</button>
+        <md-slider ng-model="val" min="5" max="500"></md-slider>
+      </div>
     </div>
     <br>
     CURRENT INSTRUCTIONS <br>
