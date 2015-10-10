@@ -14,13 +14,13 @@ app.directive('videoPlayer', () => {
 
 app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   $scope.currentClip = 0;
-  $scope.videoPlayerWidth;
   $scope.instructions = $scope.instructions || [];
 
   $scope.videoContainerId = "video-container" + IdGenerator();
 
-  var videos = [];
-  var timeoutId;
+  var videos = [],
+      timeoutId,
+      instructionVideoMap = {};
 
   $scope.reInit = function() {
 
@@ -28,13 +28,14 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       return;
     }
 
-    $scope.$emit('videoPlayerLoaded');
+    $scope.$emit('videoPlayerLoaded', instructionVideoMap);
 
       var promisedAttachments = [];
-      $scope.instructions.forEach((el) => {
-          promisedAttachments.push(VideoFactory.attachVideoSource(el.videoSource, el.id));
+      $scope.instructions.forEach((instruction) => {
+          var videoId = instructionVideoMap[instruction.id],
+              promise = VideoFactory.attachVideoSource(instruction.videoSource, videoId);
+          promisedAttachments.push(promise);
       });
-
 
       // Promise.all(promisedAttachments)
       // .then(()=> {
@@ -64,13 +65,24 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   };
 
   function loadVideoElements() {
+    console.log("LOADING VIDEO ELEMENTS");
     setTimeout(()=> {
-
         $scope.reInit();
     },0);
   }
 
   loadVideoElements();
+
+  var counter = 0;
+  $scope.getIdForVideo = function (instructionId) {
+    if (instructionVideoMap[instructionId]) {
+      return instructionVideoMap[instructionId];
+    }
+    var newVideoId = IdGenerator();
+    instructionVideoMap[instructionId] = newVideoId;
+    return newVideoId;
+  };
+
 
   // if($scope.instructions.length>0){
   //   setTimeout(() => {
@@ -94,13 +106,14 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
     if($scope.videoPlayerId === targetVideoplayerId){
       $scope.instructions = instructions;
-      setTimeout(function() {
-        console.log("attached ain player with id", $scope.instructions[0].id);
-        VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id)
-        .then(function () {
-          $scope.reInit();
-        });
-      }, 0);
+      loadVideoElements();
+      // setTimeout(function() {
+      //   // console.log("attached ain player with id", $scope.instructions[0].id);
+      //   // VideoFactory.attachVideoSource($scope.instructions[0].videoSource, $scope.instructions[0].id)
+      //   // .then(function () {
+      //     $scope.reInit();
+      //   // });
+      // }, 0);
     }
   });
 
@@ -190,7 +203,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       } else {
         console.log("video", this.index, "played but it didn't affect the time");
       }
-      $scope.$digest();
+      $scope.$digest();// maybe replace by a watch for totalCurrentTime in the slider
     };
   }
 

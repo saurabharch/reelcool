@@ -11,22 +11,22 @@ app.directive('playground', () => {
 
 app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) => {
 
-  var video, $video;
+  var video, $video, videoPlayerId;
 
-  var getMainVideoPlayer = function () {
-    return document.getElementById($scope.instructions[0].id);
-  };
+  // var getMainVideoPlayer = function () {
+  //   var videosArrayLike = $("#" + $scope.videoContainerId).find("video");
+  //   return document.getElementById($scope.instructions[0].id);
+  // };
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
-    var video = getMainVideoPlayer();
     if (video.reelCoolVideoSourceId === videoSourceId) {
       video.src = null;
     }
   });
 
-  $scope.$on('videoPlayerLoaded', (e, ...args) => {
-    console.log("got event videoPlayerLoaded");
-    $scope.run();
+  $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
+    video = document.getElementById(instructionVideoMap[$scope.instructions[0].id]);
+    $video = $(video);
   });
 
   $scope.updatedTimeRange = () => {
@@ -39,10 +39,10 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory) =>
       return filter;
   });
 
-  $scope.run = () => {
-    video = getMainVideoPlayer();
-    $video = $(video);
-  };
+  // $scope.run = () => {
+  //   video = getMainVideoPlayer();
+  //   $video = $(video);
+  // };
 
   $scope.toggleFilter = (filter) => {
 
