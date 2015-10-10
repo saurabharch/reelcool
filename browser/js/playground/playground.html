@@ -10,6 +10,8 @@
       <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn" ng-click="toggleFilter(filter) && updateFilters()" ng-repeat="filter in filters">{{filter.displayName}}</button>
     </div>
     <br>
+    CURRENT INSTRUCTIONS <br>
+    {{instructions}}
     <div ng-show="instructions.length" class="row">
       <button ng-click='cutToInstructions()'>Cut to Reel</button>
     </div>

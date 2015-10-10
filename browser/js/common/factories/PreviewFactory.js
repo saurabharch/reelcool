@@ -1,7 +1,10 @@
 app.factory("PreviewFactory", () => {
-  var instructions;
+  var instructions = [];
 
   return {
+    addToInstructions: (newClips) => {
+      instructions = instructions.concat(...newClips);
+    },
     setInstructions: (newInstructions) => {
       instructions = newInstructions;
     },
@@ -9,4 +12,4 @@ app.factory("PreviewFactory", () => {
       return instructions;
     }
   }
-})
+});
