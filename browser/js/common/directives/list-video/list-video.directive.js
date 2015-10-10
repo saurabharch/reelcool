@@ -14,11 +14,12 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 			};
 
 			scope.sendToPlayground = function () {
-				var instructions = InstructionsFactory.generate(scope.video.videoSource, getVideoElement().duration);
-				$rootScope.$broadcast("changeVideo", [instructions], "editor");
-				console.log("instructions", instructions);
-				//VideoFactory.attachVideoSource(scope.video.videoSource, "mainplayer");
+				//make a copy of the instructions and send it to the playground
+				var instructionsCopy = {};
+				_.assign(instructionsCopy, scope.video.instructions);
+				$rootScope.$broadcast("changeVideo", [instructionsCopy], "editor");
 			};
+
 			scope.play = function () {
 				getVideoElement().play();
 			};

@@ -9,7 +9,7 @@ app.directive('playground', () => {
   };
 });
 
-app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, PreviewFactory) => {
+app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, PreviewFactory, $rootScope ) => {
 
   var video, $video, videoPlayerId;
 
@@ -53,8 +53,9 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
 
   $scope.cutToInstructions = () => {
     console.log("cutToInstructions called")
-    PreviewFactory.addToInstructions($scope.instructions);
-    console.log("new preview instructions", PreviewFactory.getInstructions());
+    //PreviewFactory.addToInstructions($scope.instructions);
+    $rootScope.$broadcast('sendClipToReel', $scope.instructions[0]);
+    //console.log("new preview instructions", PreviewFactory.getInstructions());
   };
 
   function updateFilterString() {

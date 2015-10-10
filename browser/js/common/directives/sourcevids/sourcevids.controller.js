@@ -17,8 +17,6 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 		});
 	});
 
-	$scope.videos = [];
-
 	var fileInput = document.getElementById("videofileinput");
 
 	$scope.selectVideoFile = function () {
@@ -46,6 +44,7 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 				return VideoFactory.attachVideoSource(videoSource, videoElement.id);
 			}).then(function () {
 				videoElement.sourceAttached = true;
+				videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
 				$scope.$digest();
 			}).then(null, function (error) {
 				//TODO show error on video tag
@@ -67,4 +66,3 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 
 
 });
-
