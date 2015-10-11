@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function ($rootScope, IdGenerator) {
+app.factory("VideoFactory", function ($rootScope, IdGenerator, InstructionsFactory) {
 
 	var vidFactory = {},
 		videoSources = {};
@@ -7,10 +7,11 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 	//TODO do ajax polling for uplodaed videos
 	//TODO sent ajax call to delete on back-end
 
-	var VideoElement = function (videoSource) {
+	var VideoElement = function (videoSource, instructions) {
 		this.id = IdGenerator();
 		this.sourceAttached = false;
 		this.videoSource = videoSource;
+		this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
 	};
 
 
@@ -41,8 +42,10 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 	};
 
 
-	vidFactory.createVideoElement = function (videoSource) {
-		return new VideoElement(videoSource);
+	vidFactory.createVideoElement = function (videoSource, instructions) {
+		var newElement = new VideoElement(videoSource, instructions);
+		console.log("created new video element", newElement);
+		return newElement;
 	};
 
 
@@ -116,6 +119,3 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 	return vidFactory;
 
 });
-
-
-

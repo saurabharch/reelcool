@@ -17,24 +17,6 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 		});
 	});
 
-	$scope.videos = [];
-
-	var fileInput = document.getElementById("videofileinput");
-
-	$scope.selectVideoFile = function () {
-		fileInput.click();
-	};
-
-	$scope.$on("videosource-deleted", function (event, videoSourceId) {
-		$scope.videos.some(function (videoElement, index) {
-			if (videoElement.videoSource.id === videoSourceId) {
-				$scope.videos.splice(index, 1);
-				return true;
-			}
-		});
-	});
-
-
 	fileInput.addEventListener('change', function(e) {
 		var filesArr = Array.prototype.slice.call(fileInput.files, 0);
 		filesArr.forEach(function (file) {
@@ -46,6 +28,7 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 				return VideoFactory.attachVideoSource(videoSource, videoElement.id);
 			}).then(function () {
 				videoElement.sourceAttached = true;
+				videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
 				$scope.$digest();
 			}).then(null, function (error) {
 				//TODO show error on video tag
@@ -67,4 +50,3 @@ app.controller("SourceVidsCtrl", function ($scope, VideoFactory, PreviewFactory,
 
 
 });
-
