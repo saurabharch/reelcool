@@ -61,6 +61,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     // }
     _.assign(instructionsCopy, $scope.instructions[0]);
     //angular.copy($scope.instructions[0], instructionsCopy);
+    console.log("instructionsCopy from playground", instructionsCopy);
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
   };
 
