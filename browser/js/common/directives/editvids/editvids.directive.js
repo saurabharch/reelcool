@@ -28,6 +28,7 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 						attachSourceToVideo(updatedVideoElement, instructions);
 					}, 0);
 				}
+				updateInstructions($scope.videos);
 			});
 
 			$scope.$on('unstageClip', (e, clip)=> {
