@@ -1,14 +1,19 @@
 <div id="sourcevids">
+	<h2>Your Source Videos</h3><md-button class="md-primary md-raised" ng-click="selectVideoFile()">Add Videos</md-button>
+	<p ng-hide="videos.length">You have no videos uploaded. Upload some!</p>
 	<ul id="vidslist">
 		<li ng-repeat="video in videos">
-			<list-video video="video"></list-video>
+			<md-card>
+				<md-card-content>
+					<list-video video="video" type="'source'"></list-video>
+				</md-card-content>
+			</md-card>
 		</li>
 	</ul>
-	<input type="file" style="display:none" id="videofileinput" accept="video/*" multiple>
-	<p><button ng-click="selectVideoFile()">add</button></p>
+	<input type="file" style="display:none" id="videofileinput" accept="video/*"d- multiple>
 		<br>
 		<br>
 		<br>
 		<br>
-	<p><button ng-show="videos.length" ng-click="previewVideo()">Random Cuts</button></p>
+	<p><md-button class="md-primary md-raised" ng-click="previewVideo()">Random Cuts</md-button></p>
 </div>

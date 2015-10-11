@@ -67,16 +67,22 @@ schema.method('correctPassword', function (candidatePassword) {
 schema.post('save',function (user) {
     var pathToUserDir = path.join(__dirname,"..","..","files",user._id.toString());
     var userSubDirs = ['created', 'staging', 'uploaded', 'temp'];
+    var makeSubDirs;
     fs.statAsync(pathToUserDir) // will err if the directory doesn't exist
         .then(
-            stats => console.log(stats), // no need to make dirs, bc user and his/her dirs exist already
-            err => fs.mkdirAsync(pathToUserDir) // will create the user's directory
-            )
+            stats => console.log('user dir already exists'), 
+            function (err) { 
+                makeSubDirs=true; 
+                return fs.mkdirAsync(pathToUserDir); 
+            } // will create the user's directory
+        )
         .then(
-            () => Promise.map(userSubDirs, subDir => fs.mkdirAsync(path.join(pathToUserDir,subDir))), 
+            function () {
+                if (makeSubDirs) return Promise.map(userSubDirs, subDir => fs.mkdirAsync(path.join(pathToUserDir,subDir)));
+            }, 
             (err) => console.error(err)
-            )
+        )
         .catch(err => console.error(err));
-})
+});
 
 mongoose.model('User', schema);
