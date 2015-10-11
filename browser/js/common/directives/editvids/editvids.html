@@ -6,9 +6,7 @@
 	</ul>
 	<input type="file" style="display:none" id="videofileinput" accept="video/*" multiple>
 	<!-- <p><button ng-click="selectVideoFile()">add</button></p> -->
-		<br>
-		<br>
-		<br>
-		<br>
-	<p><button ng-show="videos.length" ng-click="previewVideo()">Preview Video</button></p>
+
+	<p><button ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</button></p>
+
 </div>

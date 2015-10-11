@@ -101,6 +101,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     $scope.totalCurrentTime = 0;
     $scope.currentClip = 0;
     videos[0].currentTime = $scope.instructions[0].startTime;
+    console.log("at time init, videos[0].currentTime", videos[0].currentTime);
     $scope.instructions.forEach(function(instruction) {
       $scope.totalEndTime += instruction.endTime - instruction.startTime;
     });
@@ -112,6 +113,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       //move the slider as video plays
       //console.log("video.currentTime", this.currentTime);
       if (this.index === $scope.currentClip) {
+        console.log("time gets messed up", video.timeBefore,  video.currentTime, $scope.instructions[index].startTime);
         $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
       } else {
         console.log("video", this.index, "played but it didn't affect the time");
@@ -143,14 +145,18 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     clearTimeout(timeoutId);
     pauseCurrentVideo();
     $scope.totalCurrentTime = args[0].time;
-    //console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime, "args", args);
+    console.log("totalCurrentTime@ reaction in videoplayer", $scope.totalCurrentTime, "args", args);
+    console.log("startTime", $scope.instructions[0].startTime);
     updateVideo();
     if (!args[0].paused) {
       playCurrentVideo();
     }
   });
 
-  $scope.$on('updatedTimeRange', (event, ...args) => {
+  $scope.$on('updatedTimeRange', (event, newTimes) => {
+    //this event comes from the playerground and therefore only affects the 0th element of instructions
+    $scope.instructions[0].startTime = newTimes.startTime;
+    $scope.instructions[0].endTime = newTimes.endTime;
     initializeTimes();
   });
 
@@ -187,7 +193,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       var newIndex;
       for (var i = 0; i < videos.length; i++) {
         // sets indices
+        console.log("$scope.totalCurrentTime", $scope.totalCurrentTime,"timeBefore", videos[i].timeBefore);
         if ($scope.totalCurrentTime < videos[i].timeBefore) {
+          console.log("$scope.totalCurrentTime", $scope.totalCurrentTime,"timeBefore", videos[i].timeBefore);
           newIndex = i - 1;
           foundSpot = true;
         } else if (i === videos.length - 1) {
@@ -200,8 +208,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
         if (foundSpot && (videos[$scope.currentClip].paused || newIndex!==oldIndex)) {
           //console.log("oldIndex", oldIndex, "newIndex", newIndex);
           var clipToPlay = videos[newIndex];
+          console.log("clipToPlay", clipToPlay, "newIndex", newIndex);
           clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
-          console.log("old video",oldIndex,"paused?", videos[oldIndex].paused, "newIndex", newIndex);
           if (videos[oldIndex].ended || !videos[oldIndex].paused) {
             videos[oldIndex].pause();
             clipToPlay.play();
