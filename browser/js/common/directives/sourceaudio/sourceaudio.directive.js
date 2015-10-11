@@ -6,18 +6,19 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 		scope: {},
 		link: function (scope, element, attr) {
 
-			scope.audioTracks = [];
+			scope.audioTracks = AudioFactory.getAudioElements();
 
 			var fileInput = document.getElementById("audiofileinput");
 
 
 			scope.$on("videosource-deleted", function (event, audioSourceId) {
-				scope.audioTracks.some(function (audioElement, index) {
-					if (audioElement.videoSource.id === audioSourceId) {
-						scope.audioTracks.splice(index, 1);
-						return true;
-					}
-				});
+				AudioFactory.removeAudioElement(audioSourceId);
+				// scope.audioTracks.some(function (audioElement, index) {
+				// 	if (audioElement.videoSource.id === audioSourceId) {
+				// 		scope.audioTracks.splice(index, 1);
+				// 		return true;
+				// 	}
+				// });
 			});
 
 			scope.selectAudioFile = function () {
@@ -30,7 +31,8 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 					var audioElement;
 					VideoFactory.addVideoSource(file).then(function (audioSource) {
 						audioElement = VideoFactory.createVideoElement(audioSource);
-						scope.audioTracks.push(audioElement);
+						//scope.audioTracks.push(audioElement);
+						AudioFactory.setAudioElement(audioElement);
 						scope.$digest();
 						return VideoFactory.attachVideoSource(audioSource, audioElement.id);
 					}).then(function () {
@@ -39,7 +41,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 						audioElement.domElement = audioDomElement;
 						audioElement.duration = audioDomElement.duration;
 						audioElement.sourceAttached = true;
-						AudioFactory.setAudioElement(audioElement);
+						//AudioFactory.setAudioElement(audioElement);
 						scope.$digest();
 					}).then(null, function (error) {
 						//TODO show error on video tag

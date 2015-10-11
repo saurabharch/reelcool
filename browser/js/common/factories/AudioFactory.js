@@ -19,11 +19,25 @@ app.factory("AudioFactory", function () {
 
 	audioFactory.setAudioElement = function (audioElement) {
 		tracks.push(audioElement);
+		//digest?
 	};
 
 	audioFactory.getAudioElements = function () {
 		return tracks;
 	};
+
+
+	audioFactory.removeAudioElement = function (audioSourceId) {
+		tracks.some(function (audioElement, index) {
+			if (audioElement.videoSource.id === audioSourceId) {
+				tracks.splice(index, 1);
+				return true;
+			}
+		});
+		//digest?
+	};
+
+
 
 	return audioFactory;
 });

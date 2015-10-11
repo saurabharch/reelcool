@@ -276,11 +276,17 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       return;
     }
 
+    // if mp3 was deleted, change to original track
+    if (newValue === null) {
+      newValue = AudioFactory.getOriginalAudio();
+      $scope.currentAudio = newValue;
+    }
+
     if (newValue.id === "original_track") {
       changeMute(false);
     }
 
-    if (oldValue.id === "original_track") {
+    if (oldValue && oldValue.id === "original_track") {
       changeMute(true);
     }
 

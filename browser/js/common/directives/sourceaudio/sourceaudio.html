@@ -1,6 +1,6 @@
 <div id="sourceaudio">
 	<ul id="audiolist">
-		<li ng-repeat="audio in audioTracks">
+		<li ng-repeat="audio in audioTracks | filter:{id: '!original_track'}">
 			<list-audio audio="audio"></list-audio>
 		</li>
 	</ul>
