@@ -118,10 +118,14 @@ router.post('/makeit', function(req, res) {
         return fs.readdirAsync(stagingAreaPath)
             .then(arrayOfFiles => Promise.map(arrayOfFiles, function (file) { return fs.unlinkAsync(path.join(stagingAreaPath, file)); }));
     }
-
     
 });
 
+router.get('/getconverted/:userId/:videoId',function (req,res){
+    var filename = req.params.videoId+'.webm';
+    var pathToVid = path.join(filesPath, req.params.userId, 'uploaded', filename);
+    fs.createReadStream(pathToVid).pipe(res);
+});
 
 router.get('/download/:videoId',function (req,res) {
     res.setHeader('Content-disposition', 'attachment; filename=reelcoolmovie.mp4');

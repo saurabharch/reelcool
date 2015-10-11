@@ -1,4 +1,4 @@
-app.controller("SourceVidsCtrl", function($scope, VideoFactory, PreviewFactory, InstructionsFactory, $state, RandomVideoGenerator) {
+app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, PreviewFactory, InstructionsFactory, $state, RandomVideoGenerator) {
 
     $scope.videos = [];
 
@@ -20,16 +20,21 @@ app.controller("SourceVidsCtrl", function($scope, VideoFactory, PreviewFactory, 
     fileInput.addEventListener('change', function(e) {
         var filesArr = Array.prototype.slice.call(fileInput.files, 0);
         filesArr.forEach(function(file) {
-            var videoElement;
+            var videoElement = VideoFactory.createVideoElement();
+            $scope.videos.push(videoElement); //try putting this up here and see if we get the spinner
             VideoFactory.addVideoSource(file)
                 .then(function(videoSource) {
-                    videoElement = VideoFactory.createVideoElement(videoSource);
-                    $scope.videos.push(videoElement);
-                    $scope.$digest();
+                	videoElement.addSource(videoSource);
+                    // if it was originally a webm video, we'll want to digest
+                    // if it wasn't, there will be a digest in progress, so we need to check before doing it
+                    let phase = $rootScope.$$phase;
+                    if (phase!=="$apply" && phase!=="$digest") $scope.$digest();
                     return VideoFactory.attachVideoSource(videoSource, videoElement.id);
                 }).then(function() {
                     videoElement.sourceAttached = true;
-                    $scope.$digest();
+                    // same here as above
+                    let phase = $rootScope.$$phase;
+                    if (phase!=="$apply" && phase!=="$digest") $scope.$digest();
                 }).then(null, function(error) {
                     //TODO show error on video tag
                     console.error("Error occured when attaching video source", error);
