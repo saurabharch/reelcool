@@ -204,6 +204,7 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     };
 
     vidFactory.attachVideoSource = function(videoSource, videoElementId) {
+        console.log('attaching video source');
         console.log(videoSource);
         console.log(videoElementId);
         if (videoSource.arrayBuffer) {

@@ -49,9 +49,15 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 			};
 
 			function attachSourceToVideo(updatedVideoElement, instructions) {
+				console.log('updatedVideoElement',updatedVideoElement);
+				console.log('instructions',instructions);
 				VideoFactory.attachVideoSource(instructions.videoSource, updatedVideoElement.id)
 				.then(() =>  {
 					updatedVideoElement.sourceAttached = true;
+					console.log('the video element got its source');
+					console.log('updatedVideoElement',updatedVideoElement);
+					console.log('and instructions, apparently', updatedVideoElement.instructions);
+					updatedVideoElement.instructions = instructions;
 					if(typeof updatedVideoElement.instructions.endTime==='undefined'){
 						updatedVideoElement.instructions.endTime = document.getElementById(updatedVideoElement.id).duration;
 					}
