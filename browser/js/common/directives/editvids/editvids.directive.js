@@ -12,7 +12,7 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 			var instructionsToVideoMap = {};
 			//scope.instructions= Pedit reel got instructions"reviewFactory.instructions;
 			scope.$on('sendClipToReel', (e,instructions) => {
-				//console.log("****scope.videos at start", scope.videos, "new instructions", instructions);
+				console.log("****scope.videos at start", scope.videos, "new instructions", instructions);
 				//if clip is already there, modify it
 				//scope.instructions[] = instructions;
 				var index = _.findIndex(scope.instructions, (el) => {
@@ -21,12 +21,12 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 
 				console.log("index found", index);
 				//if clip is not already there, add it to the end
-				scope.instructions.push(instructions);
+				//scope.instructions.push(instructions);
 				//console.log("creating new element with", instructions.videoSource, instructions);
 				var updatedVideoElement = VideoFactory.createVideoElement(instructions.videoSource, instructions)
 				//console.log("created new video element with instructions", updatedVideoElement.instructions);
 				scope.videos.push(updatedVideoElement);
-				//console.log("****scope.videos BEFORE ATTACH", scope.videos);
+				console.log("****scope.videos BEFORE ATTACH", scope.videos);
 				setTimeout(()=> {
 					attachSourceToVideo(updatedVideoElement, instructions)
 					//console.log("****scope.videos AFTER ATTACH", scope.videos);
