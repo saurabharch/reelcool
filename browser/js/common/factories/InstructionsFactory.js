@@ -1,4 +1,4 @@
-app.factory('InstructionsFactory',function(IdGenerator){
+app.factory('InstructionsFactory',function (IdGenerator) {
 	var instructions = [];
 
 	return {
@@ -15,6 +15,7 @@ app.factory('InstructionsFactory',function(IdGenerator){
 				startTime: 0,
 				endTime: endTime,
 			};
-		}
+		}, 
+		update: (newInstructions) => instructions = newInstructions
 	};
 });
