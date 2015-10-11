@@ -15,10 +15,8 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 				console.log("****scope.videos at start", scope.videos, "new instructions", instructions);
 				//if clip is already there, modify it
 				//scope.instructions[] = instructions;
-				var index = _.findIndex(scope.videos, (el) => {
-					return el.instructions.id === instructions.id;
-				});
 
+				var index = getVideoIndexByInstructionsId(instructions.id);
 				if(index> -1){
 					//clip was previously added to list
 					_.assign(scope.videos[index].instructions, instructions);
@@ -36,6 +34,19 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 					}, 0);
 				}
 			});
+
+			scope.$on('unstageClip', (e, clip)=> {
+				var index = getVideoIndexByInstructionsId(clip.instructions.id);
+				if(index>-1){
+					scope.videos.splice(index, 1);
+				}
+			});
+
+			function getVideoIndexByInstructionsId (id) {
+				return _.findIndex(scope.videos, (el) => {
+					return el.instructions.id === id;
+				});
+			};
 
 			function attachSourceToVideo(updatedVideoElement, instructions) {
 				VideoFactory.attachVideoSource(instructions.videoSource, updatedVideoElement.id)
