@@ -4,7 +4,7 @@ app.factory("AudioFactory", function () {
 		tracks = [];
 
 	audioFactory.setAudioElement = function (audioElement) {
-		return tracks.push(audioElement);
+		tracks.push(audioElement);
 	};
 
 	audioFactory.getAudioElements = function () {

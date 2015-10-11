@@ -5,14 +5,15 @@ app.directive('videoPlayer', () => {
       instructions: '=',
       width: "=",
       height: "=",
-      videoPlayerId: '='
+      videoPlayerId: '=',
+      audioenabled: "="
     },
     templateUrl: 'js/common/directives/videoplayer/videoplayer.html',
     controller: 'VideoPlayerCtrl'
   };
 });
 
-app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
+app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFactory) => {
   var videos = [],
       timeoutId,
       instructionVideoMap = {};
@@ -20,6 +21,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
   $scope.instructions = $scope.instructions || [];
   $scope.videoContainerId = "video-container" + IdGenerator();
 
+  if ($scope.audioenabled) {
+    $scope.audioTracks = AudioFactory.getAudioElements();
+  }
 
 
  //  _____       _ _   _       _ _          _   _
@@ -140,6 +144,11 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
     clearTimeout(timeoutId);
     pauseCurrentVideo();
     $scope.totalCurrentTime = args[0].time;
+
+    if ($scope.currentAudio) {
+      $scope.currentAudio.domElement.currentTime = args[0].time;
+    }
+
     //console.log("totalCurrentTime@ reaction in ctrl", $scope.totalCurrentTime, "args", args);
     updateVideo();
     if (!args[0].paused) {
@@ -215,15 +224,38 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
 
 
   function pauseCurrentVideo() {
+    console.log("current audio:", $scope.currentAudio);
+    if ($scope.currentAudio) {
+      $scope.currentAudio.domElement.pause();
+    }
     videos[$scope.currentClip].pause();
     console.log("pauseCurrentVideo was invoked");
     $scope.$broadcast('pauseCurrentVideo');
   }
 
   function playCurrentVideo() {
+    if ($scope.currentAudio) {
+      $scope.currentAudio.domElement.play();
+    }
     videos[$scope.currentClip].play();
     $scope.$broadcast('playCurrentVideo');
   }
+
+
+  $scope.$watch("currentAudio", function (newValue, oldValue) {
+    if (newValue === oldValue) {
+      return;
+    }
+    if (videos[$scope.currentClip].paused) {
+      return;
+    }
+    if (oldValue) {
+      oldValue.domElement.pause();
+    }
+    newValue.domElement.currentTime = $scope.totalCurrentTime;
+    newValue.domElement.play();
+  });
+
 
 
 });
