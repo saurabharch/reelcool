@@ -10,9 +10,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 		return array[Math.round(Math.random() * (array.length - 1))];
 	};
 
-	//TODO get from FilterFactory
-	var filters = ["invert", "blur", "bw", "sepia"];
-
+	var filters = FilterFactory.filters;
 
 	var getRange = function (duration, cutLength) {
 		var start = Math.round(Math.random() * (duration - cutLength));
@@ -31,7 +29,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			range = getRange(duration, cutLength);
 			instr.startTime = range[0];
 			instr.endTime = range[1];
-			instr.filter = getRandomElement(filters);
+			instr.filter = getRandomElement(filters).code;
 			cuts.push(instr);
 		}
 
@@ -45,6 +43,9 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 
 	generator.createVideo = function (videoElements, cutsNumber, cutLength) {
+		console.log(videoElements);
+		console.log(cutsNumber);
+		console.log(cutLength);
 		var allInstructions = [];
 		videoElements.forEach(video => {
 			var duration = document.getElementById(video.id).duration;
@@ -54,7 +55,6 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 		shuffle(allInstructions);
 		return allInstructions;
 	};
-
 
 	return generator;
 

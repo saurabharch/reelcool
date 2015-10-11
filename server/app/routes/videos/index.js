@@ -118,10 +118,14 @@ router.post('/makeit', function(req, res) {
         return fs.readdirAsync(stagingAreaPath)
             .then(arrayOfFiles => Promise.map(arrayOfFiles, function (file) { return fs.unlinkAsync(path.join(stagingAreaPath, file)); }));
     }
-
     
 });
 
+router.get('/getconverted/:userId/:videoId',function (req,res){
+    var filename = req.params.videoId+'.webm';
+    var pathToVid = path.join(filesPath, req.params.userId, 'uploaded', filename);
+    fs.createReadStream(pathToVid).pipe(res);
+});
 
 router.get('/download/:videoId',function (req,res) {
     res.setHeader('Content-disposition', 'attachment; filename=reelcoolmovie.mp4');
@@ -150,6 +154,27 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
             });
         });
     }
+});
+
+router.delete('/:videoId', function (req,res) {
+    let videoId = req.params.videoId;
+    let filename = videoId+'.webm';
+    let fullFilePath = path.join(uploadedFilesPath,filename);
+    
+    fs.unlinkAsync(fullFilePath)
+        .then( 
+            // file found, proceed to delete reference from db
+            () => true, 
+            // unlink will err if file not found, that's why we need this whole block, 
+            // to keep this on the success chain
+            () => console.log('File not found. Attempting to remove any remaining reference to it from db.') 
+        ) 
+        .then( () => Video.findByIdAndRemove(videoId))
+        .then(function (removed) {
+            if (removed) res.send(removed);
+            else res.status(404).send();
+        });
+
 });
 
 module.exports = router;
