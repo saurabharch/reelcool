@@ -31,20 +31,16 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
 
 
   $scope.prepareVideoElements = function() {
-    console.log('preparing video elements')
     if (!$scope.instructions.length) {
       return;
     }
 
-    console.log('I am emitting videoPlayerLoaded with',instructionVideoMap);
     $scope.$emit('videoPlayerLoaded', instructionVideoMap);
 
       var promisedAttachments = [];
       $scope.instructions.forEach((instruction) => {
           var videoId = instructionVideoMap[instruction.id],
               promise = VideoFactory.attachVideoSource(instruction.videoSource, videoId);
-          console.log('I made a promise');
-          console.log(promise);
           promisedAttachments.push(promise);
       });
 
@@ -55,7 +51,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       // });
 
     var videosArrayLike = $("#" + $scope.videoContainerId).find("video");
-    console.log("$videos", videosArrayLike);
     for (var i = 0; i < videosArrayLike.length; i++) {
       videos[i] = videosArrayLike[i];
       videos[i].index = i;
@@ -193,9 +188,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
       var newIndex;
       for (var i = 0; i < videos.length; i++) {
         // sets indices
-        console.log("$scope.totalCurrentTime", $scope.totalCurrentTime,"timeBefore", videos[i].timeBefore);
+        //console.log("$scope.totalCurrentTime", $scope.totalCurrentTime,"timeBefore", videos[i].timeBefore);
         if ($scope.totalCurrentTime < videos[i].timeBefore) {
-          console.log("$scope.totalCurrentTime", $scope.totalCurrentTime,"timeBefore", videos[i].timeBefore);
+          //console.log("$scope.totalCurrentTime", $scope.totalCurrentTime,"timeBefore", videos[i].timeBefore);
           newIndex = i - 1;
           foundSpot = true;
         } else if (i === videos.length - 1) {

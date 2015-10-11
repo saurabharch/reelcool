@@ -16,7 +16,6 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     VideoElement.prototype.addSource = function (videoSource, instructions) {
     	this.videoSource = videoSource;
         this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
-        console.log('my source was added',this.videoSource);
     };
 
     var VideoSource = function(fileName, mimeType, arrayBuffer) {
@@ -204,9 +203,6 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     };
 
     vidFactory.attachVideoSource = function(videoSource, videoElementId) {
-        console.log('attaching video source');
-        console.log(videoSource);
-        console.log(videoElementId);
         if (videoSource.arrayBuffer) {
             return attachBufferVideoSource(videoSource, videoElementId);
         }
