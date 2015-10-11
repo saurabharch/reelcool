@@ -20,13 +20,11 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 				}
 				else{
 					//clip is not already there, add it to the end
-					var updatedVideoElement = VideoFactory.createVideoElement(instructions.videoSource, instructions)
-					//console.log("created new video element with instructions", updatedVideoElement.instructions);
+					var updatedVideoElement = VideoFactory.createVideoElement(instructions.videoSource, instructions);
 					$scope.videos.push(updatedVideoElement);
 
 					setTimeout(()=> {
-						attachSourceToVideo(updatedVideoElement, instructions)
-						//console.log("****$scope.videos AFTER ATTACH", $scope.videos);
+						attachSourceToVideo(updatedVideoElement, instructions);
 					}, 0);
 				}
 			});
@@ -48,6 +46,7 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 				VideoFactory.attachVideoSource(instructions.videoSource, updatedVideoElement.id)
 				.then(() =>  {
 					updatedVideoElement.sourceAttached = true;
+					updatedVideoElement.instructions = instructions;
 					if(typeof updatedVideoElement.instructions.endTime==='undefined'){
 						updatedVideoElement.instructions.endTime = document.getElementById(updatedVideoElement.id).duration;
 					}

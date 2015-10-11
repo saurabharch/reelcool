@@ -45,6 +45,9 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 
 	generator.createVideo = function (videoElements, cutsNumber, cutLength) {
+		console.log(videoElements);
+		console.log(cutsNumber);
+		console.log(cutLength);
 		var allInstructions = [];
 		videoElements.forEach(video => {
 			var duration = document.getElementById(video.id).duration;
