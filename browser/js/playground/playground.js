@@ -35,7 +35,6 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
         filter.applied = false;
         return filter;
     });
-    console.log('all me filters!', $scope.filters)
   }
 
   $scope.toggleFilter = (filter) => {
@@ -70,13 +69,16 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     // for(var key in Object.keys($scope.instructions[0])){
     //   instructionsCopy[key] = $scope.instructions[0][key];
     // }
-    $scope.instructions[0].filters=$scope.filters.filter(el => el.applied).map(el=>{filterName:el.displayName, val});
+    $scope.instructions[0].filters=$scope.filters.filter(el => el.applied).map(function(el){
+      return{filterName:el.displayName, value:el.val};
+    });
 
     _.assign(instructionsCopy, $scope.instructions[0]);
     //angular.copy($scope.instructions[0], instructionsCopy);
     console.log("instructionsCopy from playground", instructionsCopy);
 
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
+    initFilters();
   };
 
 });
