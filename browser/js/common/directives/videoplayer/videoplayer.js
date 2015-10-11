@@ -216,7 +216,12 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
           //console.log("oldIndex", oldIndex, "newIndex", newIndex);
           var clipToPlay = videos[newIndex];
           console.log("clipToPlay", clipToPlay, "newIndex", newIndex);
-          clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
+          // I changed the clipToPlay.currentTime assignment because the preview wasn't working.
+          // It would start the second clip much earlier than it was supposed to. Now it starts at the right time.
+          // The downside is that the slider skips when the video switches now :( -Cristina
+          // The formerly used assignment is still below, just commented out.
+          //clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
+          clipToPlay.currentTime = $scope.instructions[newIndex].startTime;
           if (videos[oldIndex].ended || !videos[oldIndex].paused) {
             videos[oldIndex].pause();
             clipToPlay.play();

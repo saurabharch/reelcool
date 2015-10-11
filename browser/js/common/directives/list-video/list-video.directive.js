@@ -32,7 +32,12 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 			};
 
 			scope.getSizeMb = function () {
-				return Math.round(scope.video.videoSource.arrayBuffer.byteLength / 1024) / 1000;
+				// Videos don't immediately get a source, causing this function to error
+				// if it doesn't have a defensive if statement.
+				if (scope.video.videoSource) {
+					return Math.round(scope.video.videoSource.arrayBuffer.byteLength / 1024) / 1000;
+				}
+				return 'NA';
 			};
 
 			scope.removeSource = function (videoSourceId) {
