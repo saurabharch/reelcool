@@ -1,4 +1,4 @@
-app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, PreviewFactory, InstructionsFactory, $state, RandomVideoGenerator) {
+app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, PreviewFactory, InstructionsFactory, $state, RandomVideoGenerator) {
 
     $scope.videos = [];
 
@@ -24,17 +24,18 @@ app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, Pre
             $scope.videos.push(videoElement); //try putting this up here and see if we get the spinner
             VideoFactory.addVideoSource(file)
                 .then(function(videoSource) {
-                	videoElement.addSource(videoSource);
+                    videoElement.addSource(videoSource);
                     // if it was originally a webm video, we'll want to digest
                     // if it wasn't, there will be a digest in progress, so we need to check before doing it
                     let phase = $rootScope.$$phase;
-                    if (phase!=="$apply" && phase!=="$digest") $scope.$digest();
+                    if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
                     return VideoFactory.attachVideoSource(videoSource, videoElement.id);
                 }).then(function() {
                     videoElement.sourceAttached = true;
+                    videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
                     // same here as above
                     let phase = $rootScope.$$phase;
-                    if (phase!=="$apply" && phase!=="$digest") $scope.$digest();
+                    if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
                 }).then(null, function(error) {
                     //TODO show error on video tag
                     console.error("Error occured when attaching video source", error);
@@ -42,7 +43,6 @@ app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, Pre
         });
 
     });
-
 
     // This is here just for testing the preview player
     $scope.previewVideo = () => {
@@ -52,6 +52,4 @@ app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, Pre
         PreviewFactory.setInstructions(allInstructions);
         $state.go('preview');
     };
-
-
 });

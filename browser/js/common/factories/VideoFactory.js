@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService) {
+app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService, InstructionsFactory) {
     var vidFactory = {},
         videoSources = {};
 
@@ -6,13 +6,14 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     var userId;
     AuthService.getLoggedInUser().then(user => userId = user ? user._id : 'anon');
 
-    //TODO do ajax polling for uplodaed videos
+    //TODO do ajax polling for uploaded videos
     //TODO sent ajax call to delete on back-end
 
-    var VideoElement = function(videoSource) {
+    var VideoElement = function(videoSource, instructions) {
         this.id = IdGenerator();
         this.sourceAttached = false;
         this.videoSource = videoSource;
+        this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
     };
     VideoElement.prototype.addSource = function (videoSource) {
     	this.videoSource = videoSource;
@@ -86,8 +87,10 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
         }
     };
 
-    vidFactory.createVideoElement = function(videoSource) {
-        return new VideoElement(videoSource);
+    vidFactory.createVideoElement = function(videoSource, instructions) {
+    	var newElement = new VideoElement(videoSource, instructions);
+		console.log("created new video element", newElement);
+		return newElement;
     };
 
     var addWebmVideoSource = function(file, videoSrc, reader) {
@@ -224,5 +227,4 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     };
 
     return vidFactory;
-
 });
