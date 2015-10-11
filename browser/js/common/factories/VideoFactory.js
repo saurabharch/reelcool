@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService, InstructionsFactory) {
+app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthService, InstructionsFactory) {
     var vidFactory = {},
         videoSources = {};
 
@@ -78,11 +78,13 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
         while (!videoSources[localId] && counter >= 20) {
             setTimeout(500, incrementCounter);
         }
-        if (!videoSources[localId]) {
-            // If videoSource still not available after 10s, give up. It could have been deleted by user.
-            console.log('I could not find a videoSource to attach this mongoId to. Letting it go.');
-        } else {
+        if (videoSources[localId]) {
             videoSources[localId].addMongoId(mongoId);
+        }
+        else {
+            // If videoSource still not available after 10s, figure it must have been deleted locally by user.
+            console.log('I could not find a videoSource to attach this mongoId to. Deleting from server.');
+            deleteFromServer(mongoId);
         }
     };
 
@@ -211,18 +213,29 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
         }
     };
 
+    var deleteFromServer = function (mongoId) {
+        $http.delete('/api/videos/'+mongoId).then(function (resp) {
+            if (resp.status===200) console.log('Successfully deleted', resp.data._id);
+            else console.log('Server responded with ', resp.status); // should be 404 if video was not found
+        });
+    };
 
     vidFactory.deleteVideoSource = function(videoSourceId) {
         var videoSource = videoSources[videoSourceId];
-
         $rootScope.$broadcast("videosource-deleted", videoSourceId);
-
         videoSource.objUrls.forEach(window.URL.revokeObjectURL);
         delete videoSource.arrayBuffer;
 
-        //TODO sent ajax call to delete on back-end
+        console.log("Video source terminated locally.");
 
-        console.log("video source terminated!");
+        if (videoSource.mongoId) {
+            console.log(videoSource.mongoId);
+            console.log('Requesting deletion from server.');
+            deleteFromServer(videoSource.mongoId);
+        }
+        // Else do nothing. If the videoSource doesn't have a mongoId yet, then the
+        // delete request will be sent when the mongoId comes in 
+        // Refer to attachMongoId function to see where this is called.
     };
 
     return vidFactory;
