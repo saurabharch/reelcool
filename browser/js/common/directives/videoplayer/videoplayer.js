@@ -73,6 +73,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       cumulativeTimeBefore += $scope.instructions[i].endTime - $scope.instructions[i].startTime;
     }
 
+    initAudio();
+
     timeoutId = setTimeout(updateVideo, 10);
     playCurrentVideo();
 
@@ -96,6 +98,11 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       init();
     }
   });
+
+  var initAudio = function () {
+    changeMute($scope.currentAudio.id !== "original_track");
+    $scope.currentAudio.domElement.currentTime = 0;
+  };
 
 
   function initializeTimes() {
@@ -242,17 +249,16 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     $scope.$broadcast('playCurrentVideo');
   }
 
+  var changeMute = function (newState) {
+    videos.forEach(function (video) {
+      video.muted = newState;
+    });
+  };
 
   $scope.$watch("currentAudio", function (newValue, oldValue) {
     if (newValue === oldValue) {
       return;
     }
-
-    var changeMute = function (newState) {
-      videos.forEach(function (video) {
-        video.muted = newState;
-      });
-    };
 
     if (newValue.id === "original_track") {
       changeMute(false);
