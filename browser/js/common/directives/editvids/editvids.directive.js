@@ -1,13 +1,13 @@
-app.directive("editvids", function (PreviewFactory, VideoFactory) {
+app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFactory) {
 	return {
 		restrict: "E",
-		$scope: {
-		},
+		scope: {},
 		templateUrl: "js/common/directives/editvids/editvids.html",
 		controller: function ($scope, $mdDialog) {
 
 			$scope.videos = [];
-			$scope.instructions = [];
+			$scope.instructions = InstructionsFactory.get();
+			//$scope.instructions = [];
 
 			var instructionsToVideoMap = {};
 			//$scope.instructions= Pedit reel got instructions"reviewFactory.instructions;
@@ -20,7 +20,8 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 				}
 				else{
 					//clip is not already there, add it to the end
-					var updatedVideoElement = VideoFactory.createVideoElement(instructions.videoSource, instructions);
+					var updatedVideoElement = VideoFactory.createVideoElement();
+					updatedVideoElement.addSource(instructions.videoSource, instructions);
 					$scope.videos.push(updatedVideoElement);
 
 					setTimeout(()=> {
@@ -58,14 +59,21 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 				});
 			}
 
-			function updateInstructions() {
-				$scope.instructions = $scope.videos.map(el => el.instructions);
+			function updateInstructions(videosList) {
+				// Updates the instructions in the InstructionsFactory
+				// and puts them on the scope.
+				var newInstructions = videosList.map(el => el.instructions);
+				$scope.instructions = InstructionsFactory.update(newInstructions);
 			}
 
 			$scope.showPreviewModal = ($event) => {
-				updateInstructions();
+				console.log('showing preview modal, time to update instructions')
+				updateInstructions($scope.videos);
+				console.log('instructions are updated')
+				console.log('from InstructionsFactory',InstructionsFactory.get());
+				console.log('from the $scope',$scope.instructions);
 				PreviewFactory.showPreview($event, $scope.instructions);
-			}
+			};
 
 		}
 
