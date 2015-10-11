@@ -26,7 +26,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   });
 
   $scope.updatedTimeRange = () => {
-    $scope.$broadcast('updatedTimeRange');
+    $scope.$broadcast('updatedTimeRange', {startTime: $scope.newStartTime, endTime: $scope.newEndTime});
   };
 
   function initFilters () {
