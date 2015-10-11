@@ -66,7 +66,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       cumulativeTimeBefore += $scope.instructions[i].endTime - $scope.instructions[i].startTime;
     }
 
-    initAudio();
+    if ($scope.audioenabled) {
+      initAudio();
+    }
 
     timeoutId = setTimeout(updateVideo, 10);
     playCurrentVideo();
@@ -109,7 +111,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       //move the slider as video plays
       //console.log("video.currentTime", this.currentTime);
       if (this.index === $scope.currentClip) {
-        console.log("time gets messed up", video.timeBefore,  video.currentTime, $scope.instructions[index].startTime);
+        //console.log("time gets messed up", video.timeBefore,  video.currentTime, $scope.instructions[index].startTime);
         $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
       } else {
         console.log("video", this.index, "played but it didn't affect the time");
@@ -186,7 +188,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
 
-    setVolume();
+    if ($scope.audioenabled) {
+      setVolume();
+    }
 
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
       ended = true;
@@ -220,8 +224,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
           // It would start the second clip much earlier than it was supposed to. Now it starts at the right time.
           // The downside is that the slider skips when the video switches now :( -Cristina
           // The formerly used assignment is still below, just commented out.
-          //clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
-          clipToPlay.currentTime = $scope.instructions[newIndex].startTime;
+          clipToPlay.currentTime = $scope.totalCurrentTime - clipToPlay.timeBefore + $scope.instructions[newIndex].startTime;
+          //clipToPlay.currentTime = $scope.instructions[newIndex].startTime;
           if (videos[oldIndex].ended || !videos[oldIndex].paused) {
             videos[oldIndex].pause();
             clipToPlay.play();
