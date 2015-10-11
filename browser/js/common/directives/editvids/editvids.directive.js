@@ -12,8 +12,6 @@ app.directive("editvids", function (PreviewFactory, VideoFactory) {
 			var instructionsToVideoMap = {};
 			//scope.instructions= Pedit reel got instructions"reviewFactory.instructions;
 			scope.$on('sendClipToReel', (e,instructions) => {
-
-				console.log("got instructions", instructions);
 				//console.log("****scope.videos at start", scope.videos, "new instructions", instructions);
 				//if clip is already there, modify it
 				//scope.instructions[] = instructions;
