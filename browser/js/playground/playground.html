@@ -2,8 +2,8 @@
   <div class="col-sm-12">
     <video-player width="600" height="350" instructions="instructions" video-player-id="'editor'"></video-player>
     <div ng-show="instructions.length" class="row">
-      <input type="text" ng-model="instructions[0].startTime"></input>
-      <input type="text" ng-model="instructions[0].endTime"></input>
+      <input type="text" ng-model="newStartTime"></input>
+      <input type="text" ng-model="newEndTime"></input>
       <button ng-click="updatedTimeRange()">Update Times</button>
     </div>
     <div class="row">
