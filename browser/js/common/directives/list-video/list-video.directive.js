@@ -1,4 +1,4 @@
-app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootScope) {
+app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootScope, IdGenerator) {
 	return {
 		restrict: "E",
 		templateUrl: "js/common/directives/list-video/list-video.html",
@@ -17,6 +17,9 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 				//make a copy of the instructions and send it to the playground
 				var instructionsCopy = {};
 				_.assign(instructionsCopy, scope.video.instructions);
+				if(!instructionsCopy.edited){
+					instructionsCopy.id = IdGenerator();
+				}
 				$rootScope.$broadcast("changeVideo", [instructionsCopy], "editor");
 			};
 

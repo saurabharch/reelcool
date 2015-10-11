@@ -8,10 +8,12 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator, InstructionsFacto
 	//TODO sent ajax call to delete on back-end
 
 	var VideoElement = function (videoSource, instructions) {
+		console.log("VideoElement constructor got instructions", instructions);
 		this.id = IdGenerator();
 		this.sourceAttached = false;
 		this.videoSource = videoSource;
 		this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
+		console.log("constructor's this", this);
 	};
 
 
@@ -43,7 +45,9 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator, InstructionsFacto
 
 
 	vidFactory.createVideoElement = function (videoSource, instructions) {
-		return new VideoElement(videoSource, instructions);
+		var newElement = new VideoElement(videoSource, instructions);
+		console.log("created new video element", newElement);
+		return newElement;
 	};
 
 
