@@ -5,14 +5,15 @@ app.directive('videoPlayer', () => {
       instructions: '=',
       width: "=",
       height: "=",
-      videoPlayerId: '='
+      videoPlayerId: '=',
+      filters: '='
     },
     templateUrl: 'js/common/directives/videoplayer/videoplayer.html',
     controller: 'VideoPlayerCtrl'
   };
 });
 
-app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
+app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator,FilterFactory) => {
   var videos = [],
       timeoutId,
       instructionVideoMap = {};

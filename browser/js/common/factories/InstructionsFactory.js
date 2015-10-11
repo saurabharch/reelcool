@@ -17,4 +17,4 @@ app.factory('InstructionsFactory',function(IdGenerator){
 			};
 		}
 	};
-})
+});

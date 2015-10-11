@@ -38,16 +38,10 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     console.log('all me filters!', $scope.filters)
   }
 
-  $scope.clearFilter = (filter)=> {
-    if(filter.applied)
-      filter.applied = false;
-  };
-  $scope.x = 5;
-
   $scope.toggleFilter = (filter) => {
     if (filter.applied){
       filter.applied = false;
-      updateFilterString();
+      filter.val = filter.default;
       return;
     }
     else{
@@ -55,15 +49,17 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
       $scope.filters.forEach(el => {
         if(filter.code ==="clear"){
           el.applied = false;
+          el.val = el.default;
         }
         else if(filter.primary){
           if(el.primary && el!==filter){
             el.applied = false;
+            el.val = el.default;
           }
         }
       });
+      if(filter.displayName=='Invert') filter.val = 1;
     }
-    updateFilterString();
   };
 
   $scope.cutToInstructions = () => {
@@ -82,10 +78,5 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
 
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
   };
-
-  function updateFilterString() {
-    let newFilterStr = FilterFactory.createFilterString($scope.filters);
-    $video.attr('style', `-webkit-filter:${newFilterStr}`);
-  }
 
 });
