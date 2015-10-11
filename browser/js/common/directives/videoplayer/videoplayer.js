@@ -296,11 +296,26 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   });
 
 
+  var resetVolume = function () {
+      if (getCurrentVolume() === 1) {
+        return;
+      }
+      $scope.currentAudio.domElement.volume = 1;
+      videos[$scope.currentClip].volume = 1;
+  };
+
+  var getCurrentVolume = function () {
+    if ($scope.currentAudio.id === "original_track") {
+      return videos[$scope.currentClip].volume;
+    }
+    return $scope.currentAudio.domElement.volume;
+  };
+
   var defaultVolume = 1;
   var fadeTreshold = 10; // in percent
   var setVolume = function () {
     if (!$scope.fadeOut) {
-      videos[$scope.currentClip].volume = 1;
+      resetVolume();
       return;
     }
     // FADEOUT
@@ -308,7 +323,13 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     $scope.percentageLeft = percentageLeft;
     if (percentageLeft >= 0 && percentageLeft <= fadeTreshold) {
       var newVolume = percentageLeft / fadeTreshold;
-      videos[$scope.currentClip].volume = newVolume;
+      if ($scope.currentAudio.id === "original_track") {
+        videos[$scope.currentClip].volume = newVolume;
+      } else {
+        $scope.currentAudio.domElement.volume = newVolume;
+      }
+    } else {
+        resetVolume();
     }
   };
 
