@@ -20,6 +20,8 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   });
 
   $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
+    console.log('I heard videoPlayerLoaded',instructionVideoMap);
+    console.log('here is $scope.instructions[0]',$scope.instructions[0]);
     video = document.getElementById(instructionVideoMap[$scope.instructions[0].id]);
     $video = $(video);
     initFilters();

@@ -9,14 +9,14 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     //TODO do ajax polling for uploaded videos
     //TODO sent ajax call to delete on back-end
 
-    var VideoElement = function(videoSource, instructions) {
+    var VideoElement = function() {
         this.id = IdGenerator();
         this.sourceAttached = false;
-        this.videoSource = videoSource;
-        this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
     };
-    VideoElement.prototype.addSource = function (videoSource) {
+    VideoElement.prototype.addSource = function (videoSource, instructions) {
     	this.videoSource = videoSource;
+        this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
+        console.log('my source was added',this.videoSource);
     };
 
     var VideoSource = function(fileName, mimeType, arrayBuffer) {
@@ -204,6 +204,8 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
     };
 
     vidFactory.attachVideoSource = function(videoSource, videoElementId) {
+        console.log(videoSource);
+        console.log(videoElementId);
         if (videoSource.arrayBuffer) {
             return attachBufferVideoSource(videoSource, videoElementId);
         }

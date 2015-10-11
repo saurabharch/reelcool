@@ -31,17 +31,20 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator) => {
 
 
   $scope.prepareVideoElements = function() {
-
+    console.log('preparing video elements')
     if (!$scope.instructions.length) {
       return;
     }
 
+    console.log('I am emitting videoPlayerLoaded with',instructionVideoMap);
     $scope.$emit('videoPlayerLoaded', instructionVideoMap);
 
       var promisedAttachments = [];
       $scope.instructions.forEach((instruction) => {
           var videoId = instructionVideoMap[instruction.id],
               promise = VideoFactory.attachVideoSource(instruction.videoSource, videoId);
+          console.log('I made a promise');
+          console.log(promise);
           promisedAttachments.push(promise);
       });
 
