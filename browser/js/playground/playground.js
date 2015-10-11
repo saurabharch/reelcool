@@ -35,24 +35,42 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
         filter.applied = false;
         return filter;
     });
+    console.log('all me filters!', $scope.filters)
   }
 
-  $scope.toggleFilter = (filter) => {
+  $scope.clearFilter = (filter)=> {
+    if(filter.applied)
+      filter.applied = false;
+  };
+  $scope.x = 5;
 
-    $scope.filters.forEach(el => {
-      if(filter.code ===""){
-        el.applied = false;
-      }
-      else if(el.code === filter.code || el.applied){
-        el.applied = !el.applied;
-      }
-    });
-    saveFilterToInstructions();
+  $scope.toggleFilter = (filter) => {
+    if (filter.applied){
+      filter.applied = false;
+      updateFilterString();
+      return;
+    }
+    else{
+      filter.applied = true;
+      $scope.filters.forEach(el => {
+        if(filter.code ==="clear"){
+          el.applied = false;
+        }
+        else if(filter.primary){
+          if(el.primary && el!==filter){
+            el.applied = false;
+          }
+        }
+      });
+    }
     updateFilterString();
   };
 
   $scope.cutToInstructions = () => {
-    console.log("cutToInstructions called")
+    console.log("cutToInstructions called");
+    /* Below assigns the 'filters' property of the instructions to an array 
+    of objects (of the form {filterName: *filter name*, val: *value for filter*})*/ 
+    $scope.instructions[0].filters=$scope.filters.filter(el => el.applied).map(el=>{filterName:el.displayName, val});
     PreviewFactory.addToInstructions($scope.instructions);
     console.log("new preview instructions", PreviewFactory.getInstructions());
   };
@@ -60,11 +78,6 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   function updateFilterString() {
     let newFilterStr = FilterFactory.createFilterString($scope.filters);
     $video.attr('style', `-webkit-filter:${newFilterStr}`);
-  }
-
-  function saveFilterToInstructions (){
-    console.log("will save",  $scope.filters.filter(el => el.applied)[0].code);
-    $scope.instructions[0].filter = $scope.filters.filter(el => el.applied)[0].code;
   }
 
 });
