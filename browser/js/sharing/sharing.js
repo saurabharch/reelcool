@@ -7,41 +7,35 @@ app.directive('sharing', () => {
         },
         controller: 'ShareCtrl',
         templateUrl: 'js/sharing/sharing.html'
-    }
+    };
 });
 
-app.controller('ShareCtrl', function ($scope, $mdDialog) {
-  function download () {
-    $.ajax({
-      method: 'POST',
-      url:'/api/videos/makeit',
-      data:  {data:[
-      {
-        startTime: 2,
-        endTime: 3,
-        filters: ["blur"]
-      },
-      {
-        startTime: 4,
-        endTime: 6,
-        filters: ["sepia"]
-      },
-      {
-        startTime: 3,
-        endTime: 4,
-        filters: ["grayscale"]
-      }
-      ]}
-    }).done(function(vid){
-      var src = '/api/videos/download/' + vid;
-      $("body").append("<iframe src=" + src + " style='display: none;' ></iframe>");
-    });
-  };
+app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFactory) {
+  function requestReelVideo (instructions) {
+    return $http.post('/api/videos/makeit', instructions);
+  }
+  function promisifiedDownload (instructions) {
+    requestReelVideo(instructions)
+      .then(function (resp) {
+        if (resp.status===201) {
+          var url = '/api/videos/download/'+resp.data;
+          // this "append" is what actually causes the video file to download to the user's computer
+          $("body").append("<iframe src=" + url + " style='display: none;' ></iframe>");
+        }
+        else {
+          console.error('The server responded with status', resp.status);
+        }
+      });
+  }
 
 	$scope.socialNetworks = ['Download', 'Twitter', 'Facebook', 'Instagram'];
     $scope.isOpen = false;
     $scope.openDialog = function($event, item) {
-      if (item==='Download') download();
+      console.log('oh hey I was clicked')
+      var instructions = InstructionsFactory.get();
+      if (item==='Download') {
+        promisifiedDownload(instructions);
+      }
       else {
         // Show the dialog
         $mdDialog.show({

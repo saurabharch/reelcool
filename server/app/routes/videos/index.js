@@ -51,59 +51,58 @@ var upload = multer({
 });
 
 var filters = {
-    grayscale: 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
-    sepia: 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-    blur: 'boxblur=luma_radius=5:luma_power=3',
-    invert: 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val'
+    "grayscale()": 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
+    "sepia()": 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
+    "blur()": 'boxblur=luma_radius=5:luma_power=3',
+    "invert()": 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val'
 };
 
 router.post('/makeit', function(req, res) {
-    var instructions = [{
-        videoSource: {
-            _id: '56182b7f25ba9a8e4c48b46a',
-            startTime: '0',
-            endTime: '3',
-            filter: filters.sepia
-        }
-    }, {
-        videoSource: {
-            _id: '56182b8325ba9a8e4c48b46b',
-            startTime: '2',
-            endTime: '5',
-            filter: filters.grayscale
-        }
-    }, {
-        videoSource: {
-            _id: '56182b8825ba9a8e4c48b46c',
-            startTime: '5',
-            endTime: '10',
-            filter: filters.blur
-        }
-    }];
-    var vidsDone = 0;
-    var mergedVideo = ffmpeg();
+    let instructions = req.body;
+    let vidsDone = 0;
+    let mergedVideo = ffmpeg();
 
     instructions.forEach(function(instruction, ind) {
-        var vid = instruction.videoSource;
-        var sourceVid = uploadedFilesPath + '/' + vid._id + '.webm';
-        var destVid = stagingAreaPath + '/' + vid._id + '.mp4';
-        var duration = (Number(vid.endTime) - Number(vid.startTime)).toString();
-        var filtersProc = spawn('ffmpeg', ['-ss', vid.startTime, '-i', sourceVid, '-t', duration, '-filter_complex', vid.filter, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
+        let vid = instruction.videoSource.mongoId;
+        let sourceVid = uploadedFilesPath + '/' + vid + '.webm';
+        let destVid = stagingAreaPath + '/' + vid + '.mp4';
+        let startTime = instruction.startTime;
+        let duration = (Number(instruction.endTime) - Number(startTime)).toString();
+        // TODO: Need an option for "no filter" that doesn't break the child process 
+        // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
+        // That's why we currently force it to have grayscale if it doesn't already have a filter.
+        let filterName = instruction.filter || "grayscale"; 
+        let filterCode = filters[filterName];
+        
+        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
+        filtersProc.on('error',function(err,stdout,stderr){
+            console.error('Errored when attempting to convert this video. Details below.');
+            console.error(err);
+            console.error(stdout);
+            console.error(stderr);
+        });
         filtersProc.on('exit', function(code, signal) {
-            console.log('I filtered and converted', vid._id);
+            console.log('Filtered and converted', vid);
             vidsDone++;
-            mergedVideo.addInput(destVid);
             if (vidsDone == instructions.length) {
-                console.log('filters done, now going to merge');
-                mergeVids(mergedVideo, createdFilePath);
+                console.log('Filters done, now merging.');
+                mergeVids(mergedVideo, createdFilePath, instructions);
             }
             req.resume();
         });
     });
 
-    function mergeVids(mergedVideo) {
-        var createdVidName = Date.now() + '.mp4';
-        var mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
+    function mergeVids(mergedVideo, createdFilePath, instructions) {
+        let createdVidName = Date.now() + '.mp4';
+        let mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
+
+        // add inputs in the same order as they were in the instructions
+        instructions.forEach(function (inst) {
+            let filename = inst.videoSource.mongoId+'.mp4';
+            let input = path.join(stagingAreaPath,filename);
+            mergedVideo.addInput(input);
+        });
+        
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err) {
                 console.log('Error ' + err.message);
