@@ -17,14 +17,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   var videos = [],
       timeoutId,
       instructionVideoMap = {};
-  $scope.currentClip = 0;
-  $scope.instructions = $scope.instructions || [];
-  $scope.videoContainerId = "video-container" + IdGenerator();
-
-  if ($scope.audioenabled) {
-    $scope.audioTracks = AudioFactory.getAudioElements();
-    $scope.currentAudio = AudioFactory.getOriginalAudio();
-  }
 
 
  //  _____       _ _   _       _ _          _   _
@@ -34,6 +26,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
  //  _| |_| | | | | |_| | (_| | | |/ / (_| | |_| | (_) | | | |
  // |_____|_| |_|_|\__|_|\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
 
+  $scope.currentClip = 0;
+  $scope.instructions = $scope.instructions || [];
+  $scope.videoContainerId = "video-container" + IdGenerator();
 
   $scope.prepareVideoElements = function() {
 
@@ -99,12 +94,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     }
   });
 
-  var initAudio = function () {
-    changeMute($scope.currentAudio.id !== "original_track");
-    $scope.currentAudio.domElement.currentTime = 0;
-  };
-
-
   function initializeTimes() {
     $scope.totalEndTime = 0;
     $scope.totalCurrentTime = 0;
@@ -150,7 +139,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
   $scope.$on('newMovingTime', (event, ...args) => {
     clearTimeout(timeoutId);
-    pauseCurrentVideo();
+    var isPlaying = !videos[$scope.currentClip].paused;
+    pauseCurrentVideo();  // changes isPlaying t false
+    $scope.isPlaying = isPlaying;
     $scope.totalCurrentTime = args[0].time;
 
     if ($scope.currentAudio) {
@@ -189,6 +180,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   function updateVideo() {
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
+
+    setVolume();
+
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
       ended = true;
       console.log("end of video");
@@ -224,7 +218,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
         }
         if (foundSpot) break;
       }
-      if (!ended && !videos[$scope.currentClip].paused) {
+      // if (!ended && !videos[$scope.currentClip].paused) {
+      if (!ended && $scope.isPlaying) {
         timeoutId = setTimeout(updateVideo, 10);
       }
     }
@@ -237,6 +232,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       $scope.currentAudio.domElement.pause();
     }
     videos[$scope.currentClip].pause();
+    $scope.isPlaying = false;
     console.log("pauseCurrentVideo was invoked");
     $scope.$broadcast('pauseCurrentVideo');
   }
@@ -245,9 +241,29 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     if ($scope.currentAudio) {
       $scope.currentAudio.domElement.play();
     }
+    $scope.isPlaying = true;
     videos[$scope.currentClip].play();
     $scope.$broadcast('playCurrentVideo');
   }
+
+
+ //                    _ _
+ //     /\            | (_)
+ //    /  \  _   _  __| |_  ___
+ //   / /\ \| | | |/ _` | |/ _ \
+ //  / ____ \ |_| | (_| | | (_) |
+ // /_/    \_\__,_|\__,_|_|\___/
+
+
+  if ($scope.audioenabled) {
+    $scope.audioTracks = AudioFactory.getAudioElements();
+    $scope.currentAudio = AudioFactory.getOriginalAudio();
+  }
+
+  var initAudio = function () {
+    changeMute($scope.currentAudio.id !== "original_track");
+    $scope.currentAudio.domElement.currentTime = 0;
+  };
 
   var changeMute = function (newState) {
     videos.forEach(function (video) {
@@ -280,5 +296,26 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   });
 
 
+  var defaultVolume = 1;
+  var fadeTreshold = 10; // in percent
+  var setVolume = function () {
+    if (!$scope.fadeOut) {
+      videos[$scope.currentClip].volume = 1;
+      return;
+    }
+    // FADEOUT
+    var percentageLeft = 100 - (($scope.totalCurrentTime / $scope.totalEndTime) * 100);
+    $scope.percentageLeft = percentageLeft;
+    if (percentageLeft >= 0 && percentageLeft <= fadeTreshold) {
+      var newVolume = percentageLeft / fadeTreshold;
+      videos[$scope.currentClip].volume = newVolume;
+    }
+  };
+
+
+
+
 
 });
+
+
