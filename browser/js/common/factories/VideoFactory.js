@@ -67,6 +67,7 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 		//'video/mp4':  'video/mp4; codecs="avc1.64001E, mp4a.40.2"',
 		//'video/mp4':  'video/mp4; codecs="mp4v.20.8, mp4a.40.2"',
 		//'video/mp4':  'video/mp4; codecs="mp4v.20.240, mp4a.40.2"',
+		'audio/mp3': 'audio/mpeg',
 		'video/webm': 'video/webm; codecs="vp8, vorbis"'
 	};
 
@@ -75,6 +76,7 @@ app.factory("VideoFactory", function ($rootScope, IdGenerator) {
 		return new Promise(function (resolve, reject) {
 			var mediaSource = new MediaSource();
 			mediaSource.addEventListener("sourceopen", function () {
+				console.log("mime type:", videoSource.mimeType);
 				var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
 				sourceBuffer.addEventListener('updateend', function(_) {
 					try {
