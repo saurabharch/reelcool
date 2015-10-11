@@ -1,6 +1,7 @@
 .idea
 node_modules
-server/files/dragon.ogg
+server/files/*
+!server/files/anon
 npm-debug.log
 public
 .DS_Store
