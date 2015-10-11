@@ -2,7 +2,7 @@
   <div width="{{width}}px" id="{{videoContainerId}}">
   	<div class="emptyVideo" style="width: {{width}}px; height: {{height}}px" ng-hide="instructions.length">SELECT A VIDEO!</div>
     <div ng-repeat="instruction in instructions" ng-show="currentClip===$index">
-      <video width="{{width}}px" height="{{height}}px" id="{{getIdForVideo(instruction.id)}}" class='box' ng-class='instruction.filter' muted preload>
+      <video width="{{width}}px" height="{{height}}px" id="{{getIdForVideo(instruction.id)}}" class='box' ng-class='instruction.filter' preload>
       </video>
     </div>
     <time-slider ng-show="instructions.length" id="slider" moving-time="totalCurrentTime" start-time="0" end-time="totalEndTime" width="width"></time-slider>

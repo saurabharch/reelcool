@@ -23,6 +23,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
   if ($scope.audioenabled) {
     $scope.audioTracks = AudioFactory.getAudioElements();
+    $scope.currentAudio = AudioFactory.getOriginalAudio();
   }
 
 
@@ -246,14 +247,30 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     if (newValue === oldValue) {
       return;
     }
-    if (videos[$scope.currentClip].paused) {
-      return;
+
+    var changeMute = function (newState) {
+      videos.forEach(function (video) {
+        video.muted = newState;
+      });
+    };
+
+    if (newValue.id === "original_track") {
+      changeMute(false);
     }
-    if (oldValue) {
-      oldValue.domElement.pause();
+
+    if (oldValue.id === "original_track") {
+      changeMute(true);
     }
+
     newValue.domElement.currentTime = $scope.totalCurrentTime;
-    newValue.domElement.play();
+
+    if (!videos[$scope.currentClip].paused) {
+      if (oldValue) {
+        oldValue.domElement.pause();
+      }
+      newValue.domElement.play();
+    }
+
   });
 
 
