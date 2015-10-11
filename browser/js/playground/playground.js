@@ -57,7 +57,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
           }
         }
       });
-      if(filter.displayName=='Invert') filter.val = 1;
+      if(filter.displayName=='Invert'||filter.displayName=="Sepia"||filter.displayName=="Grayscale") filter.val = 1;
     }
   };
 

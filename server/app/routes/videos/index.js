@@ -51,10 +51,9 @@ var upload = multer({
 });
 
 var filters = {
-    "grayscale()": 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
-    "sepia()": 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-    "blur()": 'boxblur=luma_radius=5:luma_power=3',
-    "invert()": 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val'
+    "Grayscale": 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
+    "Sepia": 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
+    "Invert": 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val',
 };
 
 router.post('/makeit', function(req, res) {
