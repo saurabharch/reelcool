@@ -1,8 +1,7 @@
 <div id="editvids">
 	<ul id="vidslist">
 		<li ng-repeat="video in videos">
-			{{video.instructions.id}}
-			<list-video video="video"></list-video>
+			<list-video video="video" type="'edited'"></list-video>
 		</li>
 	</ul>
 	<input type="file" style="display:none" id="videofileinput" accept="video/*" multiple>

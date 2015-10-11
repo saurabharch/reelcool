@@ -3,7 +3,8 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 		restrict: "E",
 		templateUrl: "js/common/directives/list-video/list-video.html",
 		scope: {
-			video: "="
+			video: "=",
+			type: '='
 		},
 		link: function (scope, element, attr) {
 
@@ -34,9 +35,13 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 				return Math.round(scope.video.videoSource.arrayBuffer.byteLength / 1024) / 1000;
 			};
 
-			scope.remove = function (videoSourceId) {
+			scope.removeSource = function (videoSourceId) {
 				VideoFactory.deleteVideoSource(videoSourceId);
 			};
+
+			scope.unstageClip = function(video) {
+				scope.$emit('unstageClip', video);
+			}
 
 		}
 	};
