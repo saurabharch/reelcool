@@ -2,7 +2,6 @@ app.directive('playground', () => {
   return {
     restrict: 'E',
     scope: {
-      instructions: '='
     },
     controller: 'PlaygroundCtrl',
     templateUrl: 'js/playground/playground.html'
@@ -20,13 +19,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   });
 
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
-    initFilters();
-    $scope.filters.forEach((filt,ind1) => {
-      instructions.filters.forEach((prevFilt,ind2) => {
-        if(filt.displayName==prevFilt.displayName)
-          $scope.filters[ind1] = instructions.filters[ind2];
-      });
-    });
+    $scope.instructions = instructions;
   });
 
   $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
@@ -41,8 +34,18 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
 
   function initFilters () {
     //get the available filters, none of them are applied
-    $scope.filters = FilterFactory.filters.map(filter => {
+    if($scope.instructions[0].edited) return;
+    $scope.instructions[0].filters = FilterFactory.filters.map(filter => {
         filter.applied = false;
+        filter.val = filter.default;
+        return filter;
+    });
+  }
+  function resetFilters () {
+    //get the available filters, none of them are applied
+    $scope.instructions[0].filters = FilterFactory.filters.map(filter => {
+        filter.applied = false;
+        filter.val = filter.default;
         return filter;
     });
   }
@@ -55,7 +58,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     }
     else{
       filter.applied = true;
-      $scope.filters.forEach(el => {
+      $scope.instructions[0].filters.forEach(el => {
         if(filter.code ==="clear"){
           el.applied = false;
           el.val = el.default;
@@ -69,6 +72,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
       });
       if(filter.displayName=='Invert'||filter.displayName=="Sepia"||filter.displayName=="Grayscale") filter.val = 1;
     }
+    console.log('instructions', $scope.instructions[0]);
   };
 
   $scope.cutToInstructions = () => {
@@ -79,14 +83,14 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     // for(var key in Object.keys($scope.instructions[0])){
     //   instructionsCopy[key] = $scope.instructions[0][key];
     // }
-    $scope.instructions[0].filters=$scope.filters.filter(el => el.applied);
-
     _.assign(instructionsCopy, $scope.instructions[0]);
     //angular.copy($scope.instructions[0], instructionsCopy);
     console.log("instructionsCopy from playground", instructionsCopy);
 
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
-    initFilters();
+    console.log('right after send to reel',instructionsCopy.filters[2].applied);
+    resetFilters();
+    console.log('right after init',instructionsCopy.filters[2].applied);
   };
 
 });

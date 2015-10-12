@@ -89,7 +89,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     };
 
     vidFactory.createVideoElement = function(videoSource, instructions) {
-    	var newElement = new VideoElement(videoSource, instructions);
+    	var newElement = new VideoElement();
 		console.log("created new video element", newElement);
 		return newElement;
     };

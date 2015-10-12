@@ -6,7 +6,6 @@ app.directive('videoPlayer', () => {
       width: "=",
       height: "=",
       videoPlayerId: '=',
-      filters: '='
     },
     templateUrl: 'js/common/directives/videoplayer/videoplayer.html',
     controller: 'VideoPlayerCtrl'
@@ -19,7 +18,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, FilterFact
       timeoutId,
       instructionVideoMap = {};
   $scope.currentClip = 0;
-  $scope.instructions = $scope.instructions || [];
   $scope.videoContainerId = "video-container" + IdGenerator();
 
  //  _____       _ _   _       _ _          _   _
@@ -31,7 +29,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, FilterFact
 
 
   $scope.prepareVideoElements = function() {
-    if (!$scope.instructions.length) {
+    if (!$scope.instructions) {
       return;
     }
 
@@ -160,6 +158,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, FilterFact
     clearTimeout(timeoutId);
     pauseCurrentVideo();
   });
+
 
   $scope.$on('playButton', (event, ...args) => {
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {

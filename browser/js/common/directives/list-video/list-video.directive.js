@@ -8,7 +8,6 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 		},
 		link: function (scope, element, attr) {
 
-
 			var getVideoElement = function () {
 				scope.video.element = scope.video.element ||
 					document.getElementById(scope.video.id);
@@ -17,11 +16,11 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 
 			scope.sendToPlayground = function () {
 				//make a copy of the instructions and send it to the playground
-				var instructionsCopy = {};
-				_.assign(instructionsCopy, scope.video.instructions);
+				var instructionsCopy = InstructionsFactory.makeUniqueInstructions(scope.video.instructions);
 				if(!instructionsCopy.edited){
 					instructionsCopy.id = IdGenerator();
 				}
+				console.log("inscopy", instructionsCopy);
 				$rootScope.$broadcast("changeVideo", [instructionsCopy], "editor");
 			};
 
