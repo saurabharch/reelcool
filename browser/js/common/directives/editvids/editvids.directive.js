@@ -3,7 +3,7 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 		restrict: "E",
 		scope: {},
 		templateUrl: "js/common/directives/editvids/editvids.html",
-		controller: function ($scope, $mdDialog) {
+		controller: function ($scope, $mdDialog, $rootScope) {
 
 			$scope.videos = [];
 			$scope.instructions = InstructionsFactory.get();
@@ -73,7 +73,9 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				console.log('instructions are updated')
 				console.log('from InstructionsFactory',InstructionsFactory.get());
 				console.log('from the $scope',$scope.instructions);
-				PreviewFactory.showPreview($event, $scope.instructions);
+				PreviewFactory.setInstructions($scope.instructions);
+				console.log("instructions in previewFactory", PreviewFactory.getInstructions());
+				$rootScope.$broadcast('toggleModal');
 			};
 
 		}
