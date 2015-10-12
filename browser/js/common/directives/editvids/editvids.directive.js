@@ -3,7 +3,7 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 		restrict: "E",
 		scope: {},
 		templateUrl: "js/common/directives/editvids/editvids.html",
-		controller: function ($scope, $mdDialog, $rootScope) {
+		controller: function ($scope, $mdDialog) {
 
 			$scope.videos = [];
 			$scope.instructions = InstructionsFactory.get();

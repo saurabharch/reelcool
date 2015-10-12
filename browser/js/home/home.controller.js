@@ -1,4 +1,4 @@
-app.controller('homeCtrl', function ($http, $scope, $rootScope, $state, VideoFactory){
+app.controller('homeCtrl', function ($http, $scope, $state, VideoFactory){
 	//temporarily setting instructions here to test the playground
 	// $scope.instructions = [{
 	// 	id: "mainplayer",
@@ -7,10 +7,5 @@ app.controller('homeCtrl', function ($http, $scope, $rootScope, $state, VideoFac
 	// 	endTime: 35,
 	// 	filter: 'blur'
 	// }];
-
-	$scope.toggleModal = () => {
-		console.log("hoem tryna toggle")
-		$rootScope.$broadcast('toggleModal');
-	}
 
 });
