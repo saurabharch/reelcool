@@ -1,3 +1,124 @@
+// <<<<<<< HEAD
+// app.factory("VideoFactory", function ($rootScope, IdGenerator) {
+
+// 	var vidFactory = {},
+// 		videoSources = {};
+
+
+// 	//TODO do ajax polling for uplodaed videos
+// 	//TODO sent ajax call to delete on back-end
+
+// 	var VideoElement = function (videoSource) {
+// 		this.id = IdGenerator();
+// 		this.sourceAttached = false;
+// 		this.videoSource = videoSource;
+// 	};
+
+
+// 	var VideoSource = function (fileName, mimeType, arrayBuffer) {
+// 		this.id = IdGenerator();
+// 		this.fileName = fileName;
+// 		this.mimeType = mimeType;
+// 		this.arrayBuffer = arrayBuffer;
+// 		this.objUrls = [];
+// 	};
+
+
+// 	var uploadVideoToServer = function(file){
+// 		var reader = new FileReader();
+// 		var formData = new FormData();
+// 		formData.append("uploadedFile",file);
+
+// 		$.ajax({
+// 				method: 'POST',
+// 				url: '/api/videos/upload',
+// 				enctype:'multipart/form-data',
+// 				data: formData,
+// 				processData:false,
+// 				contentType:false
+// 			}).done(function(data){
+// 				console.log('done!');
+// 		});
+// 	};
+
+
+// 	vidFactory.createVideoElement = function (videoSource) {
+// 		return new VideoElement(videoSource);
+// 	};
+
+
+// 	vidFactory.addVideoSource = function(file) {
+// 		return new Promise(function (resolve, reject) {
+// 			var reader = new FileReader();
+// 			reader.onloadend = function() {
+// 				var videoSrc = new VideoSource(file.name, file.type, reader.result);
+// 				videoSources[videoSrc.id] = videoSrc;
+// 				resolve(videoSrc);
+// 			};
+// 			reader.readAsArrayBuffer(file);
+// 			uploadVideoToServer(file);
+// 		});
+// 	};
+
+// 	var mimeTypes = {
+// 		//'video/mp4': 'video/mp4; codecs="avc1.64001F, mp4a.40.2"',
+// 		//'video/mp4': 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"',
+// 		//'video/mp4':  'video/mp4; codecs="avc1.58A01E, mp4a.40.2"',
+// 		//'video/mp4':  'video/mp4; codecs="avc1.4D401E, mp4a.40.2"',
+// 		//'video/mp4':  'video/mp4; codecs="avc1.64001E, mp4a.40.2"',
+// 		//'video/mp4':  'video/mp4; codecs="mp4v.20.8, mp4a.40.2"',
+// 		//'video/mp4':  'video/mp4; codecs="mp4v.20.240, mp4a.40.2"',
+// 		'audio/mp3': 'audio/mpeg',
+// 		'video/webm': 'video/webm; codecs="vp8, vorbis"'
+// 	};
+
+
+// 	vidFactory.attachVideoSource = function (videoSource, videoElementId) {
+// 		return new Promise(function (resolve, reject) {
+// 			var mediaSource = new MediaSource();
+// 			mediaSource.addEventListener("sourceopen", function () {
+// 				console.log("mime type:", videoSource.mimeType);
+// 				var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
+// 				sourceBuffer.addEventListener('updateend', function(_) {
+// 					try {
+// 						mediaSource.endOfStream();
+// 						resolve();
+// 					} catch (error) {
+// 						return reject(error);
+// 					}
+// 				});
+// 				try {
+// 					sourceBuffer.appendBuffer(videoSource.arrayBuffer);
+// 				} catch (error) {
+// 					return reject(error);
+// 				}
+// 			});
+// 			var objUrl = window.URL.createObjectURL(mediaSource);
+// 			var video = document.getElementById(videoElementId);
+// 			console.log("videoElementId", videoElementId);
+// 			video.src = objUrl;
+// 			video.reelCoolVideoSourceId = videoSource.id;
+// 			videoSource.objUrls.push(objUrl);
+// 		});
+// 	};
+
+
+// 	vidFactory.deleteVideoSource = function (videoSourceId) {
+// 		var videoSource = videoSources[videoSourceId];
+
+// 		$rootScope.$broadcast("videosource-deleted", videoSourceId);
+
+// 		videoSource.objUrls.forEach(window.URL.revokeObjectURL);
+// 		delete videoSource.arrayBuffer;
+
+// 		//TODO sent ajax call to delete on back-end
+
+// 		console.log("video source terminated!");
+// 	};
+
+// 	return vidFactory;
+
+// =======
 app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthService, InstructionsFactory) {
     var vidFactory = {},
         videoSources = {};
@@ -49,19 +170,19 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         formData.append("uploadedFile", file);
         var options = {
             withCredentials: false,
-            // We set Content-Type to undefined because that way the browser automatically fills in 'multipart/form-data'. 
+            // We set Content-Type to undefined because that way the browser automatically fills in 'multipart/form-data'.
             // If we manually set it to 'multipart/form-data', it will error because it expects to be told the boundary.
             headers: {
                 'Content-Type': undefined
             },
-            // The line below overrides Angular's default transformRequest function, 
+            // The line below overrides Angular's default transformRequest function,
             // which would try to serialize our form data. We want it left intact.
             transformRequest: angular.identity
         };
         return $http.post('/api/videos/upload', formData, options)
             .then(function(resp) {
             	// this if statement is for non-webm videos that haven't been added to the sourcevids yet
-            	if (!videoSources[videoSrc.id]) videoSources[videoSrc.id] = videoSrc; 
+            	if (!videoSources[videoSrc.id]) videoSources[videoSrc.id] = videoSrc;
                 attachMongoId(resp.data, videoSrc.id);
                 return videoSrc;
             }).catch(err => console.error('something bad happened', err));
@@ -88,8 +209,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         }
     };
 
-    vidFactory.createVideoElement = function(videoSource, instructions) {
-    	var newElement = new VideoElement(videoSource, instructions);
+    vidFactory.createVideoElement = function(file) {
+    	var newElement = new VideoElement();
+    	if (file) {
+    		newElement.fileName = file.name;
+    	}
 		console.log("created new video element", newElement);
 		return newElement;
     };
@@ -121,18 +245,12 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         // instantiate videoSrc here, add name and contents later
         // depending on when they're actually available.
         var videoSrc = new VideoSource();
-        if (file.type === "video/webm") return addWebmVideoSource(file, videoSrc);
+        if (mimeTypes[file.type]) return addWebmVideoSource(file, videoSrc);
         else return addOtherVideoSource(file, videoSrc);
     };
 
     var mimeTypes = {
-        //'video/mp4': 'video/mp4; codecs="avc1.64001F, mp4a.40.2"',
-        //'video/mp4': 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"',
-        //'video/mp4':  'video/mp4; codecs="avc1.58A01E, mp4a.40.2"',
-        //'video/mp4':  'video/mp4; codecs="avc1.4D401E, mp4a.40.2"',
-        //'video/mp4':  'video/mp4; codecs="avc1.64001E, mp4a.40.2"',
-        //'video/mp4':  'video/mp4; codecs="mp4v.20.8, mp4a.40.2"',
-        //'video/mp4':  'video/mp4; codecs="mp4v.20.240, mp4a.40.2"',
+        'audio/mp3': 'audio/mpeg',
         'video/webm': 'video/webm; codecs="vp8, vorbis"'
     };
 
@@ -186,11 +304,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
                         var arr = new Uint8Array(xhr.response);
                         videoSource.arrayBuffer = arr;
                         try {
-	                        sourceBuffer.appendBuffer(videoSource.arrayBuffer);                        	
+	                        sourceBuffer.appendBuffer(videoSource.arrayBuffer);
                         }
-                        catch (e) { 
-                        	console.error('error appending buffer', e); 
-                        	return reject(e); 
+                        catch (e) {
+                        	console.error('error appending buffer', e);
+                        	return reject(e);
                         }
                     }
                 };
@@ -234,9 +352,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
             deleteFromServer(videoSource.mongoId);
         }
         // Else do nothing. If the videoSource doesn't have a mongoId yet, then the
-        // delete request will be sent when the mongoId comes in 
+        // delete request will be sent when the mongoId comes in
         // Refer to attachMongoId function to see where this is called.
     };
 
     return vidFactory;
 });
+
+

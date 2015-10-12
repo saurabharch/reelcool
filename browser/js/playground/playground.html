@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-12">
-    <video-player width="600" height="350" instructions="instructions" video-player-id="'editor'"></video-player>
+    <video-player audioenabled="false" width="600" height="350" instructions="instructions" video-player-id="'editor'"></video-player>
     <div ng-show="instructions.length" class="row">
       <input type="text" ng-model="newStartTime"></input>
       <input type="text" ng-model="newEndTime"></input>
@@ -14,3 +14,4 @@
     </div>
   </div>
 </div>
+<pre>{{instructions | json:4}}</pre>

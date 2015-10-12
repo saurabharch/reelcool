@@ -20,11 +20,11 @@ app.factory("FilterFactory", () => {
         displayName:"Sepia",
         type:"color"
     },
-    {
-        code: "blur(3px)",
-        displayName:"Blur",
-        type:"blur"
-    },
+    // {
+    //     code: "blur(3px)",
+    //     displayName:"Blur",
+    //     type:"blur"
+    // },
     {
         code: "invert()",
         displayName:"Invert",
