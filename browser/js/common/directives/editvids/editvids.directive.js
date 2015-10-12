@@ -45,11 +45,8 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 			};
 
 			$scope.$on("videosource-deleted", function(event, videoSourceId) {
-					$scope.videos.forEach(function(videoElement, index) {
-							console.log("checking", videoElement.videoSource.id, videoSourceId)
-							if (videoElement.videoSource.id === videoSourceId) {
-									$scope.videos.splice(index, 1);
-							}
+					$scope.videos = $scope.videos.filter(el => {
+						return el.videoSource.id !== videoSourceId;
 					});
 			});
 
