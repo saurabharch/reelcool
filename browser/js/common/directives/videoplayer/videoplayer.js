@@ -136,7 +136,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
  // | |___\ V /  __/ | | | |_\__ \
  // |______\_/ \___|_| |_|\__|___/
 
-
   $scope.$on('newMovingTime', (event, ...args) => {
     clearTimeout(timeoutId);
     var isPlaying = !videos[$scope.currentClip].paused;
@@ -186,8 +185,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     console.log("currently playing", $scope.videoPlayerId);
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
-
-    console.log("currently playing:", $scope.videoPlayerId);
 
     if ($scope.audioenabled) {
       setVolume();
@@ -326,6 +323,16 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
   });
 
+  //when the preview modal is exited, the audio track stops playing and resets to beginning
+  $scope.$on('toggleModal', (e, shown) => {
+    if(!shown){
+      if($scope.currentAudio){
+        $scope.currentAudio.domElement.pause = 0;
+        $scope.currentAudio.domElement.currentTime = 0;
+      }
+    }
+  })
+
 
   var resetVolume = function () {
       if (getCurrentVolume() === 1) {
@@ -374,5 +381,3 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
 
 });
-
-

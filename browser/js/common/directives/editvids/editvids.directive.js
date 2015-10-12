@@ -80,8 +80,7 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				console.log('from InstructionsFactory',InstructionsFactory.get());
 				console.log('from the $scope',$scope.instructions);
 				PreviewFactory.setInstructions($scope.instructions);
-				console.log("instructions in previewFactory", PreviewFactory.getInstructions());
-				$rootScope.$broadcast('toggleModal');
+				$rootScope.$broadcast('toggleModal', {show: true});
 			};
 
 		}

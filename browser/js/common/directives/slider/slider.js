@@ -69,7 +69,15 @@ app.directive("timeSlider", () => {
  // |______\_/ \___|_| |_|\__| |_|  |_|\__,_|_| |_|\__,_|_|_|_| |_|\__, |
  //                                                                 __/ |
  //                                                                |___/
-
+       scope.$on('toggleModal', (event, args) => {
+         console.log("slider rxn to toggle modal", args, $(elements[0]).parents('modal-dialog'))
+         if(!args.show && $(elements[0]).parents('modal-dialog').length){
+           //if it is the slider insider the modal window, then it should pause itself
+           //when the modal is hidden
+           console.log("tried to pause");
+           scope.$emit('pauseButton');
+         }
+       })
 
       scope.$on('pauseButton', () => {
         scope.paused = true;
