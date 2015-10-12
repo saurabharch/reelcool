@@ -4,25 +4,29 @@ app.factory("FilterFactory", () => {
         code: "clear",
         displayName:"Clear filters",
     },
-    {
+    {   
+        code: ["grayscale(",")"],
         displayName:"Grayscale",
         primary: true,
         val:0,
         default:0
     },
-    {
+    {   
+        code: ["sepia(",")"],
         displayName:"Sepia",
         primary: true,
         val:0,
         default:0
     },
     {
+        code: ["invert(",")"],
         displayName:"Invert",
         primary: true,
         val: 0,
         default:0
     },
     {
+        code: ["brightness(",")"],
         displayName: "Brightness",
         primary: false,
         min:.2,
@@ -31,6 +35,7 @@ app.factory("FilterFactory", () => {
         default:1
     },
     {
+        code: ["contrast(",")"],
         displayName: "Contrast",
         primary: false,
         min:1,
@@ -39,6 +44,7 @@ app.factory("FilterFactory", () => {
         default:1
     },
     {
+        code: ["hue-rotate(",")"],
         displayName: "Hue",
         primary: false,
         min:0,
@@ -47,6 +53,7 @@ app.factory("FilterFactory", () => {
         default:0
     },
     {
+        code: ["saturate(",")"],
         displayName: "Saturation",
         primary: false,
         min:0,

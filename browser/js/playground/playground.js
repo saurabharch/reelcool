@@ -19,6 +19,10 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     }
   });
 
+  $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
+    $scope.filters = instructions.filters;
+  });
+
   $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
     video = document.getElementById(instructionVideoMap[$scope.instructions[0].id]);
     $video = $(video);
@@ -69,9 +73,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     // for(var key in Object.keys($scope.instructions[0])){
     //   instructionsCopy[key] = $scope.instructions[0][key];
     // }
-    $scope.instructions[0].filters=$scope.filters.filter(el => el.applied).map(function(el){
-      return{filterName:el.displayName, value:el.val};
-    });
+    $scope.instructions[0].filters=$scope.filters.filter(el => el.applied);
 
     _.assign(instructionsCopy, $scope.instructions[0]);
     //angular.copy($scope.instructions[0], instructionsCopy);
