@@ -8,7 +8,8 @@ app.directive("timeSlider", () => {
       endTime: '=',
       width : '='
     },
-    link: (scope, elements, attrs) => {
+    link: (scope, elements, attr) => {
+
 
 //  _____       _ _   _       _ _          _   _
  // |_   _|     (_) | (_)     | (_)        | | (_)
