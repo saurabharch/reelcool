@@ -41,8 +41,12 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 			};
 
 			scope.removeSource = function (videoSourceId) {
-				VideoFactory.deleteVideoSource(videoSourceId);
+				$rootScope.$broadcast('delete-cut-clips', videoSourceId);
 			};
+
+			scope.$on('cuts-deleted', (videoSourceId) => {
+				VideoFactory.deleteVideoSource(videoSourceId);
+			})
 
 			scope.unstageClip = function(video) {
 				scope.$emit('unstageClip', video);
