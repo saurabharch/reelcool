@@ -183,6 +183,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   });
 
   function updateVideo() {
+    console.log("currently playing", $scope.videoPlayerId);
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
 
