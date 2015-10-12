@@ -187,7 +187,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
 
-    console.log("UPDATEVIDEO");
+    console.log("currently playing:", $scope.videoPlayerId);
 
     if ($scope.audioenabled) {
       setVolume();
