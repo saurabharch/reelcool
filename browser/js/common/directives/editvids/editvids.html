@@ -1,4 +1,6 @@
 <div id="editvids">
+	<p class='section-title'>Cut Videos</p>
+	<p ng-hide=videos.length>You haven't made any cuts yet. Make some in the Playground!</p>
 	<ul id="vidslist">
 		<li ng-repeat="video in videos">
 			<list-video video="video" type="'edited'"></list-video>
@@ -7,6 +9,6 @@
 	<input type="file" style="display:none" id="videofileinput" accept="video/*" multiple>
 	<!-- <p><button ng-click="selectVideoFile()">add</button></p> -->
 
-	<p><button ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</button></p>
+	<p><md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button></p>
 
 </div>
