@@ -30,8 +30,8 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				filesArr.forEach(function (file) {
 					var audioElement;
 					VideoFactory.addVideoSource(file).then(function (audioSource) {
-						audioElement = VideoFactory.createVideoElement(audioSource);
-						//scope.audioTracks.push(audioElement);
+						audioElement = VideoFactory.createVideoElement(file);
+						audioElement.addSource(audioSource);
 						AudioFactory.setAudioElement(audioElement);
 						scope.$digest();
 						return VideoFactory.attachVideoSource(audioSource, audioElement.id);
@@ -41,7 +41,6 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 						audioElement.domElement = audioDomElement;
 						audioElement.duration = audioDomElement.duration;
 						audioElement.sourceAttached = true;
-						//AudioFactory.setAudioElement(audioElement);
 						scope.$digest();
 					}).then(null, function (error) {
 						//TODO show error on video tag

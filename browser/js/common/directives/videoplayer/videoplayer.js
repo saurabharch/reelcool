@@ -364,6 +364,11 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   };
 
 
+  $scope.$on("audioTracks changed", function () {
+    console.log("audioTracks changed:");
+    $scope.$digest();
+  });
+
 
 
 

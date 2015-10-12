@@ -17,7 +17,7 @@ totalCurrentTime: {{totalCurrentTime}}
   </div>
 
 <div ng-show="audioenabled">
-	<select ng-model="currentAudio" ng-options="audio.videoSource.fileName for audio in audioTracks"></select>
+	<select ng-model="currentAudio" ng-options="audio.fileName for audio in audioTracks"></select>
 	fadeout: <input type="checkbox" ng-model="fadeOut">
 </div>
 </div>

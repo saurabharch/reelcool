@@ -1,11 +1,10 @@
-app.factory("AudioFactory", function () {
+app.factory("AudioFactory", function ($rootScope) {
 
 	var audioFactory = {},
 		originalTrack = {	// fake object representing the orignal audio track of the vide
 			id: "original_track",
-			videoSource: {
-				fileName: "Original track"
-			},
+			fileName: "Original Track",
+			videoSource: {},
 			domElement: {
 				play: function () {},
 				pause: function () {}
@@ -19,7 +18,7 @@ app.factory("AudioFactory", function () {
 
 	audioFactory.setAudioElement = function (audioElement) {
 		tracks.push(audioElement);
-		//digest?
+		$rootScope.$broadcast("audioTracks changed");
 	};
 
 	audioFactory.getAudioElements = function () {
@@ -34,7 +33,6 @@ app.factory("AudioFactory", function () {
 				return true;
 			}
 		});
-		//digest?
 	};
 
 
