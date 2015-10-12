@@ -25,16 +25,16 @@ app.factory("FilterFactory", () => {
     {
         displayName: "Brightness",
         primary: false,
-        min:0,
-        max:2,
+        min:.2,
+        max:1.8,
         val:1,
         default:1
     },
     {
         displayName: "Contrast",
         primary: false,
-        min:0,
-        max:2,
+        min:1,
+        max:5,
         val:1,
         default:1
     },
@@ -45,14 +45,6 @@ app.factory("FilterFactory", () => {
         max:360,
         val:0,
         default:0
-    },
-    {
-        displayName: "Opacity",
-        primary: false,
-        min:0,
-        max:1,
-        val:1,
-        default:1
     },
     {
         displayName: "Saturation",
