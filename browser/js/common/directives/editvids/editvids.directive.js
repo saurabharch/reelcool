@@ -44,14 +44,13 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				});
 			};
 
-			$scope.$on("delete-cut-clips", function(event, videoSourceId) {
+			$scope.$on("videosource-deleted", function(event, videoSourceId) {
 					$scope.videos.forEach(function(videoElement, index) {
 							console.log("checking", videoElement.videoSource.id, videoSourceId)
 							if (videoElement.videoSource.id === videoSourceId) {
 									$scope.videos.splice(index, 1);
 							}
 					});
-					$rootScope.$broadcast('cuts-deleted', videoSourceId);
 			});
 
 			function attachSourceToVideo(updatedVideoElement, instructions) {
