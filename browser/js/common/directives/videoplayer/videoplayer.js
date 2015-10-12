@@ -13,15 +13,14 @@ app.directive('videoPlayer', () => {
   };
 });
 
-app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator,FilterFactory) => {
+app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, FilterFactory) => {
+
   var videos = [],
       timeoutId,
       instructionVideoMap = {};
   $scope.currentClip = 0;
   $scope.instructions = $scope.instructions || [];
   $scope.videoContainerId = "video-container" + IdGenerator();
-
-
 
  //  _____       _ _   _       _ _          _   _
  // |_   _|     (_) | (_)     | (_)        | | (_)
@@ -109,7 +108,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator,FilterFacto
       //move the slider as video plays
       //console.log("video.currentTime", this.currentTime);
       if (this.index === $scope.currentClip) {
-        console.log("time gets messed up", video.timeBefore,  video.currentTime, $scope.instructions[index].startTime);
+        //console.log("time gets messed up", video.timeBefore,  video.currentTime, $scope.instructions[index].startTime);
         $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
       } else {
         console.log("video", this.index, "played but it didn't affect the time");
@@ -157,7 +156,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator,FilterFacto
   });
 
   $scope.$on('pauseButton', (event, ...args) => {
-    console.log("pauseButton event got")
+    console.log("pauseButton event got");
     clearTimeout(timeoutId);
     pauseCurrentVideo();
   });
@@ -175,6 +174,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator,FilterFacto
   });
 
   function updateVideo() {
+    console.log("currently playing", $scope.videoPlayerId);
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
