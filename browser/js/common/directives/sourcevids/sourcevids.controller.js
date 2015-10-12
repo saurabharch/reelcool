@@ -8,7 +8,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Prev
         fileInput.click();
     };
 
-    $scope.$on("videosource-deleted", function(event, videoSourceId) {
+    $scope.$on("cuts-deleted", function(event, videoSourceId) {
         $scope.videos.some(function(videoElement, index) {
             if (videoElement.videoSource.id === videoSourceId) {
                 $scope.videos.splice(index, 1);
