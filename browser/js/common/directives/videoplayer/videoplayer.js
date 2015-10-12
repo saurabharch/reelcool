@@ -111,7 +111,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       //move the slider as video plays
       //console.log("video.currentTime", this.currentTime);
       if (this.index === $scope.currentClip) {
-        //console.log("time gets messed up", video.timeBefore,  video.currentTime, $scope.instructions[index].startTime);
         $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
       } else {
         console.log("video", this.index, "played but it didn't affect the time");
@@ -161,8 +160,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
   $scope.$on('updatedTimeRange', (event, newTimes) => {
     //this event comes from the playerground and therefore only affects the 0th element of instructions
-    $scope.instructions[0].startTime = newTimes.startTime;
-    $scope.instructions[0].endTime = newTimes.endTime;
+    $scope.instructions[0].startTime = Number(newTimes.startTime);
+    $scope.instructions[0].endTime = Number(newTimes.endTime);
     initializeTimes();
   });
 
@@ -187,6 +186,8 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   function updateVideo() {
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
+
+    console.log("UPDATEVIDEO");
 
     if ($scope.audioenabled) {
       setVolume();
@@ -219,7 +220,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
         if (foundSpot && (videos[$scope.currentClip].paused || newIndex!==oldIndex)) {
           //console.log("oldIndex", oldIndex, "newIndex", newIndex);
           var clipToPlay = videos[newIndex];
-          console.log("clipToPlay", clipToPlay, "newIndex", newIndex);
+          //console.log("clipToPlay", clipToPlay, "newIndex", newIndex);
           // I changed the clipToPlay.currentTime assignment because the preview wasn't working.
           // It would start the second clip much earlier than it was supposed to. Now it starts at the right time.
           // The downside is that the slider skips when the video switches now :( -Cristina
@@ -261,6 +262,14 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     videos[$scope.currentClip].play();
     $scope.$broadcast('playCurrentVideo');
   }
+
+  $scope.getCurrentStartTime = function () {
+    if ($scope.instructions.length === 0) {
+      return 0;
+    }
+    return $scope.instructions[$scope.currentClip].startTime;
+  };
+
 
 
  //                    _ _
