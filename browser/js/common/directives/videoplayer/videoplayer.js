@@ -18,7 +18,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       timeoutId,
       instructionVideoMap = {};
 
-
  //  _____       _ _   _       _ _          _   _
  // |_   _|     (_) | (_)     | (_)        | | (_)
  //   | |  _ __  _| |_ _  __ _| |_ ______ _| |_ _  ___  _ __
