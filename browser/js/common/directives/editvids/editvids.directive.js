@@ -67,14 +67,14 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				$scope.instructions = InstructionsFactory.update(newInstructions);
 			}
 
-			$scope.showPreviewModal = ($event) => {
+			$scope.showPreviewModal = () => {
 				console.log('showing preview modal, time to update instructions')
 				updateInstructions($scope.videos);
-				console.log('instructions are updated')
-				console.log('from InstructionsFactory',InstructionsFactory.get());
-				console.log('from the $scope',$scope.instructions);
+				//console.log('instructions are updated')
+				//console.log('from InstructionsFactory',InstructionsFactory.get());
+				//console.log('from the $scope',$scope.instructions);
 				PreviewFactory.setInstructions($scope.instructions);
-				console.log("instructions in previewFactory", PreviewFactory.getInstructions());
+				//console.log("instructions in previewFactory", PreviewFactory.getInstructions());
 				$rootScope.$broadcast('toggleModal');
 			};
 
