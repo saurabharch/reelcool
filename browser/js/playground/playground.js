@@ -20,7 +20,13 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   });
 
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
-    $scope.filters = instructions.filters;
+    initFilters();
+    $scope.filters.forEach((filt,ind1) => {
+      instructions.filters.forEach((prevFilt,ind2) => {
+        if(filt.displayName==prevFilt.displayName)
+          $scope.filters[ind1] = instructions.filters[ind2];
+      });
+    });
   });
 
   $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {

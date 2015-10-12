@@ -8,9 +8,10 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 		},
 		link: function (scope, element, attr) {
 
-			scope.filters = video.instructions.filters.map(el=>{
+			scope.filters = scope.video.instructions.filters.map(el=>{
 				return el.code[0]+el.val+el.code[1];
 			}).join(" ");
+
 			var getVideoElement = function () {
 				scope.video.element = scope.video.element ||
 					document.getElementById(scope.video.id);
