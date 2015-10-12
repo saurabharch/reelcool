@@ -5,6 +5,19 @@
       <video width="{{width}}px" height="{{height}}px" id="{{getIdForVideo(instruction.id)}}" class='box' style="-webkit-filter: {{'grayscale('+instruction.filters[1].val+')' + 'sepia('+instruction.filters[2].val+')' + 'invert('+instruction.filters[3].val+')' + 'brightness('+instruction.filters[4].val+')' + 'contrast('+instruction.filters[5].val+')' + 'hue-rotate('+instruction.filters[6].val+'deg)' + 'opacity('+instruction.filters[7].val+')' + 'saturate('+instruction.filters[8].val+')'}}" preload>
       </video>
     </div>
-    <time-slider ng-show="instructions.length" id="slider" moving-time="totalCurrentTime" start-time="0" end-time="totalEndTime" width="width"></time-slider>
+
+<!-- <pre>
+instructions: {{instructions | json}}
+totalEndTime: {{totalEndTime}}
+totalCurrentTime: {{totalCurrentTime}}
+</pre> -->
+
+
+    <time-slider ng-show="instructions.length" id="slider" moving-time="totalCurrentTime" start-time="getCurrentStartTime()" end-time="totalEndTime" width="width"></time-slider>
   </div>
+
+<div ng-show="audioenabled">
+	<select ng-model="currentAudio" ng-options="audio.fileName for audio in audioTracks"></select>
+	fadeout: <input type="checkbox" ng-model="fadeOut">
+</div>
 </div>

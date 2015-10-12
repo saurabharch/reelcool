@@ -29,7 +29,7 @@ app.factory("FilterFactory", () => {
         code: ["brightness(",")"],
         displayName: "Brightness",
         primary: false,
-        min:.2,
+        min:0.2,
         max:1.8,
         val:1,
         default:1

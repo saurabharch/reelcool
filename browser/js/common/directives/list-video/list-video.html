@@ -1,6 +1,6 @@
 <div class="list-video">
 		<video style="-webkit-filter: {{'grayscale('+video.instructions.filters[1].val+')' + 'sepia('+video.instructions.filters[2].val+')' + 'invert('+video.instructions.filters[3].val+')' + 'brightness('+video.instructions.filters[4].val+')' + 'contrast('+video.instructions.filters[5].val+')' + 'hue-rotate('+video.instructions.filters[6].val+'deg)' + 'opacity('+video.instructions.filters[7].val+')' + 'saturate('+video.instructions.filters[8].val+')'}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="200px" height="150px" id="{{video.id}}" loop muted></video>
-		<div>{{video.videoSource.fileName}} ({{getSizeMb()}} MB)</div>
+		<div>{{video.fileName}}</div>
 		<img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
 		<md-button class="md-warn" ng-if="type==='source'" ng-click="removeSource(video.videoSource.id)">delete</md-button>
 		<md-button class="md-warn" ng-if="type==='edited'" ng-click="unstageClip(video)">delete</md-button>

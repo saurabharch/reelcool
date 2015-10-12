@@ -13,7 +13,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   var video, $video, videoPlayerId;
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
-    if (video.reelCoolVideoSourceId === videoSourceId) {
+    if (video && (video.reelCoolVideoSourceId === videoSourceId)) {
       video.src = null;
     }
   });

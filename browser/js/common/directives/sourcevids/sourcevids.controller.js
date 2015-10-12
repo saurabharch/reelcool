@@ -20,7 +20,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Prev
     fileInput.addEventListener('change', function(e) {
         var filesArr = Array.prototype.slice.call(fileInput.files, 0);
         filesArr.forEach(function(file) {
-            var videoElement = VideoFactory.createVideoElement();
+            var videoElement = VideoFactory.createVideoElement(file);
             $scope.videos.push(videoElement); //try putting this up here and see if we get the spinner
             VideoFactory.addVideoSource(file)
                 .then(function(videoSource) {
