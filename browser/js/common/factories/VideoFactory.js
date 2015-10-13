@@ -315,7 +315,7 @@ app.factory("VideoFactory", function($rootScope, $http, IdGenerator, AuthService
                     if (xhr.status !== 200) {
                         console.error("Failed to download video data");
                     } else {
-                        var arr = new Uint8Array(xhr.response);
+                        var arr = xhr.response;
                         videoSource.arrayBuffer = arr;
                         try {
                             sourceBuffer.appendBuffer(videoSource.arrayBuffer);
