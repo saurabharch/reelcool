@@ -1,4 +1,4 @@
-app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFactory) {
+app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 	return {
 		restrict: "E",
 		scope: {},
@@ -79,7 +79,6 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				console.log('instructions are updated')
 				console.log('from InstructionsFactory',InstructionsFactory.get());
 				console.log('from the $scope',$scope.instructions);
-				PreviewFactory.setInstructions($scope.instructions);
 				$rootScope.$broadcast('toggleModal', {show: true});
 			};
 
