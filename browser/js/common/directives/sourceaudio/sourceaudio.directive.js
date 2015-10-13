@@ -13,12 +13,6 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 
 			scope.$on("videosource-deleted", function (event, audioSourceId) {
 				AudioFactory.removeAudioElement(audioSourceId);
-				// scope.audioTracks.some(function (audioElement, index) {
-				// 	if (audioElement.videoSource.id === audioSourceId) {
-				// 		scope.audioTracks.splice(index, 1);
-				// 		return true;
-				// 	}
-				// });
 			});
 
 			scope.selectAudioFile = function () {
