@@ -24,7 +24,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
     var putVidOnScope = function(file) {
         var videoElement = VideoFactory.createVideoElement();
-        $scope.videos.push(videoElement); 
+        $scope.videos.push(videoElement);
         VideoFactory.addVideoSource(file)
             .then(function(videoSource) {
                 videoElement.addSource(videoSource);
@@ -35,7 +35,9 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
                 return VideoFactory.attachVideoSource(videoSource, videoElement.id);
             }).then(function() {
                 videoElement.sourceAttached = true;
-                videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
+                var duration = document.getElementById(videoElement.id).duration;
+                // videoElement.duration = duration;
+                videoElement.instructions.endTime = duration;
                 // same here as above
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
@@ -45,10 +47,10 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             });
     };
 
-    var putRemoteVidOnScope = function (mongoId) {
-        var videoElement = VideoFactory.createVideoElement();
+    var putRemoteVidOnScope = function (mediaData) {
+        var videoElement = VideoFactory.createVideoElement(mediaData.title);
         $scope.videos.push(videoElement);
-        VideoFactory.addRemoteVideoSource(mongoId)
+        VideoFactory.addRemoteSource(mediaData._id)
             .then(function (videoSource) {
                 let phase = $rootScope.$$phase;
                 videoElement.addSource(videoSource);
@@ -57,7 +59,9 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             })
             .then(function () {
                 videoElement.sourceAttached = true;
-                videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
+                var duration = document.getElementById(videoElement.id).duration;
+                // videoElement.duration = duration;
+                videoElement.instructions.endTime = duration;
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
             })
@@ -67,21 +71,14 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             });
     };
 
-    var getPrevUploads = function() {
-        let existingVids = $scope.videos.filter( vid => vid.videoSource && vid.videoSource.mongoId ).map( vid => vid.videoSource.mongoId);
-        return VideoFactory.getUserVideos()
-            .then(function (videos) {
-                return videos.filter(vid => existingVids.indexOf(vid)===-1);
-            });
-    };
 
     var updateSourceVids = function () {
-        getPrevUploads().then(function (mongoIdsToAdd) {
-            mongoIdsToAdd.forEach(putRemoteVidOnScope);
+        VideoFactory.getPrevUploads($scope.videos).then(function (mediaData) {
+            mediaData.forEach(putRemoteVidOnScope);
         });
     };
 
-    setTimeout(updateSourceVids,1000); 
+    setTimeout(updateSourceVids,1000);
     setInterval(updateSourceVids,20000); // polls the server every 20 seconds
 
     // This is here just for testing the preview player
