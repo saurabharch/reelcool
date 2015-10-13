@@ -1,4 +1,4 @@
-app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, PreviewFactory, InstructionsFactory, $state, RandomVideoGenerator) {
+app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator) {
 
     $scope.videos = [];
 
@@ -89,7 +89,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Prev
         var cutsNumber = 4;
         var cutLength = 2;
         var allInstructions = RandomVideoGenerator.createVideo($scope.videos, cutsNumber, cutLength);
-        PreviewFactory.setInstructions(allInstructions);
+        InstructionsFactory.update(allInstructions);
         $state.go('preview');
     };
 });

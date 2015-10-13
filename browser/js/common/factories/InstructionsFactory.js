@@ -15,7 +15,7 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 				startTime: 0,
 				endTime: endTime,
 			};
-		}, 
+		},
 		update: (newInstructions) => instructions = newInstructions
 	};
 });
