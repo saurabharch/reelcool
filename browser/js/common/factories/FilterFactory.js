@@ -75,7 +75,6 @@ app.factory("FilterFactory", () => {
     return filtersArr.filter(el => el.applied).map(el => el.code[0]+el.val+el.code[1]).join(" ");
   };
   let parseFilterString = (str) => {
-    debugger;
     let newFilters = angular.copy(filters);
     let filts = str.split(' ').map(el => el.split('(')[0]);
     let filtVals = str.split(' ').map(el => el.split('(')[1].split(')')[0]);

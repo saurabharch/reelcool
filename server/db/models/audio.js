@@ -6,14 +6,10 @@ var schema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ext: {
-        type: String,
-        required: true
-    },
     editor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
 });
 
-mongoose.model('Video', schema);
+mongoose.model('Audio', schema);
