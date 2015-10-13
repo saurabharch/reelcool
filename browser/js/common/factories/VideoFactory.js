@@ -7,17 +7,24 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     var userId;
     AuthService.getLoggedInUser().then(user => userId = user ? user._id : 'anon');
 
-    vidFactory.getUserVideos = function() {
-        console.log('calling getUserVideos for user', userId);
-        let url = `/api/videos/byuser/${userId}`;
+    var getUserMedia = function(type) {
+        console.log('calling getUserMedia for user', userId);
+        let url = `/api/${type}/byuser/${userId}`;
         console.log(url);
         return $http.get(url).then(resp => resp.data);
     };
 
-    vidFactory.getUserAudio = function() {
-        let url = `/api/audio/byuser/${userId}`;
-        return $http.get(url).then(resp => resp.data);
-    };
+    // vidFactory.getUserVideos = function() {
+    //     console.log('calling getUserVideos for user', userId);
+    //     let url = `/api/videos/byuser/${userId}`;
+    //     console.log(url);
+    //     return $http.get(url).then(resp => resp.data);
+    // };
+
+    // vidFactory.getUserAudio = function() {
+    //     let url = `/api/audio/byuser/${userId}`;
+    //     return $http.get(url).then(resp => resp.data);
+    // };
 
     var VideoElement = function() {
         this.id = IdGenerator();
@@ -104,11 +111,9 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         }
     };
 
-    vidFactory.createVideoElement = function(file) {
+    vidFactory.createVideoElement = function(fileName) {
         var newElement = new VideoElement();
-        if (file) {
-            newElement.fileName = file.name;
-        }
+        newElement.fileName = fileName;
         console.log("created new video element", newElement);
         return newElement;
     };
@@ -274,10 +279,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
 
     vidFactory.getPrevUploads = function(mediaElements, isAudio) {
         let existingVids = mediaElements.filter( vid => vid.videoSource && vid.videoSource.mongoId ).map( vid => vid.videoSource.mongoId);
-        var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
-        return getMediaFunc()
-            .then(function (mediaMongoIds) {
-                return mediaMongoIds.filter(id => existingVids.indexOf(id)===-1);
+        // var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
+        var media = isAudio ? "audio" : "videos";
+        return getUserMedia(media)
+            .then(function (mediaData) {
+                return mediaData.filter(media => existingVids.indexOf(media._id)===-1);
             });
     };
 

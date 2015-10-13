@@ -35,7 +35,9 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
                 return VideoFactory.attachVideoSource(videoSource, videoElement.id);
             }).then(function() {
                 videoElement.sourceAttached = true;
-                videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
+                var duration = document.getElementById(videoElement.id).duration;
+                // videoElement.duration = duration;
+                videoElement.instructions.endTime = duration;
                 // same here as above
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
@@ -45,10 +47,10 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             });
     };
 
-    var putRemoteVidOnScope = function (mongoId) {
-        var videoElement = VideoFactory.createVideoElement();
+    var putRemoteVidOnScope = function (mediaData) {
+        var videoElement = VideoFactory.createVideoElement(mediaData.title);
         $scope.videos.push(videoElement);
-        VideoFactory.addRemoteSource(mongoId)
+        VideoFactory.addRemoteSource(mediaData._id)
             .then(function (videoSource) {
                 let phase = $rootScope.$$phase;
                 videoElement.addSource(videoSource);
@@ -57,7 +59,9 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             })
             .then(function () {
                 videoElement.sourceAttached = true;
-                videoElement.instructions.endTime = document.getElementById(videoElement.id).duration;
+                var duration = document.getElementById(videoElement.id).duration;
+                // videoElement.duration = duration;
+                videoElement.instructions.endTime = duration;
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
             })
@@ -69,8 +73,8 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
 
     var updateSourceVids = function () {
-        VideoFactory.getPrevUploads($scope.videos).then(function (mongoIdsToAdd) {
-            mongoIdsToAdd.forEach(putRemoteVidOnScope);
+        VideoFactory.getPrevUploads($scope.videos).then(function (mediaData) {
+            mediaData.forEach(putRemoteVidOnScope);
         });
     };
 

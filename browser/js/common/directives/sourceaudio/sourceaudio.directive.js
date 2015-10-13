@@ -24,7 +24,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				filesArr.forEach(function (file) {
 					var audioElement;
 					VideoFactory.addVideoSource(file).then(function (audioSource) {
-						audioElement = VideoFactory.createVideoElement(file);
+						audioElement = VideoFactory.createVideoElement(file.name);
 						audioElement.addSource(audioSource);
 						AudioFactory.setAudioElement(audioElement);
 						scope.$digest();
@@ -43,11 +43,10 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				});
 			});
 
-			var putRemoteAudioOnScope = function (mongoId) {
-
+			var putRemoteAudioOnScope = function (mediaData) {
 				var audioElement;
-				VideoFactory.addRemoteSource(mongoId, true).then(function (audioSource) {
-					audioElement = VideoFactory.createVideoElement();
+				VideoFactory.addRemoteSource(mediaData._id, true).then(function (audioSource) {
+					audioElement = VideoFactory.createVideoElement(mediaData.title);
 					audioElement.addSource(audioSource);
 					AudioFactory.setAudioElement(audioElement);
 					scope.$digest();
@@ -71,8 +70,8 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 
 			var updateSourceAudio = function () {
 				console.log("UPDATESOURCEAUDIO");
-				VideoFactory.getPrevUploads(scope.audioTracks, true).then(function (mongoIdsToAdd) {
-					mongoIdsToAdd.forEach(putRemoteAudioOnScope);
+				VideoFactory.getPrevUploads(scope.audioTracks, true).then(function (mediaData) {
+					mediaData.forEach(putRemoteAudioOnScope);
 				});
 
 			};

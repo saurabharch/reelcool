@@ -89,10 +89,10 @@ router.get('/byuser/:userId',function (req,res) {
     else {
         // Only want webm videos because other extensions are not ready to plug into MediaSource
         // They'll get updated to webm once they are converted.
-        Audio.find({editor:userId}).select('_id')
+        Audio.find({editor:userId}).select('_id title')
             .then(audioFiles => {
-                var audioIds = audioFiles.map(audio => audio._id);
-                res.send(audioIds);
+                // var audioIds = audioFiles.map(audio => audio._id);
+                res.send(audioFiles);
             })
             .catch(e => {
                 let msg = `Unable to find audio files for ${userId}`;
