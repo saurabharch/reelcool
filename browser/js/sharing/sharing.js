@@ -10,7 +10,7 @@ app.directive('sharing', () => {
     };
 });
 
-app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFactory) {
+app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFactory, FilterFactory) {
   function requestReelVideo (instructions) {
     return $http.post('/api/videos/makeit', instructions);
   }
@@ -33,6 +33,8 @@ app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFact
     $scope.openDialog = function($event, item) {
       console.log('oh hey I was clicked')
       var instructions = InstructionsFactory.get();
+      FilterFactory.addFiltersToAllInstructions(instructions);
+      console.log(instructions);
       if (item==='Download') {
         promisifiedDownload(instructions);
       }

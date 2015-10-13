@@ -17,6 +17,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			});
 
 			function addClip (instructions) {
+				console.log('adding clip', instructions);
 			    var index = getVideoIndexByInstructionsId(instructions.id);
 			    if (index > -1) {
 			        //clip was previously added to list
@@ -33,7 +34,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			    }
 			}
 
-
 			$scope.$on("randomVidGenerated", function (event){
 				$scope.videos = [];
 				$scope.instructions = InstructionsFactory.get();
@@ -42,6 +42,26 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				});
 				// let phase = $rootScope.$$phase;
 				// if (phase !== "apply" && phase !=="digest") $scope.$digest();
+// =======
+// 				var index = getVideoIndexByInstructionsId(instructions.id);
+// 				var instCopy = InstructionsFactory.makeUniqueInstructions(instructions);
+// 				console.log('instructions after', instCopy);
+// 				if(index> -1){
+// 					//clip was previously added to list
+// 					_.assign($scope.videos[index].instructions, instCopy);
+// 				}
+// 				else{
+// 					//clip is not already there, add it to the end
+// 					var updatedVideoElement = VideoFactory.createVideoElement();
+// 					updatedVideoElement.addSource(instCopy.videoSource, instCopy);
+// 					$scope.videos.push(updatedVideoElement);
+
+// 					setTimeout(()=> {
+// 						attachSourceToVideo(updatedVideoElement, instCopy);
+// 					}, 0);
+// 				}
+// 				updateInstructions($scope.videos);
+// >>>>>>> master
 			});
 
 			$scope.$on('unstageClip', (e, clip)=> {
@@ -57,13 +77,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				return _.findIndex($scope.videos, (el) => {
 					return el.instructions.id === id;
 				});
-			};
-
-			$scope.$on("videosource-deleted", function(event, videoSourceId) {
-					$scope.videos = $scope.videos.filter(el => {
-						return el.videoSource.id !== videoSourceId;
-					});
-			});
+			}
 
 			function attachSourceToVideo(updatedVideoElement, instructions) {
 				VideoFactory.attachVideoSource(instructions.videoSource, updatedVideoElement.id)
