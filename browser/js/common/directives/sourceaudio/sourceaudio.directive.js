@@ -70,13 +70,14 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 
 
 			var updateSourceAudio = function () {
+				console.log("UPDATESOURCEAUDIO");
 				VideoFactory.getPrevUploads(scope.audioTracks, true).then(function (mongoIdsToAdd) {
 					mongoIdsToAdd.forEach(putRemoteAudioOnScope);
 				});
-				setInterval(updateSourceAudio,20000); // polls the server every 20 seconds
-			};
 
+			};
 			setTimeout(updateSourceAudio,500);
+			setInterval(updateSourceAudio,20000); // polls the server every 20 seconds
 
 
 		}// link end

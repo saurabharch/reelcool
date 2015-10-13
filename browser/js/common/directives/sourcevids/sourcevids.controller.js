@@ -72,11 +72,10 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
         VideoFactory.getPrevUploads($scope.videos).then(function (mongoIdsToAdd) {
             mongoIdsToAdd.forEach(putRemoteVidOnScope);
         });
-        setInterval(updateSourceVids,20000); // polls the server every 20 seconds
     };
 
     setTimeout(updateSourceVids,1000);
-
+    setInterval(updateSourceVids,20000); // polls the server every 20 seconds
 
     // This is here just for testing the preview player
     $scope.previewVideo = () => {
