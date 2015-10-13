@@ -25,7 +25,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			i;
 
 		for (i = 0; i < cutsNumber; i++) {
-			instr = InstructionsFactory.generate(video.videoSource, duration);
+			instr = InstructionsFactory.generate(video.videoSource, duration, true);
 			range = getRange(duration, cutLength);
 			instr.startTime = range[0];
 			instr.endTime = range[1];
