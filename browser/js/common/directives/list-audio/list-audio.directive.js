@@ -1,4 +1,4 @@
-app.directive("listAudio", function (VideoFactory) {
+app.directive("listAudio", function (VideoFactory, InstructionsFactory) {
 	return {
 		restrict: "E",
 		templateUrl: "js/common/directives/list-audio/list-audio.html",
@@ -22,7 +22,12 @@ app.directive("listAudio", function (VideoFactory) {
 			};
 
 			scope.remove = function (audioSourceId) {
+				var delAudioMongoId = scope.audio.videoSource.mongoId;
 				VideoFactory.deleteVideoSource(audioSourceId);
+				var audio = InstructionsFactory.getAudio();
+				if (delAudioMongoId === audio.id) {
+					audio.id = null;
+				}
 			};
 
 		}

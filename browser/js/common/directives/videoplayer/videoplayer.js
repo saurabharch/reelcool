@@ -13,7 +13,7 @@ app.directive('videoPlayer', () => {
   };
 });
 
-app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFactory) => {
+app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFactory, InstructionsFactory) => {
   var videos = [],
       timeoutId,
       instructionVideoMap = {};
@@ -183,11 +183,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   });
 
   function updateVideo() {
-    console.log("currently playing", $scope.videoPlayerId);
+    //console.log("currently playing", $scope.videoPlayerId);
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
-
-    console.log("currently playing:", $scope.videoPlayerId);
 
     if ($scope.audioenabled) {
       setVolume();
@@ -285,7 +283,19 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     $scope.currentAudio = AudioFactory.getOriginalAudio();
   }
 
+  $scope.audioObj = InstructionsFactory.getAudio(); // just for logging, remove later
+
   var initAudio = function () {
+    // set current track depdendant on audio setting in InstructionsFactory
+    // but keep default for editor
+    if ($scope.videoPlayerId !== "editor") {
+      var audioSetting = InstructionsFactory.getAudio();
+      var audioElement = AudioFactory.getAudioElementByMongoId(audioSetting.id);
+      if (audioElement) {
+        $scope.currentAudio = audioElement;
+      }
+      $scope.fadeOut = audioSetting.fadeOut;
+    }
     changeMute($scope.currentAudio.id !== "original_track");
     $scope.currentAudio.domElement.currentTime = 0;
   };
@@ -295,6 +305,14 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       video.muted = newState;
     });
   };
+
+  $scope.$watch("fadeOut", function (newValue, oldValue) {
+    if (newValue === oldValue) {
+      return;
+    }
+    InstructionsFactory.getAudio().fadeOut = newValue;
+  });
+
 
   $scope.$watch("currentAudio", function (newValue, oldValue) {
     if (newValue === oldValue) {
@@ -306,6 +324,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       newValue = AudioFactory.getOriginalAudio();
       $scope.currentAudio = newValue;
     }
+
+    InstructionsFactory.getAudio().id = newValue.videoSource.mongoId;
+
 
     if (newValue.id === "original_track") {
       changeMute(false);

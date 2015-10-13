@@ -1,0 +1,14 @@
+Audio BE
+--------
+
+- save files as it (already working, gets mongoID)
+- add to instructions object
+	audio: {
+		id: "gwer34ef", // (or null to keep original track)
+		fadeIn: false,
+		fadeOut: true
+	}
+- make ffmpeg handle audio properly
+	- keep original
+	- add custom
+	- fade in/out

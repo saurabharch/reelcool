@@ -1,5 +1,10 @@
 app.factory('InstructionsFactory',function (IdGenerator) {
-	var instructions = [];
+	var instructions = [],
+		audio = {
+			id: null, // null to keep original track, otherwise mongoID
+			fadeIn: false,
+			fadeOut: false
+		};
 
 	return {
 		add: (instruction) => {
@@ -15,7 +20,10 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 				startTime: 0,
 				endTime: endTime,
 			};
-		}, 
-		update: (newInstructions) => instructions = newInstructions
+		},
+		update: (newInstructions) => instructions = newInstructions,
+		getAudio: function () {
+			return audio;
+		}
 	};
 });
