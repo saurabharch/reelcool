@@ -194,6 +194,9 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       ended = true;
       //console.log("end of video");
       pauseCurrentVideo();
+      if ($scope.audioenabled) {
+        $scope.currentAudio.domElement.currentTime = 0;
+      }
       return;
     }
     else {
