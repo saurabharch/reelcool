@@ -155,6 +155,29 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     }
 });
 
+router.get('/byuser/:userId',function (req,res) {
+    let userId = req.params.userId;
+    if (userId==='anon' || userId===undefined) {
+        res.status(404).send('User not logged in.');
+    }
+    else {
+        // Only want webm videos because other extensions are not ready to plug into MediaSource
+        // They'll get updated to webm once they are converted.
+        Video.find({editor:userId, ext:'.webm'}).select('_id')
+            .then(videos => {
+                var vidIds = videos.map(vid => vid._id);
+                res.send(vidIds);
+            })
+            .catch(e => {
+                let msg = `Unable to find videos for ${userId}`;
+                console.error(msg);
+                console.error(e); 
+                res.status(404).send(msg);
+            });
+    }
+});
+
+
 router.delete('/:videoId', function (req,res) {
     let videoId = req.params.videoId;
     let filename = videoId+'.webm';
