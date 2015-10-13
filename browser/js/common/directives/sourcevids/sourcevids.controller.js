@@ -24,7 +24,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
     var putVidOnScope = function(file) {
         var videoElement = VideoFactory.createVideoElement();
-        $scope.videos.push(videoElement); 
+        $scope.videos.push(videoElement);
         VideoFactory.addVideoSource(file)
             .then(function(videoSource) {
                 videoElement.addSource(videoSource);
@@ -48,7 +48,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
     var putRemoteVidOnScope = function (mongoId) {
         var videoElement = VideoFactory.createVideoElement();
         $scope.videos.push(videoElement);
-        VideoFactory.addRemoteVideoSource(mongoId)
+        VideoFactory.addRemoteSource(mongoId)
             .then(function (videoSource) {
                 let phase = $rootScope.$$phase;
                 videoElement.addSource(videoSource);
@@ -67,22 +67,16 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             });
     };
 
-    var getPrevUploads = function() {
-        let existingVids = $scope.videos.filter( vid => vid.videoSource && vid.videoSource.mongoId ).map( vid => vid.videoSource.mongoId);
-        return VideoFactory.getUserVideos()
-            .then(function (videos) {
-                return videos.filter(vid => existingVids.indexOf(vid)===-1);
-            });
-    };
 
     var updateSourceVids = function () {
-        getPrevUploads().then(function (mongoIdsToAdd) {
+        VideoFactory.getPrevUploads($scope.videos).then(function (mongoIdsToAdd) {
             mongoIdsToAdd.forEach(putRemoteVidOnScope);
         });
+        setInterval(updateSourceVids,20000); // polls the server every 20 seconds
     };
 
-    setTimeout(updateSourceVids,1000); 
-    setInterval(updateSourceVids,20000); // polls the server every 20 seconds
+    setTimeout(updateSourceVids,1000);
+
 
     // This is here just for testing the preview player
     $scope.previewVideo = () => {
