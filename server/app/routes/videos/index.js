@@ -78,9 +78,12 @@ function translateHue(command,val){
 }
 function makeFilterString(filtArr){
     if(filtArr==[]) return;
-    return filtArr.map(filt=>{
+    return filtArr.filter(el => el.applied).map(filt=>{
         let filterKey = filters[filt.displayName];
-        return filterKey.translate(filterKey.command, filt.value);
+        if (filterKey.translate){
+            return filterKey.translate(filterKey.command, filt.val);
+        }
+        else return filterKey;
     }).join(', ');
 }
 

@@ -81,23 +81,31 @@ app.factory("FilterFactory", () => {
     let templateFilts = filters.map(filt => filt.code[0].slice(0,filt.code[0].length-1));
     templateFilts.forEach((el,ind) => {
         let filtInd = filts.indexOf(el);
-        if(el.displayName=="Hue"){
-        }
         if(filtInd>-1){
-            if(el.displayName=="Hue"){
-                newFilters[ind].val=filtVals[filtInd].split('d')[0];
+            if(el=="hue-rotate"){
+                newFilters[ind].val=str.split('deg')[0].split('(').slice(-1);
+                console.log('yooooo', newFilters[ind]);
                 newFilters[ind].applied = true;
             }
-            newFilters[ind].val = filtVals[filtInd];
-            newFilters[ind].applied = true;
+            else{
+                newFilters[ind].val = filtVals[filtInd];
+                newFilters[ind].applied = true;
+            }
         }
     });
     return newFilters;
   };
 
+  let addFiltersToAllInstructions = (instructs) => {
+    instructs.forEach(inst => {
+        inst.filters = parseFilterString(inst.filterString);
+    });
+  };
+
   return {
     filters,
     createFilterString,
-    parseFilterString
+    parseFilterString,
+    addFiltersToAllInstructions
   };
 });

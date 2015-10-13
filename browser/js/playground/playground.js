@@ -79,9 +79,6 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, $r
     _.assign(instructionsCopy, $scope.instructions[0]);
     //console.log("instructionsCopy from playground", instructionsCopy);
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
-    console.log('right after send to reel',instructionsCopy.filters[2].applied);
-    resetFilters();
-    console.log('right after init',instructionsCopy.filters[2].applied);
   };
 
 });
