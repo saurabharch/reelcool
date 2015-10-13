@@ -35,9 +35,10 @@ var storage = multer.diskStorage({
         cb(null, uploadedFilesPath);
     },
     filename: function(req, file, cb) {
-        var parsedFile = path.parse(file.originalname);
-        var video = {
-            title: parsedFile.name
+        let parsedFile = path.parse(file.originalname);
+        let video = {
+            title: parsedFile.name, 
+            ext: parsedFile.ext
         };
         if (req.user) video.editor = req.user._id; // if user is not logged in, we won't remember who uploaded the video. sorry.
         Video.create(video)
