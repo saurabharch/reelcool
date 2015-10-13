@@ -31,6 +31,21 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 			return sequence;
 		},
 		update: (newInstructions) => instructions = newInstructions,
+		makeUniqueInstructions: function(instructions){
+			var instCopy = {filters:[]};
+			if(instructions.filters){
+				instructions.filters.forEach(function(filt,ind){
+					instCopy.filters[ind]={};
+					_.assign(instCopy.filters[ind], filt);
+				});
+			}
+			for(var key in instructions){
+				if(key!="filters"){
+					instCopy[key]=instructions[key];
+				}
+			}
+			return instCopy;
+		},
 		getAudio: function () {
 			return audio;
 		}

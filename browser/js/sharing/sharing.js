@@ -11,7 +11,6 @@ app.directive('sharing', () => {
 });
 
 app.controller('ShareCtrl', function ($http, $scope, DownloadFactory, InstructionsFactory) {
-
 	$scope.socialNetworks = ['Download', 'Twitter', 'Facebook', 'Instagram'];
     $scope.isOpen = false;
     $scope.openDialog = function($event, item) {

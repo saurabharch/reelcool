@@ -1,6 +1,7 @@
-app.factory("DownloadFactory", ($http) => {
+app.factory("DownloadFactory", ($http, FilterFactory) => {
 
   let requestReelVideo = (sequence) => {
+    FilterFactory.addFiltersToAllInstructions(sequence.instructions);
     return $http.post('/api/videos/makeit', sequence);
   };
 

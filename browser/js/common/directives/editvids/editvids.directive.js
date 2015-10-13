@@ -12,18 +12,20 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			$scope.$on('sendClipToReel', (e,instructions) => {
 
 				var index = getVideoIndexByInstructionsId(instructions.id);
+				var instCopy = InstructionsFactory.makeUniqueInstructions(instructions);
+				console.log('instructions after', instCopy);
 				if(index> -1){
 					//clip was previously added to list
-					_.assign($scope.videos[index].instructions, instructions);
+					_.assign($scope.videos[index].instructions, instCopy);
 				}
 				else{
 					//clip is not already there, add it to the end
 					var updatedVideoElement = VideoFactory.createVideoElement();
-					updatedVideoElement.addSource(instructions.videoSource, instructions);
+					updatedVideoElement.addSource(instCopy.videoSource, instCopy);
 					$scope.videos.push(updatedVideoElement);
 
 					setTimeout(()=> {
-						attachSourceToVideo(updatedVideoElement, instructions);
+						attachSourceToVideo(updatedVideoElement, instCopy);
 					}, 0);
 				}
 				//the only time that this scope's instructions are updated
@@ -41,13 +43,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				return _.findIndex($scope.videos, (el) => {
 					return el.instructions.id === id;
 				});
-			};
-
-			$scope.$on("videosource-deleted", function(event, videoSourceId) {
-					$scope.videos = $scope.videos.filter(el => {
-						return el.videoSource.id !== videoSourceId;
-					});
-			});
+			}
 
 			function attachSourceToVideo(updatedVideoElement, instructions) {
 				VideoFactory.attachVideoSource(instructions.videoSource, updatedVideoElement.id)

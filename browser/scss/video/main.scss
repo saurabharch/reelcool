@@ -27,3 +27,4 @@ could/should be moved to a filters.scss file and required here.
 .invert {
 	@include filters-for-all(invert, 100%);
 }
+

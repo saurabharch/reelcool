@@ -54,11 +54,40 @@ var upload = multer({
 });
 
 var filters = {
-    "grayscale()": 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
-    "sepia()": 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-    "blur()": 'boxblur=luma_radius=5:luma_power=3',
-    "invert()": 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val'
+    "Grayscale": 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
+    "Sepia": 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
+    "Invert": 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val',
+    "Brightness": {command:'hue=b=', translate: translateBrightness},
+    "Contrast": {command:['mp=eq2=1:',':0:1:1:1:1'], translate: translateContrast},
+    "Saturation": {command: ['mp=eq2=1:1:0:',':1:1:1'],translate: translateSaturation},
+    "Hue": {command:'hue=h=', translate: translateHue},
 };
+
+function translateBrightness(command,val){
+    let newVal;
+    if(val<=1) newVal = (1-val)*10*-1;
+    else newVal = (val-1)*4;
+    return command+newVal.toString();
+}
+function translateContrast(command,val){
+    return command[0]+val.toString()+command[1];
+}
+function translateSaturation(command,val){
+    return command[0]+val.toString()+command[1];
+}
+function translateHue(command,val){
+    return command+val.toString();
+}
+function makeFilterString(filtArr){
+    if(filtArr==[]) return;
+    return filtArr.filter(el => el.applied).map(filt=>{
+        let filterKey = filters[filt.displayName];
+        if (filterKey.translate){
+            return filterKey.translate(filterKey.command, filt.val);
+        }
+        else return filterKey;
+    }).join(', ');
+}
 
 router.post('/makeit', function(req, res) {
 
@@ -83,7 +112,7 @@ router.post('/makeit', function(req, res) {
         return makeClipsToBeMerged(instructions)
         .then(inst => {
           mergeVids(mergedVideo, createdFilePath, inst, instructionsId);
-        });
+        })
       }
     })
     .catch(err=> {
@@ -93,6 +122,7 @@ router.post('/makeit', function(req, res) {
     function makeClipsToBeMerged(instructions){
 
       return new Promise((resolve, reject) => {
+
         instructions.forEach(function(instruction, ind) {
             let vid = instruction.videoSource.mongoId;
             let sourceVid = uploadedFilesPath + '/' + vid + '.webm';
@@ -102,9 +132,7 @@ router.post('/makeit', function(req, res) {
             // TODO: Need an option for "no filter" that doesn't break the child process
             // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
             // That's why we currently force it to have grayscale if it doesn't already have a filter.
-            let filterName = instruction.filter || "grayscale";
-            let filterCode = filters[filterName];
-
+            let filterCode = makeFilterString(instruction.filters) || "mp=eq2=1:1:0:1:1:1:1";
             let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
             filtersProc.on('error',function(err,stdout,stderr){
                 console.error('Errored when attempting to convert this video. Details below.');
@@ -119,11 +147,11 @@ router.post('/makeit', function(req, res) {
                 if (vidsDone == instructions.length) {
                     console.log('Filters done, now merging.');
                     resolve(instructions);
-                    //mergeVids(mergedVideo, createdFilePath, instructions, instructionsId);
+                    //mergeVids(mergedVideo, createdFilePath, instructions);
                 }
                 req.resume();
             });
-        });
+          });
       });
     }
 
