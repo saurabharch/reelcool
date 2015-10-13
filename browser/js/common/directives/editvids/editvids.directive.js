@@ -11,33 +11,66 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 
 			var instructionsToVideoMap = {};
 			//$scope.instructions= Pedit reel got instructions"reviewFactory.instructions;
-			$scope.$on('sendClipToReel', (e,instructions) => {
-
-				var index = getVideoIndexByInstructionsId(instructions.id);
-				var instCopy = InstructionsFactory.makeUniqueInstructions(instructions);
-				console.log('instructions after', instCopy);
-				if(index> -1){
-					//clip was previously added to list
-					_.assign($scope.videos[index].instructions, instCopy);
-				}
-				else{
-					//clip is not already there, add it to the end
-					var updatedVideoElement = VideoFactory.createVideoElement();
-					updatedVideoElement.addSource(instCopy.videoSource, instCopy);
-					$scope.videos.push(updatedVideoElement);
-
-					setTimeout(()=> {
-						attachSourceToVideo(updatedVideoElement, instCopy);
-					}, 0);
-				}
+			$scope.$on('sendClipToReel', (e, instructions) => {
+				addClip(instructions);
 				updateInstructions($scope.videos);
+			});
+
+			function addClip (instructions) {
+				console.log('adding clip', instructions);
+			    var index = getVideoIndexByInstructionsId(instructions.id);
+			    if (index > -1) {
+			        //clip was previously added to list
+			        _.assign($scope.videos[index].instructions, instructions);
+			    } else {
+			        //clip is not already there, add it to the end
+			        var updatedVideoElement = VideoFactory.createVideoElement();
+			        updatedVideoElement.addSource(instructions.videoSource, instructions);
+			        $scope.videos.push(updatedVideoElement);
+
+			        setTimeout(() => {
+			            attachSourceToVideo(updatedVideoElement, instructions);
+			        }, 0);
+			    }
+			}
+
+			$scope.$on("randomVidGenerated", function (event){
+				$scope.videos = [];
+				$scope.instructions = InstructionsFactory.get();
+				$scope.instructions.forEach(function (i) {
+					addClip(i);
+				});
+				// let phase = $rootScope.$$phase;
+				// if (phase !== "apply" && phase !=="digest") $scope.$digest();
+// =======
+// 				var index = getVideoIndexByInstructionsId(instructions.id);
+// 				var instCopy = InstructionsFactory.makeUniqueInstructions(instructions);
+// 				console.log('instructions after', instCopy);
+// 				if(index> -1){
+// 					//clip was previously added to list
+// 					_.assign($scope.videos[index].instructions, instCopy);
+// 				}
+// 				else{
+// 					//clip is not already there, add it to the end
+// 					var updatedVideoElement = VideoFactory.createVideoElement();
+// 					updatedVideoElement.addSource(instCopy.videoSource, instCopy);
+// 					$scope.videos.push(updatedVideoElement);
+
+// 					setTimeout(()=> {
+// 						attachSourceToVideo(updatedVideoElement, instCopy);
+// 					}, 0);
+// 				}
+// 				updateInstructions($scope.videos);
+// >>>>>>> master
 			});
 
 			$scope.$on('unstageClip', (e, clip)=> {
 				var index = getVideoIndexByInstructionsId(clip.instructions.id);
 				if(index>-1){
 					$scope.videos.splice(index, 1);
+					updateInstructions($scope.videos);
 				}
+				console.log(InstructionsFactory.get());
 			});
 
 			function getVideoIndexByInstructionsId (id) {

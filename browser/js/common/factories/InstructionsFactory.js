@@ -13,12 +13,13 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 		get: () => {
 			return instructions;
 		},
-		generate: (videoSource, endTime) => {
+		generate: (videoSource, endTime, edited) => {
 			return {
 				id: IdGenerator(),
 				videoSource: videoSource,
 				startTime: 0,
 				endTime: endTime,
+				edited: edited || false
 			};
 		}, 
 		update: (newInstructions) => instructions = newInstructions,
