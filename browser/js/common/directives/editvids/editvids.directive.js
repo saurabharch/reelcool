@@ -6,8 +6,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 		controller: function ($scope, IdGenerator, $rootScope, DownloadFactory) {
 
 			$scope.videos = [];
-			$scope.instructions = InstructionsFactory.get();
-			//$scope.instructions = [];
 
 			var instructionsToVideoMap = {};
 			//$scope.instructions= Pedit reel got instructions"reviewFactory.instructions;
@@ -31,11 +29,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				//the only time that this scope's instructions are updated
 				updateInstructions($scope.videos);
 			});
-
-			$scope.$watch('instructions', (newOnes, oldOnes) => {
-				//when the instructions change, they get a new id
-				$scope.instructions.id = IdGenerator();
-			}, true);
 
 			$scope.$on('unstageClip', (e, clip)=> {
 				var index = getVideoIndexByInstructionsId(clip.instructions.id);
@@ -77,7 +70,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				// and puts them on the scope.
 				var newInstructions = videosList.map(el => el.instructions);
 				InstructionsFactory.updateSequence(newInstructions);
-				$scope.instructions = InstructionsFactory.getSequence().instructions;
 			}
 
 			$scope.previewVideo = () => {
