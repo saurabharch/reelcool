@@ -132,7 +132,8 @@ router.post('/makeit', function(req, res) {
         //create the video record (but don't save it yet) to get the _id of it
         let createdVideo = new Video({
           editor: req.user? req.user._id.toString() : 'anon',
-          instructionsId: instructionsId
+          instructionsId: instructionsId,
+          ext: '.mp4'
         })
 
         let createdVidName = createdVideo._id + '.mp4';
