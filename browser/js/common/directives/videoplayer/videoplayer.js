@@ -86,7 +86,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   init();
 
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
-    console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
+    // console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
     if($scope.videoPlayerId === targetVideoplayerId){
       $scope.instructions = instructions;
       init();
@@ -98,7 +98,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     $scope.totalCurrentTime = 0;
     $scope.currentClip = 0;
     videos[0].currentTime = $scope.instructions[0].startTime;
-    console.log("at time init, videos[0].currentTime", videos[0].currentTime);
+    // console.log("at time init, videos[0].currentTime", videos[0].currentTime);
     $scope.instructions.forEach(function(instruction) {
       $scope.totalEndTime += instruction.endTime - instruction.startTime;
     });
@@ -112,7 +112,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       if (this.index === $scope.currentClip) {
         $scope.totalCurrentTime = video.timeBefore + video.currentTime - $scope.instructions[index].startTime;
       } else {
-        console.log("video", this.index, "played but it didn't affect the time");
+        //console.log("video", this.index, "played but it didn't affect the time");
       }
       $scope.$digest(); // this gets triggered very often
     };
@@ -164,7 +164,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   });
 
   $scope.$on('pauseButton', (event, ...args) => {
-    console.log("pauseButton event got")
+    //console.log("pauseButton event got")
     clearTimeout(timeoutId);
     pauseCurrentVideo();
   });
@@ -176,13 +176,13 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       $scope.totalCurrentTime = 0;
       videos[$scope.currentClip].currentTime = $scope.instructions[$scope.currentClip].startTime;
     }
-    console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip, "total current time is", $scope.totalCurrentTime);
+    //console.log("HIT PLAY BUTTON, current clip is", $scope.currentClip, "total current time is", $scope.totalCurrentTime);
     playCurrentVideo();
     updateVideo();
   });
 
   function updateVideo() {
-    console.log("currently playing", $scope.videoPlayerId);
+    //console.log("currently playing", $scope.videoPlayerId);
     //console.log("totalCurrentTime @ update", $scope.totalCurrentTime, "video paused", videos[$scope.currentClip].paused);
     var ended;
 
@@ -192,7 +192,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
       ended = true;
-      console.log("end of video");
+      //console.log("end of video");
       pauseCurrentVideo();
       return;
     }
@@ -241,13 +241,13 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
 
   function pauseCurrentVideo() {
-    console.log("current audio:", $scope.currentAudio);
+    //console.log("current audio:", $scope.currentAudio);
     if ($scope.currentAudio) {
       $scope.currentAudio.domElement.pause();
     }
     videos[$scope.currentClip].pause();
     $scope.isPlaying = false;
-    console.log("pauseCurrentVideo was invoked");
+    //console.log("pauseCurrentVideo was invoked");
     $scope.$broadcast('pauseCurrentVideo');
   }
 
@@ -373,7 +373,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
 
   $scope.$on("audioTracks changed", function () {
-    console.log("audioTracks changed:");
+    //console.log("audioTracks changed:");
     $scope.$digest();
   });
 
