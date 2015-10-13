@@ -9,7 +9,7 @@ app.directive('playground', () => {
   };
 });
 
-app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, PreviewFactory, $rootScope ) => {
+app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, $rootScope ) => {
 
   var video, $video, videoPlayerId;
 
@@ -52,16 +52,11 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
   };
 
   $scope.cutToInstructions = () => {
-    console.log("cutToInstructions called, $scope.instructions[0]", $scope.instructions[0]);
-    //PreviewFactory.addToInstructions($scope.instructions);
+    //console.log("cutToInstructions called, $scope.instructions[0]", $scope.instructions[0]);
     $scope.instructions[0].edited = true;
     var instructionsCopy = {};
-    // for(var key in Object.keys($scope.instructions[0])){
-    //   instructionsCopy[key] = $scope.instructions[0][key];
-    // }
     _.assign(instructionsCopy, $scope.instructions[0]);
-    //angular.copy($scope.instructions[0], instructionsCopy);
-    console.log("instructionsCopy from playground", instructionsCopy);
+    //console.log("instructionsCopy from playground", instructionsCopy);
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
   };
 
