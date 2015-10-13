@@ -39,7 +39,6 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			instr.startTime = range[0];
 			instr.endTime = range[1];
 			instr.filterString = chosenFilter;
-			console.log(instr.filter);
 			cuts.push(instr);
 		}
 
@@ -54,9 +53,6 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 	generator.createVideo = function (videoElements, cutsNumber, cutLength, chosenFilter) {
 		chosenFilter = chosenFilter || getRandomElement(filters);
-		console.log(videoElements);
-		console.log(cutsNumber);
-		console.log(cutLength);
 		var allInstructions = [];
 		videoElements.forEach(video => {
 			var duration = document.getElementById(video.id).duration;
