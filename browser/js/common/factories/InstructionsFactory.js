@@ -1,5 +1,6 @@
 app.factory('InstructionsFactory',function (IdGenerator) {
 	var instructions = [];
+	var sequence = {};
 
 	return {
 		add: (instruction) => {
@@ -16,6 +17,12 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 				endTime: endTime,
 			};
 		},
-		update: (newInstructions) => instructions = newInstructions
+		updateSequence: (newInstructions) => {
+			sequence.instructions = newInstructions;
+			sequence.id = IdGenerator();
+		},
+		getSequence: () => {
+			return sequence;
+		}
 	};
 });
