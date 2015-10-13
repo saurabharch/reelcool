@@ -60,11 +60,8 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
             transformRequest: angular.identity
         };
 
-        if (file.type.indexOf("video") === -1) {
-            uploadPath = "/api/audio/upload";
-        } else {
-            uploadPath = "/api/videos/upload";
-        }
+
+        uploadPath = apiPathByFileType(file.type) + "/upload";
 
         return $http.post(uploadPath, formData, options)
             .then(function(resp) {
@@ -218,8 +215,18 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         }
     };
 
-    var deleteFromServer = function (mongoId) {
-        $http.delete('/api/videos/'+mongoId).then(function (resp) {
+    var apiPathByFileType = function (type) {
+        if (type.indexOf("video") === -1) {
+            return "/api/audio";
+        } else {
+            return "/api/videos";
+        }
+    };
+
+
+    var deleteFromServer = function (mongoId, fileType) {
+        var apiPath = apiPathByFileType(fileType);
+        $http.delete(apiPath + '/' + mongoId).then(function (resp) {
             if (resp.status===200) console.log('Successfully deleted', resp.data._id);
             else console.log('Server responded with ', resp.status); // should be 404 if video was not found
         });
@@ -236,7 +243,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         if (videoSource.mongoId) {
             console.log(videoSource.mongoId);
             console.log('Requesting deletion from server.');
-            deleteFromServer(videoSource.mongoId);
+            deleteFromServer(videoSource.mongoId, videoSource.mimeType);
         }
         // Else do nothing. If the videoSource doesn't have a mongoId yet, then the
         // delete request will be sent when the mongoId comes in
