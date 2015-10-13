@@ -35,9 +35,10 @@ var storage = multer.diskStorage({
         cb(null, uploadedFilesPath);
     },
     filename: function(req, file, cb) {
-        var parsedFile = path.parse(file.originalname);
-        var video = {
-            title: parsedFile.name
+        let parsedFile = path.parse(file.originalname);
+        let video = {
+            title: parsedFile.name, 
+            ext: parsedFile.ext
         };
         if (req.user) video.editor = req.user._id; // if user is not logged in, we won't remember who uploaded the video. sorry.
         Video.create(video)
@@ -136,7 +137,9 @@ router.get('/download/:videoId',function (req,res) {
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
-    if (parsedFile.ext === ".webm") res.status(201).send(parsedFile.name);
+    var mongoId = parsedFile.name;
+    var desiredExt = '.webm';
+    if (parsedFile.ext === desiredExt) res.status(201).send(parsedFile.name);
     else {
         var dest = req.file.destination + '/' + parsedFile.name + '.webm';
         var ffmpeg = spawn('ffmpeg', ['-i', req.file.path, '-c:v', 'libvpx', '-crf', '10', '-b:v', '1M', '-c:a', 'libvorbis', dest, '-y']);
@@ -145,15 +148,38 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
         });
         ffmpeg.on('error', function(err) {
             console.error(err);
+            res.status(500).send();
         });
         ffmpeg.on('exit', function(code, signal) {
-            fs.unlink(req.file.path, function(err) {
-                req.resume();
-                res.status(201).send(parsedFile.name);
-            });
+            fs.unlinkAsync(req.file.path)
+                .then(function () {
+                    return Video.findByIdAndUpdate(mongoId, { ext: desiredExt }, {new: true});
+                })
+                .then(updated => res.status(201).send(updated._id));
         });
     }
 });
+
+router.get('/byuser/:userId',function (req,res) {
+    let userId = req.params.userId;
+    if (userId==='anon' || userId===undefined) res.status(404).send('User not logged in.');
+    else {
+        // Only want webm videos because other extensions are not ready to plug into MediaSource
+        // They'll get updated to webm once they are converted.
+        Video.find({editor:userId, ext:'.webm'}).select('_id')
+            .then(videos => {
+                var vidIds = videos.map(vid => vid._id);
+                res.send(vidIds);
+            })
+            .catch(e => {
+                let msg = `Unable to find videos for ${userId}`;
+                console.error(msg);
+                console.error(e); 
+                res.status(404).send(msg);
+            });
+    }
+});
+
 
 router.delete('/:videoId', function (req,res) {
     let videoId = req.params.videoId;
