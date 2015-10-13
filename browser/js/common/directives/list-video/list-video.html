@@ -1,5 +1,5 @@
 <div class="list-video">
-		<video style="-webkit-filter: {{video.instructions.filter}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="200px" height="150px" id="{{video.id}}" loop muted></video>
+		<video style="-webkit-filter: {{video.instructions.filterString}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="200px" height="150px" id="{{video.id}}" loop muted></video>
 		<div>{{video.fileName}} ({{video.instructions.endTime - video.instructions.startTime | duration}})</div>
 		<img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
 		<md-button class="md-warn" ng-if="type==='source'" ng-click="removeSource(video.videoSource.id)">delete</md-button>

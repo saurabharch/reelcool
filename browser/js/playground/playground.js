@@ -2,7 +2,6 @@ app.directive('playground', () => {
   return {
     restrict: 'E',
     scope: {
-      instructions: '='
     },
     controller: 'PlaygroundCtrl',
     templateUrl: 'js/playground/playground.html'
@@ -19,10 +18,14 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, $r
     }
   });
 
+  $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
+    $scope.instructions = instructions;
+    initFilters();
+  });
+
   $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
     video = document.getElementById(instructionVideoMap[$scope.instructions[0].id]);
     $video = $(video);
-    initFilters();
   });
 
   $scope.updatedTimeRange = () => {
@@ -31,43 +34,51 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, $r
 
   function initFilters () {
     //get the available filters, none of them are applied
-    $scope.filters = FilterFactory.filters.map(filter => {
-        filter.applied = false;
-        return filter;
-    });
+    if($scope.instructions[0].edited){
+      $scope.filters = FilterFactory.parseFilterString($scope.instructions[0].filterString);
+    }
+    else{
+      $scope.filters = angular.copy(FilterFactory.filters);
+    }
+    $scope.$watch('filters',function(newVal,oldVal){
+      $scope.instructions[0].filterString = FilterFactory.createFilterString(newVal);
+    }, true);
   }
 
-  $scope.toggleFilter = (filter) => {
 
-    $scope.filters.forEach(el => {
-      if(filter.code ===""){
-        el.applied = false;
-      }
-      else if(el.code === filter.code || el.applied){
-        el.applied = !el.applied;
-      }
-    });
-    saveFilterToInstructions();
-    updateFilterString();
+  $scope.toggleFilter = (filter) => {
+    if (filter.applied){
+      filter.applied = false;
+      filter.val = filter.default;
+      return;
+    }
+    else{
+      filter.applied = true;
+      $scope.filters.forEach(el => {
+        if(filter.code ==="clear"){
+          el.applied = false;
+          el.val = el.default;
+        }
+        else if(filter.primary){
+          if(el.primary && el!==filter){
+            el.applied = false;
+            el.val = el.default;
+          }
+        }
+      });
+      if(filter.displayName=='Invert'||filter.displayName=="Sepia"||filter.displayName=="Grayscale") filter.val = 1;
+    }
+    console.log('instructions', $scope.instructions[0]);
   };
 
   $scope.cutToInstructions = () => {
     //console.log("cutToInstructions called, $scope.instructions[0]", $scope.instructions[0]);
     $scope.instructions[0].edited = true;
+
     var instructionsCopy = {};
     _.assign(instructionsCopy, $scope.instructions[0]);
     //console.log("instructionsCopy from playground", instructionsCopy);
     $rootScope.$broadcast('sendClipToReel', instructionsCopy);
   };
-
-  function updateFilterString() {
-    let newFilterStr = FilterFactory.createFilterString($scope.filters);
-    $video.attr('style', `-webkit-filter:${newFilterStr}`);
-  }
-
-  function saveFilterToInstructions (){
-    console.log("will save",  $scope.filters.filter(el => el.applied)[0].code);
-    $scope.instructions[0].filter = $scope.filters.filter(el => el.applied)[0].code;
-  }
 
 });

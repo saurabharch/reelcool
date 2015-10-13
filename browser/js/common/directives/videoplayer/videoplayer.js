@@ -13,7 +13,7 @@ app.directive('videoPlayer', () => {
   };
 });
 
-app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFactory, InstructionsFactory) => {
+app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFactory, FilterFactory, InstructionsFactory) => {
   var videos = [],
       timeoutId,
       instructionVideoMap = {};
@@ -30,7 +30,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   $scope.videoContainerId = "video-container" + IdGenerator();
 
   $scope.prepareVideoElements = function() {
-    if (!$scope.instructions.length) {
+    if (!$scope.instructions) {
       return;
     }
 
@@ -168,6 +168,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     clearTimeout(timeoutId);
     pauseCurrentVideo();
   });
+
 
   $scope.$on('playButton', (event, ...args) => {
     if ($scope.totalCurrentTime >= $scope.totalEndTime) {
