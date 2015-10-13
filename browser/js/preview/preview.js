@@ -3,7 +3,7 @@ app.config(($stateProvider) => {
     $stateProvider.state('preview', {
         url: '/preview',
         templateUrl: 'js/preview/preview.html',
-        controller: ($scope) => {
+        controller: ($scope, InstructionsFactory) => {
           $scope.instructions = InstructionsFactory.get();
           console.log("previewer got instructions", $scope.instructions);
         }

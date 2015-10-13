@@ -1,0 +1,10 @@
+Audio BE
+--------
+
+
+- poll for audio
+- send audio config with instructions to server for creating final video
+- make ffmpeg handle audio properly
+	- keep original
+	- add custom
+	- fade in/out

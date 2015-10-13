@@ -1,7 +1,11 @@
 <div class="list-audio">
 	<img width="60px" ng-click="togglePlay()" src="http://researchradio.org/wp-content/uploads/2015/06/audio-icon.png" />
 	<audio ng-show="audio.sourceAttached" width="200px" height="150px" id="{{audio.id}}" loop></audio>
-	<div>{{audio.videoSource.fileName}} ({{getAudioDuration(audio.duration)}})</div>
+	<div>{{audio.fileName}} ({{audio.duration | duration}})</div>
 	<img width="100px" ng-hide="audio.sourceAttached" src="/images/spinner.gif" />
 	<button ng-click="remove(audio.videoSource.id)">delete</button>
 </div>
+<!-- <pre>
+{{audio}}
+</pre>
+ -->
