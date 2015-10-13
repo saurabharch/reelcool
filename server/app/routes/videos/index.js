@@ -66,13 +66,13 @@ router.post('/makeit', function(req, res) {
     instructions.forEach(function(instruction, ind) {
         let vid = instruction.videoSource.mongoId;
         let sourceVid = uploadedFilesPath + '/' + vid + '.webm';
-        let destVid = stagingAreaPath + '/' + vid + '.mp4';
+        let destVid = stagingAreaPath + '/' + instruction.id + '.mp4';
         let startTime = instruction.startTime;
         let duration = (Number(instruction.endTime) - Number(startTime)).toString();
         // TODO: Need an option for "no filter" that doesn't break the child process
         // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
         // That's why we currently force it to have grayscale if it doesn't already have a filter.
-        let filterName = instruction.filter || "grayscale";
+        let filterName = instruction.filter || "grayscale()";
         let filterCode = filters[filterName];
 
         let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
@@ -99,7 +99,7 @@ router.post('/makeit', function(req, res) {
 
         // add inputs in the same order as they were in the instructions
         instructions.forEach(function (inst) {
-            let filename = inst.videoSource.mongoId+'.mp4';
+            let filename = inst.id+'.mp4';
             let input = path.join(stagingAreaPath,filename);
             mergedVideo.addInput(input);
         });

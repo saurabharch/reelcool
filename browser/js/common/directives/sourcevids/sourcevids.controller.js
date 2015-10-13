@@ -87,6 +87,6 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
         var cutLength = 2;
         var allInstructions = RandomVideoGenerator.createVideo($scope.videos, cutsNumber, cutLength);
         InstructionsFactory.update(allInstructions);
-        $state.go('preview');
+        $rootScope.$broadcast("randomVidGenerated");
     };
 });

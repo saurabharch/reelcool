@@ -11,11 +11,6 @@ app.factory("FilterFactory", () => {
         type:"color"
     },
     {
-        code: "grayscale(80%)",
-        displayName:"70% Grayscale",
-        type:"color"
-    },
-    {
         code: "sepia()",
         displayName:"Sepia",
         type:"color"
