@@ -21,11 +21,11 @@ var tempFilePath;
 router.use(function (req,res,next) {
     // all this has to be inside of router.use (or at least the userDir part) so that we have access to req
     userDir = req.user ? req.user._id.toString() : 'anon'; // to prevent errors/crashes in case we somehow fail to enforce login
-    uploadedFilesPath = path.join(filesPath,userDir,"uploaded"); 
+    uploadedFilesPath = path.join(filesPath,userDir,"uploaded");
     stagingAreaPath = path.join(filesPath,userDir,"staging");
     createdFilePath = path.join(filesPath,userDir,"created");
     tempFilePath = path.join(filesPath,userDir,"temp");
-    next();   
+    next();
 });
 
 // multer file handling
@@ -37,7 +37,7 @@ var storage = multer.diskStorage({
     filename: function(req, file, cb) {
         let parsedFile = path.parse(file.originalname);
         let video = {
-            title: parsedFile.name, 
+            title: parsedFile.name,
             ext: parsedFile.ext
         };
         if (req.user) video.editor = req.user._id; // if user is not logged in, we won't remember who uploaded the video. sorry.
@@ -69,12 +69,12 @@ router.post('/makeit', function(req, res) {
         let destVid = stagingAreaPath + '/' + vid + '.mp4';
         let startTime = instruction.startTime;
         let duration = (Number(instruction.endTime) - Number(startTime)).toString();
-        // TODO: Need an option for "no filter" that doesn't break the child process 
+        // TODO: Need an option for "no filter" that doesn't break the child process
         // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
         // That's why we currently force it to have grayscale if it doesn't already have a filter.
-        let filterName = instruction.filter || "grayscale"; 
+        let filterName = instruction.filter || "grayscale";
         let filterCode = filters[filterName];
-        
+
         let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
         filtersProc.on('error',function(err,stdout,stderr){
             console.error('Errored when attempting to convert this video. Details below.');
@@ -103,7 +103,7 @@ router.post('/makeit', function(req, res) {
             let input = path.join(stagingAreaPath,filename);
             mergedVideo.addInput(input);
         });
-        
+
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err) {
                 console.log('Error ' + err.message);
@@ -118,7 +118,7 @@ router.post('/makeit', function(req, res) {
         return fs.readdirAsync(stagingAreaPath)
             .then(arrayOfFiles => Promise.map(arrayOfFiles, function (file) { return fs.unlinkAsync(path.join(stagingAreaPath, file)); }));
     }
-    
+
 });
 
 router.get('/getconverted/:userId/:videoId',function (req,res){
@@ -166,15 +166,15 @@ router.get('/byuser/:userId',function (req,res) {
     else {
         // Only want webm videos because other extensions are not ready to plug into MediaSource
         // They'll get updated to webm once they are converted.
-        Video.find({editor:userId, ext:'.webm'}).select('_id')
+        Video.find({editor:userId, ext:'.webm'}).select('_id title')
             .then(videos => {
-                var vidIds = videos.map(vid => vid._id);
-                res.send(vidIds);
+                // var vidIds = videos.map(vid => vid._id);
+                res.send(videos);
             })
             .catch(e => {
                 let msg = `Unable to find videos for ${userId}`;
                 console.error(msg);
-                console.error(e); 
+                console.error(e);
                 res.status(404).send(msg);
             });
     }
@@ -185,15 +185,15 @@ router.delete('/:videoId', function (req,res) {
     let videoId = req.params.videoId;
     let filename = videoId+'.webm';
     let fullFilePath = path.join(uploadedFilesPath,filename);
-    
+
     fs.unlinkAsync(fullFilePath)
-        .then( 
+        .then(
             // file found, proceed to delete reference from db
-            () => true, 
-            // unlink will err if file not found, that's why we need this whole block, 
+            () => true,
+            // unlink will err if file not found, that's why we need this whole block,
             // to keep this on the success chain
-            () => console.log('File not found. Attempting to remove any remaining reference to it from db.') 
-        ) 
+            () => console.log('File not found. Attempting to remove any remaining reference to it from db.')
+        )
         .then( () => Video.findByIdAndRemove(videoId))
         .then(function (removed) {
             if (removed) res.send(removed);

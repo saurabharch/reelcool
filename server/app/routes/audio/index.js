@@ -75,4 +75,39 @@ router.delete('/:audioId', function (req,res) {
 
 });
 
+
+router.get('/getconverted/:userId/:audioId',function (req,res){
+    var filename = req.params.audioId+'.mp3';
+    var pathToVid = path.join(filesPath, req.params.userId, 'uploaded', filename);
+    fs.createReadStream(pathToVid).pipe(res);
+});
+
+
+router.get('/byuser/:userId',function (req,res) {
+    let userId = req.params.userId;
+    if (userId==='anon' || userId===undefined) res.status(404).send('User not logged in.');
+    else {
+        // Only want webm videos because other extensions are not ready to plug into MediaSource
+        // They'll get updated to webm once they are converted.
+        Audio.find({editor:userId}).select('_id title')
+            .then(audioFiles => {
+                // var audioIds = audioFiles.map(audio => audio._id);
+                res.send(audioFiles);
+            })
+            .catch(e => {
+                let msg = `Unable to find audio files for ${userId}`;
+                console.error(msg);
+                console.error(e);
+                res.status(404).send(msg);
+            });
+    }
+});
+
+
+
+
+
+
 module.exports = router;
+
+

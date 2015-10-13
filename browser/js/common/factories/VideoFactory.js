@@ -7,13 +7,24 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     var userId;
     AuthService.getLoggedInUser().then(user => userId = user ? user._id : 'anon');
 
-    //TODO do ajax polling for uploaded videos
-    vidFactory.getUserVideos = function() {
-        console.log('calling getUserVideos for user', userId);
-        let url = `/api/videos/byuser/${userId}`;
+    var getUserMedia = function(type) {
+        console.log('calling getUserMedia for user', userId);
+        let url = `/api/${type}/byuser/${userId}`;
         console.log(url);
         return $http.get(url).then(resp => resp.data);
     };
+
+    // vidFactory.getUserVideos = function() {
+    //     console.log('calling getUserVideos for user', userId);
+    //     let url = `/api/videos/byuser/${userId}`;
+    //     console.log(url);
+    //     return $http.get(url).then(resp => resp.data);
+    // };
+
+    // vidFactory.getUserAudio = function() {
+    //     let url = `/api/audio/byuser/${userId}`;
+    //     return $http.get(url).then(resp => resp.data);
+    // };
 
     var VideoElement = function() {
         this.id = IdGenerator();
@@ -33,15 +44,17 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         // this.mongoId to be assigned after receiving server response
     };
     VideoSource.prototype.addUrl = function(mongoId, userId) {
-        this.url = 'api/videos/getconverted/' + userId + '/' + mongoId;
+        var media = (this.mimeType &&
+                this.mimeType.indexOf("video") === -1 ) ? "audio" : "videos";
+        this.url = 'api/' +media+ '/getconverted/' + userId + '/' + mongoId;
     };
     VideoSource.prototype.addMongoId = function(mongoId) {
         this.mongoId = mongoId;
         if (!this.arrayBuffer) {
             // if no arrayBuffer, must be a converted file we've just gotten back
             // it must need a mimeType and a URL too
-            this.addUrl(mongoId, userId); // var userId is defined early on in the controller
             this.mimeType = "video/webm";
+            this.addUrl(mongoId, userId); // var userId is defined early on in the controller
         }
     };
     VideoSource.prototype.startReading = function(fileName, mimeType, arrayBuffer) {
@@ -98,19 +111,19 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         }
     };
 
-    vidFactory.createVideoElement = function(file) {
+    vidFactory.createVideoElement = function(fileName) {
         var newElement = new VideoElement();
-        if (file) {
-            newElement.fileName = file.name;
-        }
+        newElement.fileName = fileName;
         console.log("created new video element", newElement);
         return newElement;
     };
 
-    vidFactory.addRemoteVideoSource = function(mongoId) {
+    vidFactory.addRemoteSource = function(mongoId, isAudio) {
         return new Promise(function(resolve, reject) {
             var videoSrc = new VideoSource();
-            videoSrc.addMongoId(mongoId);
+            videoSrc.mongoId = mongoId;
+            videoSrc.mimeType = isAudio ? "audio/mp3" : "video/webm";
+            videoSrc.addUrl(mongoId, userId);
             videoSources[videoSrc.id] = videoSrc;
             console.log('addRemoteVideoSource', videoSrc);
             resolve(videoSrc);
@@ -262,6 +275,20 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         // delete request will be sent when the mongoId comes in
         // Refer to attachMongoId function to see where this is called.
     };
+
+
+    vidFactory.getPrevUploads = function(mediaElements, isAudio) {
+        let existingVids = mediaElements.filter( vid => vid.videoSource && vid.videoSource.mongoId ).map( vid => vid.videoSource.mongoId);
+        // var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
+        var media = isAudio ? "audio" : "videos";
+        return getUserMedia(media)
+            .then(function (mediaData) {
+                return mediaData.filter(media => existingVids.indexOf(media._id)===-1);
+            });
+    };
+
+
+
 
     return vidFactory;
 });

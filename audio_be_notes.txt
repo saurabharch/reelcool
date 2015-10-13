@@ -1,13 +1,9 @@
 Audio BE
 --------
 
-- save files as it (already working, gets mongoID)
-- add to instructions object
-	audio: {
-		id: "gwer34ef", // (or null to keep original track)
-		fadeIn: false,
-		fadeOut: true
-	}
+
+- poll for audio
+- send audio config with instructions to server for creating final video
 - make ffmpeg handle audio properly
 	- keep original
 	- add custom
