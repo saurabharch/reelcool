@@ -9,21 +9,24 @@ app.factory("FilterFactory", () => {
         displayName:"Grayscale",
         primary: true,
         val:0,
-        default:0
+        default:0,
+        applied: false
     },
     {   
         code: ["sepia(",")"],
         displayName:"Sepia",
         primary: true,
         val:0,
-        default:0
+        default:0,
+        applied: false
     },
     {
         code: ["invert(",")"],
         displayName:"Invert",
         primary: true,
         val: 0,
-        default:0
+        default:0,
+        applied: false
     },
     {
         code: ["brightness(",")"],
@@ -32,7 +35,8 @@ app.factory("FilterFactory", () => {
         min:0.2,
         max:1.8,
         val:1,
-        default:1
+        default:1,
+        applied: false
     },
     {
         code: ["contrast(",")"],
@@ -41,16 +45,18 @@ app.factory("FilterFactory", () => {
         min:1,
         max:5,
         val:1,
-        default:1
+        default:1,
+        applied: false
     },
     {
-        code: ["hue-rotate(",")"],
+        code: ["hue-rotate(","deg)"],
         displayName: "Hue",
         primary: false,
         min:0,
         max:360,
         val:0,
-        default:0
+        default:0,
+        applied: false
     },
     {
         code: ["saturate(",")"],
@@ -59,7 +65,8 @@ app.factory("FilterFactory", () => {
         min:0,
         max:10,
         val:1,
-        default:1
+        default:1,
+        applied: false
     }
 
   ];
@@ -67,9 +74,31 @@ app.factory("FilterFactory", () => {
   let createFilterString = (filtersArr) => {
     return filtersArr.filter(el => el.applied).map(el => el.code[0]+el.val+el.code[1]).join(" ");
   };
+  let parseFilterString = (str) => {
+    debugger;
+    let newFilters = angular.copy(filters);
+    let filts = str.split(' ').map(el => el.split('(')[0]);
+    let filtVals = str.split(' ').map(el => el.split('(')[1].split(')')[0]);
+    let templateFilts = filters.map(filt => filt.code[0].slice(0,filt.code[0].length-1));
+    templateFilts.forEach((el,ind) => {
+        let filtInd = filts.indexOf(el);
+        if(el.displayName=="Hue"){
+        }
+        if(filtInd>-1){
+            if(el.displayName=="Hue"){
+                newFilters[ind].val=filtVals[filtInd].split('d')[0];
+                newFilters[ind].applied = true;
+            }
+            newFilters[ind].val = filtVals[filtInd];
+            newFilters[ind].applied = true;
+        }
+    });
+    return newFilters;
+  };
 
   return {
-    filters: filters,
-    createFilterString: createFilterString
+    filters,
+    createFilterString,
+    parseFilterString
   };
 });

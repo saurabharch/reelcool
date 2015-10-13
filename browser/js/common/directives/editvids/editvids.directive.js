@@ -46,12 +46,6 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				});
 			}
 
-			$scope.$on("videosource-deleted", function(event, videoSourceId) {
-					$scope.videos = $scope.videos.filter(el => {
-						return el.videoSource.id !== videoSourceId;
-					});
-			});
-
 			function attachSourceToVideo(updatedVideoElement, instructions) {
 				VideoFactory.attachVideoSource(instructions.videoSource, updatedVideoElement.id)
 				.then(() =>  {
@@ -82,7 +76,8 @@ app.directive("editvids", function (PreviewFactory, VideoFactory, InstructionsFa
 				console.log('from InstructionsFactory',InstructionsFactory.get());
 				console.log('from the $scope',$scope.instructions);
 				PreviewFactory.setInstructions($scope.instructions);
-				$rootScope.$broadcast('toggleModal', {show: true});
+				console.log("instructions in previewFactory", PreviewFactory.getInstructions());
+				$rootScope.$broadcast('toggleModal');
 			};
 
 		}

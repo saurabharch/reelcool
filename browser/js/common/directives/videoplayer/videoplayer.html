@@ -2,7 +2,7 @@
   <div width="{{width}}px" id="{{videoContainerId}}">
   	<div class="emptyVideo" style="width: {{width}}px; height: {{height}}px" ng-hide="instructions.length">SELECT A VIDEO!</div>
     <div ng-repeat="instruction in instructions" ng-show="currentClip===$index">
-      <video width="{{width}}px" height="{{height}}px" id="{{getIdForVideo(instruction.id)}}" class='box' style="-webkit-filter: {{'grayscale('+instruction.filters[1].val+')' + 'sepia('+instruction.filters[2].val+')' + 'invert('+instruction.filters[3].val+')' + 'brightness('+instruction.filters[4].val+')' + 'contrast('+instruction.filters[5].val+')' + 'hue-rotate('+instruction.filters[6].val+'deg)' + 'opacity('+instruction.filters[7].val+')' + 'saturate('+instruction.filters[8].val+')'}}" preload>
+      <video width="{{width}}px" height="{{height}}px" id="{{getIdForVideo(instruction.id)}}" class='box' style="-webkit-filter: {{instruction.filterString}}" preload>
       </video>
     </div>
 

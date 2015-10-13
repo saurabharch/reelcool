@@ -20,12 +20,12 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
 
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
     $scope.instructions = instructions;
+    initFilters();
   });
 
   $scope.$on('videoPlayerLoaded', (e, instructionVideoMap) => {
     video = document.getElementById(instructionVideoMap[$scope.instructions[0].id]);
     $video = $(video);
-    initFilters();
   });
 
   $scope.updatedTimeRange = () => {
@@ -34,21 +34,17 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
 
   function initFilters () {
     //get the available filters, none of them are applied
-    if($scope.instructions[0].edited) return;
-    $scope.instructions[0].filters = FilterFactory.filters.map(filter => {
-        filter.applied = false;
-        filter.val = filter.default;
-        return filter;
-    });
+    if($scope.instructions[0].edited){
+      $scope.filters = FilterFactory.parseFilterString($scope.instructions[0].filterString);
+    }
+    else{
+      $scope.filters = angular.copy(FilterFactory.filters);
+    }
+    $scope.$watch('filters',function(newVal,oldVal){
+      $scope.instructions[0].filterString = FilterFactory.createFilterString(newVal);
+    }, true);
   }
-  function resetFilters () {
-    //get the available filters, none of them are applied
-    $scope.instructions[0].filters = FilterFactory.filters.map(filter => {
-        filter.applied = false;
-        filter.val = filter.default;
-        return filter;
-    });
-  }
+
 
   $scope.toggleFilter = (filter) => {
     if (filter.applied){
@@ -58,7 +54,7 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     }
     else{
       filter.applied = true;
-      $scope.instructions[0].filters.forEach(el => {
+      $scope.filters.forEach(el => {
         if(filter.code ==="clear"){
           el.applied = false;
           el.val = el.default;
@@ -79,11 +75,10 @@ app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, Pr
     console.log("cutToInstructions called, $scope.instructions[0]", $scope.instructions[0]);
     //PreviewFactory.addToInstructions($scope.instructions);
     $scope.instructions[0].edited = true;
-    var instructionsCopy = {};
+    var instructionsCopy = $scope.instructions[0];
     // for(var key in Object.keys($scope.instructions[0])){
     //   instructionsCopy[key] = $scope.instructions[0][key];
     // }
-    _.assign(instructionsCopy, $scope.instructions[0]);
     //angular.copy($scope.instructions[0], instructionsCopy);
     console.log("instructionsCopy from playground", instructionsCopy);
 

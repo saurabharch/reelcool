@@ -1,4 +1,4 @@
-app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootScope, IdGenerator) {
+app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootScope, IdGenerator, FilterFactory) {
 	return {
 		restrict: "E",
 		templateUrl: "js/common/directives/list-video/list-video.html",
@@ -7,6 +7,8 @@ app.directive("listVideo", function (VideoFactory, InstructionsFactory, $rootSco
 			type: '='
 		},
 		link: function (scope, element, attr) {
+
+			//make a string for the filter classes (if it has filters)
 
 			var getVideoElement = function () {
 				scope.video.element = scope.video.element ||
