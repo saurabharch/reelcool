@@ -15,7 +15,7 @@
                 <div class="row" style="width: 600px" ng-repeat="filter in filters" ng-show="filter.applied && filter.max">
                     <h4 class="filter-name">{{filter.displayName}}</h4>
                     <i class="filter-remove fa fa-times" ng-click="toggleFilter(filter)"></i>
-                    <md-slider class="filter-slider" ng-model="filter.val" ng-change="valChange(filter.val)" min="{{filter.min}}" ng-discrete step="0.05" max="{{filter.max}}"></md-slider>
+                    <md-slider class="filter-slider" aria-label="filter slider" ng-model="filter.val" ng-change="valChange(filter.val)" min="{{filter.min}}" ng-discrete step="0.05" max="{{filter.max}}"></md-slider>
                 </div>
                 <div ng-show="instructions.length" class="row">
                     <button ng-click='cutToInstructions()'>Cut to Reel</button>

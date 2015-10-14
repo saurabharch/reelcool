@@ -1,9 +1,9 @@
 app.factory('InstructionsFactory',function (IdGenerator) {
 	var instructions = [],
 		audio = {
-			id: null, // null to keep original track, otherwise mongoID
+			id: "original_track", // "original_track" or mongoID
 			fadeIn: false,
-			fadeOut: false
+			fadeOut: true
 		};
 
 	return {
@@ -21,7 +21,7 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 				endTime: endTime,
 				edited: edited || false
 			};
-		}, 
+		},
 		update: (newInstructions) => instructions = newInstructions,
 		makeUniqueInstructions: function(instructions){
 			var instCopy = {filters:[]};

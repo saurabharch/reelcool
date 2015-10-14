@@ -22,7 +22,7 @@ totalCurrentTime: {{totalCurrentTime}}
     <time-slider ng-show="instructions.length" id="slider" moving-time="totalCurrentTime" start-time="getCurrentStartTime()" end-time="totalEndTime" width="width"></time-slider>
   </div>
 
-<div ng-show="audioenabled">
+<div ng-show="false"> <!-- false for the demo, until this is changed to material select box -->
 	<select ng-model="currentAudio" ng-options="audio.fileName for audio in audioTracks"></select>
 	fadeout: <input type="checkbox" ng-model="fadeOut">
 </div>

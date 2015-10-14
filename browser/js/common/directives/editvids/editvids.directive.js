@@ -34,6 +34,12 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			    }
 			}
 
+			$scope.removeAll = function () {
+				$scope.videos = [];
+				$scope.instructions = [];
+				InstructionsFactory.update($scope.instructions);
+			};
+
 			$scope.$on("randomVidGenerated", function (event){
 				$scope.videos = [];
 				$scope.instructions = InstructionsFactory.get();
