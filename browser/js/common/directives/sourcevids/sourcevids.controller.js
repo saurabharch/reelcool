@@ -83,7 +83,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
     // This is here just for testing the preview player
     $scope.previewVideo = () => {
-        var cutsNumber = 4;
+        var cutsNumber = 3;
         var cutLength = 2;
         var allInstructions = RandomVideoGenerator.createVideo($scope.videos, cutsNumber, cutLength);
         InstructionsFactory.update(allInstructions);

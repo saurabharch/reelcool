@@ -14,7 +14,8 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 	var filters = [
 		// "grayscale(1)", 
 		// "sepia(1)", 
-		"invert(1)", 
+		// "invert(1)", 
+		"hue-rotate(220deg) saturate(5)"
 		// "hue-rotate(90deg)", 
 		// "hue-rotate(225deg)", 
 		// "brightness(1.5)"
