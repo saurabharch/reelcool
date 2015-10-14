@@ -2,8 +2,20 @@
 window.app = angular.module('FullstackGeneratedApp',
       ['ui.router',
       'ui.bootstrap',
-      'fsaPreBuilt', 
+      'fsaPreBuilt',
       'ngMaterial']);
+
+app.config(($mdThemingProvider) => {
+        $mdThemingProvider.theme('reelcool')
+        .primaryPalette('light-blue')
+        .accentPalette('orange')
+        .warnPalette('yellow')
+        .backgroundPalette('grey', {
+          "default": "700"
+        });
+
+        $mdThemingProvider.setDefaultTheme('reelcool');
+});
 
 app.config(function ($urlRouterProvider, $locationProvider) {
     // This turns off hashbang urls (/#about) and changes it to something normal (/about)

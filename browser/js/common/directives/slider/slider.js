@@ -25,6 +25,7 @@ app.directive("timeSlider", () => {
       var playButton = document.getElementById('play-button');
       var $svg = $('svg');
       var svgLeftOffset = $svg.offset().left;
+      var svgOuterWidth = $svg.outerWidth();
       console.log("svgPosition", svgLeftOffset);
 
       scope.movingTime = scope.movingTime || 0;
@@ -106,25 +107,34 @@ app.directive("timeSlider", () => {
           sliderBar.addEventListener('click', moveDotFromClick);
         },1);
         //showSliderWithoutHover = false;
+        var $svg = $('svg');
+        var svgLeftOffset = $svg.offset().left;
+        var svgOuterWidth = $svg.outerWidth();
         var clickedX = e.clientX -svgLeftOffset;
         console.log('save dot x', clickedX);
-        var newMovingTime = (clickedX)/scope.width * scope.endTime;
+        var newMovingTime = (clickedX)/svgOuterWidth * scope.endTime;
         console.log('slider says newMovingTime', newMovingTime);
         scope.$emit('newMovingTime', {time: newMovingTime, paused: scope.paused});
       }
 
       function moveDot(e){
         //svgLeftOffset = $svg.offset().left;
+        var $svg = $('svg');
+        var svgLeftOffset = $svg.offset().left;
+        var svgOuterWidth = $svg.outerWidth();
         var movedX = e.clientX - svgLeftOffset;
-        scope.movingTime = (movedX)/scope.width * scope.endTime;
+        scope.movingTime = (movedX)/svgOuterWidth* scope.endTime;
         scope.$digest();
       }
 
       function moveDotFromClick(e) {
         //x value of coordinate  -> totalCurrentTime
+        var $svg = $('svg');
+        var svgLeftOffset = $svg.offset().left;
+        var svgOuterWidth = $svg.outerWidth();
         console.log('clicked x', e.clientX);
         var clickedX = e.clientX - svgLeftOffset;
-        var newMovingTime = (clickedX)/scope.width * scope.endTime;
+        var newMovingTime = (clickedX)/svgOuterWidth * scope.endTime;
         console.log('clicked slider says newMovingTime', newMovingTime);
         scope.$emit('newMovingTime', {time: newMovingTime, paused: scope.paused});
       }
