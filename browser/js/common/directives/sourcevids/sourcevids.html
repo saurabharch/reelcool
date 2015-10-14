@@ -3,11 +3,7 @@
 	<p ng-hide="videos.length">You have no videos uploaded. Upload some!</p>
 	<ul id="vidslist">
 		<li ng-repeat="video in videos">
-			<md-card>
-				<md-card-content>
-					<list-video video="video" type="'source'"></list-video>
-				</md-card-content>
-			</md-card>
+			<list-video video="video" type="'source'"></list-video>
 		</li>
 	</ul>
 	<input type="file" style="display:none" id="videofileinput" accept="video/*"d- multiple>
