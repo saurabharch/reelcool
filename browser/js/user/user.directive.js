@@ -24,7 +24,7 @@ app.controller('UserCtrl', function ($scope, $mdDialog, $state, AuthService) {
             };
           },
           controllerAs: 'dialog',
-          templateUrl: "js/login/login.html",
+          templateUrl: "js/user/login.html",
           targetEvent: $event
         });
     };
