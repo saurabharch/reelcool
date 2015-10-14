@@ -3,7 +3,7 @@
     <md-content class="md-padding" ng-hide=videos.length>
         <p>You haven't made any cuts yet. Make some in the Playground!</p>
     </md-content>
-    <md-virtual-repeat-container id="vidslist" style="height: 350px">
+    <md-virtual-repeat-container id="vidslist" style="height: 500px">
         <div layout="row" ng-repeat="video in videos">
             <list-video video="video" type="'edited'"></list-video>
         </div>
