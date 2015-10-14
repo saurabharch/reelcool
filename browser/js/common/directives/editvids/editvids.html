@@ -6,8 +6,10 @@
 			<list-video video="video" type="'edited'"></list-video>
 		</li>
 	</ul>
-	<input type="file" style="display:none" id="videofileinput" accept="video/*" multiple>
-	<!-- <p><button ng-click="selectVideoFile()">add</button></p> -->
+	<!-- <input type="file" style="display:none" id="videofileinput" accept="video/*" multiple> -->
+    <audio-selector></audio-selector>
+
+	<p><md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button></p>
 
 	<p><md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button></p>
 

@@ -30,7 +30,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   $scope.videoContainerId = "video-container" + IdGenerator();
 
   $scope.prepareVideoElements = function() {
-    if (!$scope.instructions) {
+    if (!$scope.instructions.length) {
       return;
     }
 
@@ -249,7 +249,10 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     if ($scope.currentAudio) {
       $scope.currentAudio.domElement.pause();
     }
-    videos[$scope.currentClip].pause();
+    var currentVid = videos[$scope.currentClip];
+    if (currentVid) {
+      currentVid.pause();
+    }
     $scope.isPlaying = false;
     //console.log("pauseCurrentVideo was invoked");
     $scope.$broadcast('pauseCurrentVideo');
