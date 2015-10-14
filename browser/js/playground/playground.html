@@ -2,22 +2,24 @@
     <div class="col-sm-12">
         <p class='section-title'>Studio</p>
         <md-content class="md-padding">
-            <video-player audioenabled="false" width="600" height="350" instructions="instructions" video-player-id="'editor'"></video-player>
+            <video-player audioenabled="false" width="95" height="95" instructions="instructions" video-player-id="'editor'"></video-player>
             <div ng-show="instructions.length" class="row">
                 <input type="text" ng-model="newStartTime"></input>
                 <input type="text" ng-model="newEndTime"></input>
                 <button ng-click="updatedTimeRange()">Update Times</button>
             </div>
-            <div class="row" style="width:600px">
-                <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn filter-btn" ng-click="toggleFilter(filter)" ng-repeat="filter in filters">{{filter.displayName}}</button>
-            </div>
-            <div class="row" style="width: 600px" ng-repeat="filter in filters" ng-show="filter.applied && filter.max">
-                <h4 class="filter-name">{{filter.displayName}}</h4>
-                <i class="filter-remove fa fa-times" ng-click="toggleFilter(filter)"></i>
-                <md-slider class="filter-slider" ng-model="filter.val" ng-change="valChange(filter.val)" min="{{filter.min}}" ng-discrete step="0.05" max="{{filter.max}}"></md-slider>
-            </div>
-            <div ng-show="instructions.length" class="row">
-                <button ng-click='cutToInstructions()'>Cut to Reel</button>
+            <div class="filter-buttons">
+                <div class="row" style="width:600px">
+                    <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn filter-btn" ng-click="toggleFilter(filter)" ng-repeat="filter in filters">{{filter.displayName}}</button>
+                </div>
+                <div class="row" style="width: 600px" ng-repeat="filter in filters" ng-show="filter.applied && filter.max">
+                    <h4 class="filter-name">{{filter.displayName}}</h4>
+                    <i class="filter-remove fa fa-times" ng-click="toggleFilter(filter)"></i>
+                    <md-slider class="filter-slider" ng-model="filter.val" ng-change="valChange(filter.val)" min="{{filter.min}}" ng-discrete step="0.05" max="{{filter.max}}"></md-slider>
+                </div>
+                <div ng-show="instructions.length" class="row">
+                    <button ng-click='cutToInstructions()'>Cut to Reel</button>
+                </div>
             </div>
         </md-content>
     </div>
