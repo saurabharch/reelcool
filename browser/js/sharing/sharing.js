@@ -28,7 +28,14 @@ app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFact
       });
   }
 
-	$scope.socialNetworks = ['Download', 'Twitter', 'Facebook', 'Instagram'];
+	$scope.socialNetworks = [
+    'Download', 
+    // commented out Twitter to make this menu smaller for now
+    // 'Twitter', 
+    'Facebook', 
+    'Instagram'
+    ];
+
     $scope.isOpen = false;
     $scope.openDialog = function($event, item) {
       console.log('oh hey I was clicked')
