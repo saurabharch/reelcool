@@ -1,15 +1,17 @@
-$primary: #29b6f6;
+$primary: #aed581;
+$secondary: #FFCA28;
+$background-color: #333333;
 
 * {
   box-sizing: border-box;
 }
 
 html {
-  background-color: #333333;
+  background-color: $background-color;
 }
 
 body {
-  background-color: #333333;
+  background-color: $background-color;
 }
 
 @mixin clearfix {

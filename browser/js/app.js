@@ -7,11 +7,15 @@ window.app = angular.module('FullstackGeneratedApp',
 
 app.config(($mdThemingProvider) => {
         $mdThemingProvider.theme('reelcool')
-        .primaryPalette('light-blue')
+        .primaryPalette('light-green', {
+            "default": "300"
+        })
         .accentPalette('orange')
-        .warnPalette('yellow')
+        .warnPalette('light-green', {
+            "default": "300"
+        })
         .backgroundPalette('grey', {
-          "default": "700"
+          "default": "400"
         });
 
         $mdThemingProvider.setDefaultTheme('reelcool');
