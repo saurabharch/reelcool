@@ -38,7 +38,6 @@ app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFact
 
     $scope.isOpen = false;
     $scope.openDialog = function($event, item) {
-      console.log('oh hey I was clicked')
       var instructions = InstructionsFactory.get();
       FilterFactory.addFiltersToAllInstructions(instructions);
       console.log(instructions);
