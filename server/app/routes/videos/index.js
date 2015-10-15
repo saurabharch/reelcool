@@ -133,8 +133,12 @@ router.post('/makeit', function(req, res) {
         });
 
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
-            .on('error', function(err) {
-                console.log('Error ' + err.message);
+            .on('error', function(err,stdout,stderr) {
+                console.error('Error ' + err.message);
+                console.error(stdout);
+                console.error(stderr);
+                // Important! Send response on error!
+                res.status(500).send('Could not make the video due to an error when merging the clips.');
             })
             .on('end', function() {
                 console.log('Finished!');
