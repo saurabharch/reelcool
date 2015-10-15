@@ -1,6 +1,7 @@
 .idea
 node_modules
 server/files/*
+!server/files/themes
 !server/files/anon
 npm-debug.log
 public
