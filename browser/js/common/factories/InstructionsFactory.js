@@ -2,7 +2,6 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 	var instructions = [],
 		audio = {
 			id: "original_track", // "original_track" or mongoID
-			fadeIn: false,
 			fadeOut: true
 		};
 

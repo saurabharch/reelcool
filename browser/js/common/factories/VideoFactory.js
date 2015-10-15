@@ -14,6 +14,8 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         return $http.get(url).then(resp => resp.data);
     };
 
+
+
     // vidFactory.getUserVideos = function() {
     //     console.log('calling getUserVideos for user', userId);
     //     let url = `/api/videos/byuser/${userId}`;
@@ -118,12 +120,18 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         return newElement;
     };
 
-    vidFactory.addRemoteSource = function(mongoId, isAudio) {
+    vidFactory.addRemoteSource = function(mongoId, isAudio, isTheme) {
         return new Promise(function(resolve, reject) {
             var videoSrc = new VideoSource();
             videoSrc.mongoId = mongoId;
             videoSrc.mimeType = isAudio ? "audio/mp3" : "video/webm";
-            videoSrc.addUrl(mongoId, userId);
+            videoSrc.isTheme = isTheme;
+            if(isTheme){
+              videoSrc.url = `/api/audio/getconverted/${mongoId}`;
+            }
+            else {
+              videoSrc.addUrl(mongoId, userId);
+            }
             videoSources[videoSrc.id] = videoSrc;
             console.log('addRemoteVideoSource', videoSrc);
             resolve(videoSrc);
@@ -287,7 +295,10 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
             });
     };
 
-
+    vidFactory.getThemeAudio = () =>  {
+      let url = `/api/audio/themes`;
+      return $http.get(url).then(resp => resp.data);
+    }
 
 
     return vidFactory;
