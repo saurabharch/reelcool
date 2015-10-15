@@ -1,4 +1,4 @@
-app.directive("themeSelector", function (AudioFactory, InstructionsFactory, RandomVideoGenerator) {
+app.directive("themeSelector", function (AudioFactory, InstructionsFactory, RandomVideoGenerator, $rootScope) {
 	return {
 		restrict: "E",
 		templateUrl: "js/common/directives/theme-selector/theme-selector.html",

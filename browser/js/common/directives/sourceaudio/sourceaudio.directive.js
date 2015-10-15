@@ -69,7 +69,6 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 
 
 			var updateSourceAudio = function () {
-				console.log("UPDATESOURCEAUDIO");
 				VideoFactory.getPrevUploads(scope.audioTracks, true).then(function (mediaData) {
 					mediaData.forEach(putRemoteAudioOnScope);
 				});

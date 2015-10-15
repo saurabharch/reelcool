@@ -1,16 +1,20 @@
 app.factory('InstructionsFactory',function (IdGenerator) {
-	var instructions = [],
-		audio = {
+	var instructions = [];
+	var audio = {
 			id: "original_track", // "original_track" or mongoID
 			fadeOut: true
 		};
+	var sourceVideos = [];
 
 	return {
-		add: (instruction) => {
-			instructions.push(instruction);
-		},
+		// add: (instruction) => {
+		// 	instructions.push(instruction);
+		// },
 		get: () => {
 			return instructions;
+		},
+		getSourceVideos: () => {
+			return sourceVideos;
 		},
 		generate: (videoSource, endTime, edited) => {
 			return {

@@ -10,8 +10,8 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			audioTitle: 'closetoyou'
 		},
 		{
-			displayName: 'Rock \'n\' Roll',
-			code: 'rocknroll',
+			displayName: 'Wild',
+			code: 'wild',
 			filters: "hue-rotate(220deg)",
 			audioTitle: 'stepper'
 		},
@@ -20,6 +20,12 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			code: 'adventure',
 			filters: 'sepia(1)',
 			audioTitle: 'indianajones'
+		},
+		{
+			displayName: "Happy",
+			code: 'happy',
+			filters: "grayscale(0)",
+			audioTitle: 'happy'
 		}
 	];
 

@@ -1,4 +1,4 @@
-app.directive("editvids", function (VideoFactory, InstructionsFactory) {
+app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVideoGenerator) {
 	return {
 		restrict: "E",
 		scope: {},
@@ -33,6 +33,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			        }, 0);
 			    }
 			}
+
 
 			$scope.removeAll = function () {
 				$scope.videos = [];
@@ -107,6 +108,18 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				var newInstructions = videosList.map(el => el.instructions);
 				$scope.instructions = InstructionsFactory.update(newInstructions);
 			}
+
+			$scope.$on('changedTheme', (e, theme) => {
+				$scope.theme = theme;
+			});
+
+			$scope.generateThemedCuts = () => {
+					var cutsNumber = 3;
+					var cutLength = 2;
+					var randomInstructions = RandomVideoGenerator.createVideo(InstructionsFactory.getSourceVideos(), cutsNumber, cutLength, $scope.theme.filters);
+					InstructionsFactory.update(randomInstructions);
+					$rootScope.$broadcast("randomVidGenerated");
+			};
 
 			$scope.showPreviewModal = ($event) => {
 				console.log('showing preview modal, time to update instructions')

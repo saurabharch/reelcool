@@ -1,6 +1,6 @@
 app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator) {
 
-    $scope.videos = [];
+    $scope.videos = InstructionsFactory.getSourceVideos();
 
     var fileInput = document.getElementById("videofileinput");
 
@@ -80,13 +80,4 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
     setTimeout(updateSourceVids,1000);
     setInterval(updateSourceVids,20000); // polls the server every 20 seconds
-
-    // This is here just for testing the preview player
-    $scope.previewVideo = () => {
-        var cutsNumber = 3;
-        var cutLength = 2;
-        var allInstructions = RandomVideoGenerator.createVideo($scope.videos, cutsNumber, cutLength);
-        InstructionsFactory.update(allInstructions);
-        $rootScope.$broadcast("randomVidGenerated");
-    };
 });
