@@ -9,9 +9,11 @@ var ffmpeg = require('fluent-ffmpeg');
 // express and models
 var router = require('express').Router();
 var Video = require('mongoose').model('Video');
+var Audio = require('mongoose').model('Audio');
 
 // file paths setup
 var filesPath = path.join(__dirname, "..", "..", "..", "files");
+var themesPath = path.join(filesPath, "themes");
 var userDir;
 var uploadedFilesPath;
 var stagingAreaPath;
@@ -87,7 +89,7 @@ function makeFilterString(filtArr){
     }).join(', ');
 }
 
-router.post('/makeit', function(req, res) {
+router.post('/makeit', function(req, res, next) {
     let instructions = req.body;
     let vidsDone = 0;
     let mergedVideo = ffmpeg();
@@ -103,7 +105,7 @@ router.post('/makeit', function(req, res) {
         // That's why we currently force it to have grayscale if it doesn't already have a filter.
 
         let filterCode = makeFilterString(instruction.filters) || "mp=eq2=1:1:0:1:1:1:1"; // the one on the right does nothing
-        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
+        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', '-an', destVid, '-y']);
         filtersProc.on('error',function(err,stdout,stderr){
             console.error('Errored when attempting to convert this video. Details below.');
             console.error(err);
@@ -115,13 +117,30 @@ router.post('/makeit', function(req, res) {
             vidsDone++;
             if (vidsDone == instructions.length) {
                 console.log('Filters done, now merging.');
-                mergeVids(mergedVideo, createdFilePath, instructions);
+
+
+                // add custom audio, but only if mongoId given
+                instructions.audio = {id: "562005c7287b72eb06a8a2b4"};
+                if (typeof instructions.audio.id === "string") {
+                    Audio.findById(instructions.audio.id).then(function (audio) {
+                        let audioPath = (audio.theme ? themesPath : uploadedFilesPath) +
+                            "/" + (audio.theme ? audio.title : audio._id) + ".mp3";
+                            console.log("audioPath:", audioPath);
+                        //audioPath = uploadedFilesPath + "/themes/guitar.mp3";
+                        mergeVids(mergedVideo, createdFilePath, instructions, audioPath);
+                        req.resume();
+                    }).then(null, next);
+                } else {
+                    mergeVids(mergedVideo, createdFilePath, instructions);
+                    req.resume();
+                }
+
+
             }
-            req.resume();
         });
     });
 
-    function mergeVids(mergedVideo, createdFilePath, instructions) {
+    function mergeVids(mergedVideo, createdFilePath, instructions, audioPath) {
         let createdVidName = Date.now() + '.mp4';
         let mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
 
@@ -131,6 +150,11 @@ router.post('/makeit', function(req, res) {
             let input = path.join(stagingAreaPath,filename);
             mergedVideo.addInput(input);
         });
+
+        if (audioPath) {
+            mergedVideo.addInput(audioPath);
+            mergedVideo.outputOptions("-shortest");
+        }
 
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err,stdout,stderr) {
