@@ -120,7 +120,7 @@ router.post('/makeit', function(req, res, next) {
 
 
                 // add custom audio, but only if mongoId given
-                instructions.audio = {id: "562005c7287b72eb06a8a2b4"};
+                instructions.audio = {id: "56200c6e73da85553c6f3491"};
                 if (typeof instructions.audio.id === "string") {
                     Audio.findById(instructions.audio.id).then(function (audio) {
                         let audioPath = (audio.theme ? themesPath : uploadedFilesPath) +
@@ -141,23 +141,21 @@ router.post('/makeit', function(req, res, next) {
     });
 
     function mergeVids(mergedVideo, createdFilePath, instructions, audioPath) {
-        let createdVidName = Date.now() + '.mp4';
+        // let createdVidName = Date.now() + '.mp4';
+        let createdVidName = 'temp.mp4';
         let mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
+
 
         // add inputs in the same order as they were in the instructions
         instructions.forEach(function (inst) {
             let filename = inst.id+'.mp4';
             let input = path.join(stagingAreaPath,filename);
-            mergedVideo.addInput(input);
+             mergedVideo.addInput(input);
         });
-
-        if (audioPath) {
-            mergedVideo.addInput(audioPath);
-            mergedVideo.outputOptions("-shortest");
-        }
 
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err,stdout,stderr) {
+                // console.log(mergedVideo._complexFilters.get());
                 console.error('Error ' + err.message);
                 console.error(stdout);
                 console.error(stderr);
@@ -165,9 +163,36 @@ router.post('/makeit', function(req, res, next) {
                 res.status(500).send('Could not make the video due to an error when merging the clips.');
             })
             .on('end', function() {
-                console.log('Finished!');
-                deleteStagedFiles().then(() => res.status(201).send(createdVidName));
+                console.log('Finished merging!');
+                if (audioPath) {
+                    addAudio(mergedVideoDest, createdFilePath, audioPath);
+                }
+                else {
+                    deleteStagedFiles().then(() => res.status(201).send(createdVidName));
+                }
             });
+    }
+
+    function addAudio (tempVideoPath, createdFilePath, audioPath) {
+        let finalName = Date.now() + '.mp4';
+        let finalDestination = path.join(createdFilePath, finalName); 
+        // ffmpeg -i _p7kkmt2no.mp4 -i ../../themes/happy.mp3 -codec copy -shortest output.mp4
+        let audioProc = spawn('ffmpeg', ['-i', tempVideoPath, '-i', audioPath, '-codec', 'copy', '-shortest', finalDestination]);
+        audioProc.on('error', function(err,stdout,stderr) {
+                console.error('Error ' + err.message);
+                console.error(stdout);
+                console.error(stderr);
+                // Important! Send response on error!
+                res.status(500).send('Could not make the video due to an error when adding the audio.');
+            })
+            .on('exit', function() {
+                console.log('Finished adding audio!');
+                deleteTempFile().then( () => deleteStagedFiles()).then(() => res.status(201).send(finalName));
+            });
+    }
+
+    function deleteTempFile () {
+        return fs.unlinkAsync(path.join(createdFilePath,'temp.mp4'));
     }
 
     function deleteStagedFiles () {
