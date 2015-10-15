@@ -1,3 +1,5 @@
+
+
 app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthService, InstructionsFactory) {
 
     var vidFactory = {},

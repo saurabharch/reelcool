@@ -1,3 +1,5 @@
+
+
 app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 	return {
 		restrict: "E",
