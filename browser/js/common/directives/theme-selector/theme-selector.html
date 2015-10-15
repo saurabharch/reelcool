@@ -1,0 +1,5 @@
+<md-input-container>
+  <md-select aria-label="theme select" ng-model="selectedTheme" ng-change="broadcastTheme()">
+    <md-option ng-value="theme" ng-repeat="theme in themes"> {{ theme.displayName }}</md-option>
+  </md-select>
+</md-input-container>
