@@ -1,3 +1,4 @@
+// SO LONG
 app.directive('videoPlayer', () => {
   return {
     restrict: 'E',
@@ -85,6 +86,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
   init();
 
+  // mod events - video events?
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
     // console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
     if($scope.videoPlayerId === targetVideoplayerId){
@@ -312,6 +314,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     });
   };
 
+  // this is weird... why would new val equal old val?
   $scope.$watch("fadeOut", function (newValue, oldValue) {
     if (newValue === oldValue) {
       return;
@@ -319,7 +322,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     InstructionsFactory.getAudio().fadeOut = newValue;
   });
 
-
+  // ???????
   $scope.$watch("currentAudio", function (newValue, oldValue) {
     if (newValue === oldValue) {
       return;
@@ -353,6 +356,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
 
   });
 
+// mod events 
   //when the preview modal is exited, the audio track stops playing and resets to beginning
   $scope.$on('toggleModal', (e, shown) => {
     if(!shown){

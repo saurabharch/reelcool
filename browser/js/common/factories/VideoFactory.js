@@ -136,12 +136,14 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         var reader = new FileReader();
         // it's webm! we can attach it to the MediaSource right away
         return new Promise(function(resolve, reject) {
+            //modularize events
             reader.onloadend = function() {
                 // once reader is ready, attach the rest of the video info
                 videoSrc.startReading(file.name, file.type, reader.result);
                 videoSources[videoSrc.id] = videoSrc;
                 resolve(videoSrc);
             };
+
             reader.readAsArrayBuffer(file);
             uploadToServer(file, videoSrc);
         });
@@ -171,6 +173,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     var attachBufferVideoSource = function(videoSource, videoElementId) {
         return new Promise(function(resolve, reject) {
             var mediaSource = new MediaSource();
+            // modularize events
             mediaSource.addEventListener("sourceopen", function() {
                 var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
                 sourceBuffer.addEventListener('updateend', function(_) {
@@ -181,12 +184,15 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
                         return reject(error);
                     }
                 });
+
                 try {
                     sourceBuffer.appendBuffer(videoSource.arrayBuffer);
                 } catch (error) {
                     return reject(error);
                 }
+
             });
+
             var objUrl = window.URL.createObjectURL(mediaSource);
             var video = document.getElementById(videoElementId);
             video.src = objUrl;
@@ -198,6 +204,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     var attachUrlVideoSource = function(videoSource, videoElementId) {
         return new Promise(function(resolve, reject) {
             var mediaSource = new MediaSource();
+            // modularize events
             mediaSource.addEventListener("sourceopen", function() {
                 var sourceBuffer = mediaSource.addSourceBuffer(mimeTypes[videoSource.mimeType]);
                 sourceBuffer.addEventListener('updateend', function(_) {
@@ -208,9 +215,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
                         return reject(error);
                     }
                 });
+
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', videoSource.url, true);
                 xhr.responseType = 'arraybuffer';
+                // mod events
                 xhr.onload = function(e) {
                     if (xhr.status !== 200) {
                         console.error("Failed to download video data");
@@ -225,6 +234,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
                         }
                     }
                 };
+                
                 xhr.send();
             });
             var objUrl = window.URL.createObjectURL(mediaSource);

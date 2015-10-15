@@ -19,6 +19,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				fileInput.click();
 			};
 
+			// comments?
 			fileInput.addEventListener('change', function(e) {
 				var filesArr = Array.prototype.slice.call(fileInput.files, 0);
 				filesArr.forEach(function (file) {
@@ -43,6 +44,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				});
 			});
 
+			// comments?
 			var putRemoteAudioOnScope = function (mediaData) {
 				var audioElement;
 				VideoFactory.addRemoteSource(mediaData._id, true).then(function (audioSource) {

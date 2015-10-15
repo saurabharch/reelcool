@@ -1,3 +1,4 @@
+// stronger, more readable 
 app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator) {
 
     $scope.videos = [];
@@ -39,6 +40,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
                 // videoElement.duration = duration;
                 videoElement.instructions.endTime = duration;
                 // same here as above
+                // Well done!
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();
             }).then(null, function(error) {
