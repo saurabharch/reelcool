@@ -34,20 +34,16 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       return;
     }
 
-    $scope.$emit('videoPlayerLoaded', instructionVideoMap);
-
-      var promisedAttachments = [];
-      $scope.instructions.forEach((instruction) => {
-          var videoId = instructionVideoMap[instruction.id],
-              promise = VideoFactory.attachVideoSource(instruction.videoSource, videoId);
-          promisedAttachments.push(promise);
-      });
-
-      // TODO this is probably necessary when the player is initializing many video elements
-      // Promise.all(promisedAttachments)
-      // .then(()=> {
-      //     $scope.$emit('videoPlayerLoaded');
-      // });
+    Promise.map($scope.instructions, (instruction, index) => {
+      var videoId = instructionVideoMap[instruction.id];
+      return VideoFactory.attachVideoSource(instruction.videoSource, videoId);
+    })
+    .then(() => {
+      $scope.$emit('videoPlayerLoaded', instructionVideoMap);
+    })
+    .catch(err => {
+      console.log("there was an error loading video sources", err.message);
+    })
 
     var videosArrayLike = $("#" + $scope.videoContainerId).find("video");
     for (var i = 0; i < videosArrayLike.length; i++) {
@@ -86,7 +82,6 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   init();
 
   $scope.$on("changeVideo", function(e, instructions, targetVideoplayerId) {
-    // console.log("videoplayer got changeVideo", instructions, targetVideoplayerId, $scope.videoPlayerId);
     if($scope.videoPlayerId === targetVideoplayerId){
       $scope.instructions = instructions;
       init();
@@ -136,22 +131,22 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
  // | |___\ V /  __/ | | | |_\__ \
  // |______\_/ \___|_| |_|\__|___/
 
-  $scope.$on('newMovingTime', (event, ...args) => {
+  $scope.$on('newMovingTime', (event, input) => {
     clearTimeout(timeoutId);
     var isPlaying = !videos[$scope.currentClip].paused;
     pauseCurrentVideo();  // changes isPlaying t false
     $scope.isPlaying = isPlaying;
-    $scope.totalCurrentTime = args[0].time;
+    $scope.totalCurrentTime = input.time;
 
     if ($scope.currentAudio) {
-      $scope.currentAudio.domElement.currentTime = args[0].time;
+      $scope.currentAudio.domElement.currentTime = input.time;
     }
 
     // console.log("totalCurrentTime@ reaction in videoplayer", $scope.totalCurrentTime, "args", args);
     // console.log("startTime", $scope.instructions[0].startTime);
 
     updateVideo();
-    if (!args[0].paused) {
+    if (!input.paused) {
       playCurrentVideo();
     }
   });
