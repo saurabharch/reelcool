@@ -11,8 +11,8 @@ app.directive("audioSelector", function (AudioFactory, InstructionsFactory) {
 			scope.$on('changedTheme', (e, newTheme) => {
 				//the id of the audio track id to the mongo id of the audio that has a filename
 				scope.audioConf.id = scope.audioTracks.filter(track => {
-					return track.fileName === newTheme.title;
-				})[0];
+					return track.fileName === newTheme.audioTitle;
+				})[0].videoSource.mongoId;
 			});
 		}
 	};

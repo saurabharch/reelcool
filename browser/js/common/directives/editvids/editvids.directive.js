@@ -42,7 +42,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVid
 			};
 
 			$scope.$on("randomVidGenerated", function (event){
-				console.log("a random vid was generated");
 				$scope.videos = [];
 				$scope.instructions = InstructionsFactory.get();
 				$scope.instructions.forEach(function (i) {
@@ -115,11 +114,10 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVid
 			});
 
 			$scope.generateThemedCuts = () => {
-					console.log("generating themed cuts");
 					var cutsNumber = 3;
 					var cutLength = 2;
-					var allInstructions = RandomVideoGenerator.createVideo(InstructionsFactory.getSourceVideos(), cutsNumber, cutLength, $scope.theme.filters);
-					InstructionsFactory.update(allInstructions);
+					var randomInstructions = RandomVideoGenerator.createVideo(InstructionsFactory.getSourceVideos(), cutsNumber, cutLength, $scope.theme.filters);
+					InstructionsFactory.update(randomInstructions);
 					$rootScope.$broadcast("randomVidGenerated");
 			};
 

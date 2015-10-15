@@ -127,7 +127,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
             videoSrc.mimeType = isAudio ? "audio/mp3" : "video/webm";
             videoSrc.isTheme = isTheme;
             if(isTheme){
-              videoSrc.url = `/api/audio/getconverted/${mongoId}`;
+              videoSrc.url = `/api/audio/themes/${mongoId}`;
             }
             else {
               videoSrc.addUrl(mongoId, userId);
@@ -296,6 +296,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     };
 
     vidFactory.getThemeAudio = () =>  {
+      console.log("VIDEO FACTORY ")
       let url = `/api/audio/themes`;
       return $http.get(url).then(resp => resp.data);
     }
