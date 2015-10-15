@@ -2,6 +2,23 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 	var generator = {};
 
+	var themeConfigs = [
+		{
+			displayName: 'Casablanca',
+			audio: 'closetoyou.mp3',
+			filters: 'grayscale(1)'
+		},
+		{
+			displayName: 'Adventure',
+			audio: 'indianajones.mp3',
+			filters: 'sepia(1)'
+		},
+		{
+			displayName: 'Rock \'n\' Roll',
+			audio: 'stepper.mp3',
+			filters: 'hue-rotate(220deg) saturate(5)'
+		}
+	];
 
 	var getRandomElement = function (array) {
 		if (!array.length) {
@@ -12,14 +29,15 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 	// var filters = FilterFactory.filters;
 	var filters = [
-		"grayscale(1)", 
-		"sepia(1)", 
-		"invert(1)", 
-		"hue-rotate(90deg)", 
-		"hue-rotate(225deg)", 
-		"brightness(1.5)"
+		"grayscale(1)"
+		// "sepia(1)",
+		// "invert(1)",
+		// "hue-rotate(220deg) saturate(5)",
+		// "hue-rotate(90deg)",
+		// "hue-rotate(225deg)",
+		// "brightness(1.5)"
 	];
-	
+
 
 	var getRange = function (duration, cutLength) {
 		var start = Math.round(Math.random() * (duration - cutLength));
@@ -63,8 +81,10 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 		return allInstructions;
 	};
 
+	generator.getThemeConfigs = () => {
+		return themeConfigs;
+	}
+
 	return generator;
 
 });
-
-

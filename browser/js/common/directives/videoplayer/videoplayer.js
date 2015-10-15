@@ -296,7 +296,15 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
     // but keep default for editor
     if ($scope.videoPlayerId !== "editor") {
       var audioSetting = InstructionsFactory.getAudio();
-      var audioElement = AudioFactory.getAudioElementByMongoId(audioSetting.id);
+      var audioElement;
+      if(audioSetting.type==="upload")
+      {
+        audioElement = AudioFactory.getAudioElementByMongoId(audioSetting.id);
+      }
+      else if(audioSetting.type==="static")
+      {
+        audioElement = AudioFactory.getAudioElementByFileName(audioSetting.staticFileName);
+      }
       if (audioElement) {
         $scope.currentAudio = audioElement;
       }

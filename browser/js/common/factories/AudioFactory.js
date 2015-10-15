@@ -39,6 +39,17 @@ app.factory("AudioFactory", function ($rootScope) {
 		return audioElement;
 	};
 
+	audioFactory.getAudioElementByFileName = function(staticFileName) {
+		let audioElement;
+		tracks.some((track) => {
+			if(track.videoSource.url === staticFileName) {
+				audioElement = track;
+				return true;
+			}
+		});
+		return audioElement;
+	}
+
 
 	audioFactory.removeAudioElement = function (audioSourceId) {
 		tracks.some(function (audioElement, index) {

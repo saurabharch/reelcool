@@ -1,14 +1,23 @@
 <div id="sourcevids">
-    <p class='section-title'>Raw Videos</p>
-    <md-content class="md-padding" ng-hide="videos.length">
-        <p>You have no videos uploaded. Upload some!</p>
-    </md-content>
-    <md-virtual-repeat-container id="vidslist" style="height: 350px">
-        <div layout="row" ng-repeat="video in videos">
-            <list-video video="video" type="'source'"></list-video>
-        </div>
-    </md-virtual-repeat-container>
-    <input type="file" style="display:none" id="videofileinput" accept="video/*" d- multiple>
-    <md-button class="md-primary md-raised" ng-click="selectVideoFile()">Add Videos</md-button>
-    <md-button class="md-primary md-raised" ng-click="previewVideo()">Random Cuts</md-button>
+	<p class='section-title'>Raw Videos</p>
+	<p ng-hide="videos.length">You have no videos uploaded. Upload some!</p>
+	<ul id="vidslist">
+		<li ng-repeat="video in videos">
+			<md-card>
+				<md-card-content>
+					<list-video video="video" type="'source'"></list-video>
+				</md-card-content>
+			</md-card>
+		</li>
+	</ul>
+	<input type="file" style="display:none" id="videofileinput" accept="video/*"d- multiple>
+	<p><md-button class="md-primary md-raised" ng-click="selectVideoFile()">Add Videos</md-button></p>
+<p>{{themeConfigs}}
+	<form name="myForm">
+	<label for="select-theme">Choose a Theme</label>
+	<select name="mySelect" id="select-theme"
+		ng-options="themeConfig.displayName for themeConfig in themeConfigs track by themeConfig.displayName"
+		ng-model="selectedTheme" ng-change="broadcastTheme()"></select>
+</form>
+	<md-button class="md-primary md-raised" ng-click="previewVideo()">Generate Random Movie</md-button></p>
 </div>

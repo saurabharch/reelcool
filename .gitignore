@@ -2,6 +2,7 @@
 node_modules
 server/files/*
 !server/files/anon
+!server/files/common
 npm-debug.log
 public
 .DS_Store

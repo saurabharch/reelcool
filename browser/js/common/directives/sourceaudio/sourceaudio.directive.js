@@ -62,11 +62,36 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 					//TODO show error on video tag
 					console.error("Error occured when attaching video source", error);
 				});
-
-
 			};
 
+			var putRemoteAudioOnScopeByFileName = (staticFileName) => {
+				let audioElement;
+				VideoFactory.addRemoteSource(undefined, true, staticFileName)
+				.then(audioSource => {
+					audioElement = VideoFactory.createVideoElement(staticFileName.split('.').slice(-1));
+					audioElement.addSource(audioSource);
+					AudioFactory.setAudioElement(audioElement);
+					scope.$digest();
+					return VideoFactory.attachVideoSource(audioSource, audioElement.id);
+				})
+				.then( () => {
+					console.log("track seems to be attached ;)");
+					let audioDomElement = document.getElementById(audioElement.id);
+					audioElement.domElement = audioDomElement;
+					audioElement.duration = audioDomElement.duration;
+					audioElement.sourceAttached = true;
+					scope.$digest();
+				})
+				.then(null, (err) => {
+					console.error("Error occured when attaching audio source", err);
+				});
+			}
 
+			scope.$on('themeSelected', (e, theme) => {
+				//attach the audio for the theme to the browser!
+				console.log("theme was selected, we should get the audio:", theme.audio)
+				putRemoteAudioOnScopeByFileName(theme.audio);
+			});
 
 			var updateSourceAudio = function () {
 				console.log("UPDATESOURCEAUDIO");

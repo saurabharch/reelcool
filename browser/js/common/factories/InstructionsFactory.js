@@ -3,7 +3,8 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 		audio = {
 			id: "original_track", // "original_track" or mongoID
 			fadeIn: false,
-			fadeOut: true
+			fadeOut: true,
+			type: undefined //"upload" or "static"
 		};
 
 	return {

@@ -22,6 +22,8 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
         filesArr.forEach(putVidOnScope);
     });
 
+    $scope.themeConfigs = RandomVideoGenerator.getThemeConfigs();
+
     var putVidOnScope = function(file) {
         var videoElement = VideoFactory.createVideoElement();
         $scope.videos.push(videoElement);
@@ -81,12 +83,20 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
     setTimeout(updateSourceVids,1000);
     setInterval(updateSourceVids,20000); // polls the server every 20 seconds
 
-    // This is here just for testing the preview player
+    // RANDOM VIDEO GENERATOR
+
+    $scope.broadcastTheme = () => {
+        //this happens when the theme is selected, before the user even tries to generate the video
+        //to increase chance that the audio file will be loaded by the time they try to preview the video
+        //(downside is that they will see the file pop up in their audio list)
+        $rootScope.$broadcast('themeSelected', $scope.selectedTheme);
+    }
+
     $scope.previewVideo = () => {
         var cutsNumber = 4;
         var cutLength = 2;
-        var allInstructions = RandomVideoGenerator.createVideo($scope.videos, cutsNumber, cutLength);
+        var allInstructions = RandomVideoGenerator.createVideo($scope.videos, cutsNumber, cutLength, $scope.selectedTheme.filters);
         InstructionsFactory.update(allInstructions);
-        $rootScope.$broadcast("randomVidGenerated");
+        $rootScope.$broadcast("randomVidGenerated", $scope.selectedTheme);
     };
 });

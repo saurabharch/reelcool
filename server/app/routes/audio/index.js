@@ -104,10 +104,4 @@ router.get('/byuser/:userId',function (req,res) {
 });
 
 
-
-
-
-
 module.exports = router;
-
-

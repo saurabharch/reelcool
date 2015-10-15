@@ -11,6 +11,7 @@ module.exports = function (app) {
     var publicPath = path.join(root, './public');
     var browserPath = path.join(root, './browser');
     var videosPath = path.join(root, './server/files');
+    var commonMediaPath = path.join(root, './server/files/common');
     var depPath = path.join(root, './dependencies');
 
     app.use(favicon(app.getValue('faviconPath')));
@@ -18,6 +19,7 @@ module.exports = function (app) {
     app.use(express.static(publicPath));
     app.use(express.static(browserPath));
     app.use(express.static(videosPath));
+    app.use(express.static(commonMediaPath));
     app.use(express.static(depPath));
 
 };

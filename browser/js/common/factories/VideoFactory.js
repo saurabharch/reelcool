@@ -26,6 +26,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     //     return $http.get(url).then(resp => resp.data);
     // };
 
+    let getStaticFile = function(fileName) {
+      return $http.get(fileName)
+      .then(resp => resp.data);
+    }
+
     var VideoElement = function() {
         this.id = IdGenerator();
         this.sourceAttached = false;
@@ -118,12 +123,19 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         return newElement;
     };
 
-    vidFactory.addRemoteSource = function(mongoId, isAudio) {
+    vidFactory.addRemoteSource = function(mongoId, isAudio, staticFileName) {
         return new Promise(function(resolve, reject) {
             var videoSrc = new VideoSource();
             videoSrc.mongoId = mongoId;
             videoSrc.mimeType = isAudio ? "audio/mp3" : "video/webm";
-            videoSrc.addUrl(mongoId, userId);
+            if(staticFileName) {
+              videoSrc.url = staticFileName;
+              videoSrc.type = "static";
+            }
+            else {
+              videoSrc.addUrl(mongoId, userId);
+              videoSrc.type = "upload";
+            }
             videoSources[videoSrc.id] = videoSrc;
             console.log('addRemoteVideoSource', videoSrc);
             resolve(videoSrc);
@@ -286,9 +298,6 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
                 return mediaData.filter(media => existingVids.indexOf(media._id)===-1);
             });
     };
-
-
-
 
     return vidFactory;
 });
