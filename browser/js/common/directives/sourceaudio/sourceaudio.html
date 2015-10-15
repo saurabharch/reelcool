@@ -1,6 +1,6 @@
 <div id="sourceaudio">
 	<md-virtual-repeat-container id="audiolist" style="height: 75px">
-		<div layout="row" ng-repeat="audio in audioTracks | filter:{id: '!original_track', videoSource.isTheme: true}">
+		<div layout="row" ng-repeat="audio in audioTracks | filter:{id: '!original_track'}"> <!--, videoSource.isTheme: true-->
 			<list-audio audio="audio"></list-audio>
 		</div>
 	</md-virtual-repeat-container>

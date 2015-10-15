@@ -1,4 +1,4 @@
-app.directive("editvids", function (VideoFactory, InstructionsFactory) {
+app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVideoGenerator) {
 	return {
 		restrict: "E",
 		scope: {},
@@ -34,6 +34,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			    }
 			}
 
+
 			$scope.removeAll = function () {
 				$scope.videos = [];
 				$scope.instructions = [];
@@ -41,6 +42,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			};
 
 			$scope.$on("randomVidGenerated", function (event){
+				console.log("a random vid was generated");
 				$scope.videos = [];
 				$scope.instructions = InstructionsFactory.get();
 				$scope.instructions.forEach(function (i) {
@@ -107,6 +109,19 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				var newInstructions = videosList.map(el => el.instructions);
 				$scope.instructions = InstructionsFactory.update(newInstructions);
 			}
+
+			$scope.$on('changedTheme', (e, theme) => {
+				$scope.theme = theme;
+			});
+
+			$scope.generateThemedCuts = () => {
+					console.log("generating themed cuts");
+					var cutsNumber = 3;
+					var cutLength = 2;
+					var allInstructions = RandomVideoGenerator.createVideo(InstructionsFactory.getSourceVideos(), cutsNumber, cutLength, $scope.theme.filters);
+					InstructionsFactory.update(allInstructions);
+					$rootScope.$broadcast("randomVidGenerated");
+			};
 
 			$scope.showPreviewModal = ($event) => {
 				console.log('showing preview modal, time to update instructions')

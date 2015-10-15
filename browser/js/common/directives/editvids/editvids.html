@@ -10,6 +10,7 @@
     </md-virtual-repeat-container>
         <audio-selector></audio-selector>
         <theme-selector></theme-selector>
+        <md-button class="md-primary md-raised" ng-click="generateThemedCuts()">Generate Random Cuts</md-button>
         <md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button>
         <md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button>
 </div>

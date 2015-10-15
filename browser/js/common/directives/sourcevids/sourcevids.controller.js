@@ -1,6 +1,6 @@
 app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator) {
 
-    $scope.videos = [];
+    $scope.videos = InstructionsFactory.getSourceVideos();
 
     var fileInput = document.getElementById("videofileinput");
 
