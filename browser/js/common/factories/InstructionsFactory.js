@@ -7,9 +7,9 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 	var sourceVideos = [];
 
 	return {
-		add: (instruction) => {
-			instructions.push(instruction);
-		},
+		// add: (instruction) => {
+		// 	instructions.push(instruction);
+		// },
 		get: () => {
 			return instructions;
 		},
