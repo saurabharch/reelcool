@@ -1,4 +1,4 @@
-app.factory("DownloadFactory", () => {
+app.factory("DownloadFactory", ($http) => {
 
   let requestReelVideo =  (instructions, audio) => {
     return $http.post('/api/videos/makeit', {instructions: instructions, audio: audio});
