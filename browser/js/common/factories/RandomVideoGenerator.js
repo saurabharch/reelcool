@@ -13,7 +13,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			displayName: 'Wild',
 			code: 'wild',
 			filters: "hue-rotate(220deg)",
-			audioTitle: 'stepper'
+			audioTitle: 'wild'
 		},
 		{
 			displayName: 'Adventure',
@@ -24,7 +24,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 		{
 			displayName: "Happy",
 			code: 'happy',
-			filters: "grayscale(0)",
+			filters: "",
 			audioTitle: 'happy'
 		}
 	];
@@ -39,17 +39,6 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 		}
 		return array[Math.round(Math.random() * (array.length - 1))];
 	};
-
-	// var filters = FilterFactory.filters;
-	var filters = [
-		// "grayscale(1)",
-		// "sepia(1)",
-		// "invert(1)",
-		"hue-rotate(220deg) saturate(5)"
-		// "hue-rotate(90deg)",
-		// "hue-rotate(225deg)",
-		// "brightness(1.5)"
-	];
 
 
 	var getRange = function (duration, cutLength) {
@@ -69,7 +58,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 			range = getRange(duration, cutLength);
 			instr.startTime = range[0];
 			instr.endTime = range[1];
-			instr.filterString = chosenFilter;
+			instr.filterString = chosenFilter || '';
 			cuts.push(instr);
 		}
 
@@ -83,7 +72,7 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 
 	generator.createVideo = function (videoElements, cutsNumber, cutLength, chosenFilter) {
-		chosenFilter = chosenFilter || getRandomElement(filters);
+		chosenFilter = chosenFilter;
 		var allInstructions = [];
 		videoElements.forEach(video => {
 			var duration = document.getElementById(video.id).duration;

@@ -105,9 +105,8 @@ router.post('/makeit', function(req, res, next) {
         // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
         // That's why we currently force it to have grayscale if it doesn't already have a filter.
 
-        let filterCode = makeFilterString(instruction.filters) || "mp=eq2=1:1:0:1:1:1:1"; // the one on the right does nothing
-        let commandArray = ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y'];
-        let filtersProc = spawn('ffmpeg', commandArray);
+        let filterCode = makeFilterString(instruction.filters) || "hue=b=0"; // "mp=eq2=1:1:0:1:1:1:1"; // the one on the right does nothing
+        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', '-an', destVid, '-y']);
         filtersProc.on('error',function(err,stdout,stderr){
             console.error('Errored when attempting to convert this video. Details below.');
             console.error(err);
@@ -155,7 +154,6 @@ router.post('/makeit', function(req, res, next) {
 
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
             .on('error', function(err,stdout,stderr) {
-                // console.log(mergedVideo._complexFilters.get());
                 console.error('Error ' + err.message);
                 console.error(stdout);
                 console.error(stderr);
