@@ -1,11 +1,9 @@
-<md-content class="md-padding">
-    <div class="list-video">
+<md-content>
+    <div class="list-video sourcevid">
         <md-card>
-            <!-- <video class="md-card-video" style="-webkit-filter: {{video.instructions.filterString}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="100%" id="{{video.id}}" loop muted></video> -->
-            <img src="http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg" class="md-card-image" alt="Washed Out">
-            <md-card-content>
-               <!--  <img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" /> -->
-                <span class="md-title">
+            <video class="md-card-video" style="-webkit-filter: {{video.instructions.filterString}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="100%" id="{{video.id}}" loop muted></video>
+                <img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
+                <span>
                 	{{video.fileName}} ({{video.instructions.endTime - video.instructions.startTime | duration}})
                 </span>
                 <span>
@@ -16,7 +14,6 @@
                 	<i class="zmdi zmdi-eject"></i>
                 </md-button>
                 </span>
-            </md-card-content>
         </md-card>
     </div>
 </md-content>
