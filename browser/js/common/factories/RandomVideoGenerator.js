@@ -4,6 +4,11 @@ app.factory("RandomVideoGenerator", function (FilterFactory, InstructionsFactory
 
 	let themes = [
 		{
+			displayName: 'No Theme',
+			code: 'none',
+			filters: ''
+		},
+		{
 			displayName: 'Romantic',
 			code: 'romantic',
 			filters: 'grayscale(1)',

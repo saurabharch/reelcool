@@ -9,10 +9,14 @@ app.directive("audioSelector", function (AudioFactory, InstructionsFactory) {
 			scope.audioTracks = AudioFactory.getAudioElements();
 
 			scope.$on('changedTheme', (e, newTheme) => {
-				//the id of the audio track id to the mongo id of the audio that has a filename
-				scope.audioConf.id = scope.audioTracks.filter(track => {
+				//the id of the audio track id to the mongo id of the audio that has a filename'
+
+				var matchingTracks = scope.audioTracks.filter(track => {
 					return track.fileName === newTheme.audioTitle;
-				})[0].videoSource.mongoId;
+				});
+				if(matchingTracks.length){
+					scope.audioConf.id = matchingTracks[0].videoSource.mongoId;
+				}
 			});
 		}
 	};
