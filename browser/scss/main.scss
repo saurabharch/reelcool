@@ -1,4 +1,4 @@
-$back: #CCCCCC;
+$back: #DDDDDD;
 
 
 * {
@@ -77,6 +77,7 @@ html {
 .brand {
   font-family: "Lobster";
   font-size: 48px;
+  margin-left: .5em;
 }
 
 /*.virtualRepeatdemoVerticalUsage #vertical-container {
@@ -94,13 +95,13 @@ md-virtual-repeat-container {
 .virtualRepeatdemoVerticalUsage .md-virtual-repeat-container .md-virtual-repeat-offsetter {
   padding-left: 16px; }*/
 
-.left-panel {
-  border: thin dashed grey;
-}
+// .left-panel {
+//   border: thin dashed grey;
+// }
 
-.right-panel {
-  border: thin dashed grey;
-}
+// .right-panel {
+//   border: thin dashed grey;
+// }
 
 #sourcevids {
   margin-left: 2em;

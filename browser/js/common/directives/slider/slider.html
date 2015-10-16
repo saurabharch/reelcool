@@ -1,6 +1,6 @@
 <!-- <div>{{movingTime | duration}}</div> -->
 <svg ng-attr-width="{{width}}%" height="80px">
-  <rect width="100%" height="76px" opacity=".5">
+  <rect width="100%" height="76px" opacity="1">
   </rect>
   <g id="slider-bar">
     <rect width="100%" height="40px" opacity='0'></rect>
@@ -14,7 +14,7 @@
   <g id="slider-buttons">
     <g id="pause-button" ng-hide="paused">
       <rect width="30px" height="30px" y="40" x="20" opacity="0"></rect>
-      <rect width="10px" height="30px" y="40" x="20" fill="lightgray"></rect>
+      <rect width="10px" height="30px" y="40" x="20" fill="white"></rect>
       <rect width="10px" height="30px" y="40" x="40" fill="white"></rect>
     </g>
     <g id="play-button" ng-show="paused">
@@ -26,7 +26,7 @@
 
 <!-- <pre>
 slider: {{100*movingTime/endTime}}
-dot: {{movingTime/endTime*width - 20}}
+dot: {{movingTime/endTime*width - 20}}s
 circle: {{movingTime/endTime*width}}
 startTime: {{startTime}}
 movingtime: {{movingTime}}
