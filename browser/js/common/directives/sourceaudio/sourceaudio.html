@@ -1,9 +1,12 @@
 <div id="sourceaudio">
-	<md-virtual-repeat-container id="audiolist" style="height: 75px">
-		<div layout="row" ng-repeat="audio in audioTracks" ng-hide="audio.videoSource.isTheme || audio.id==='original_track'"> <!--, videoSource.isTheme: true-->
-			<list-audio audio="audio"></list-audio>
-		</div>
-	</md-virtual-repeat-container>
-	<input type="file" style="display:none" id="audiofileinput" accept=".mp3" multiple>
-	<md-button class="md-primary md-raised" ng-click="selectAudioFile()">Add Audio</md-button>
+    <md-content class="left-panel">
+        <md-virtual-repeat-container id="audiolist" style="height: 75px">
+            <div layout="row" ng-repeat="audio in audioTracks" ng-hide="audio.videoSource.isTheme || audio.id==='original_track'">
+                <!--, videoSource.isTheme: true-->
+                <list-audio audio="audio"></list-audio>
+            </div>
+        </md-virtual-repeat-container>
+        <input type="file" style="display:none" id="audiofileinput" accept=".mp3" multiple>
+    </md-content>
+    <md-button class="md-primary md-raised" ng-click="selectAudioFile()">Add Audio</md-button>
 </div>
