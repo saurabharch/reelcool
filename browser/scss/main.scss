@@ -1,7 +1,9 @@
+$back: #CCCCCC;
+
+
 * {
   box-sizing: border-box;
 }
-
 
 @mixin clearfix {
   &:after {
@@ -9,6 +11,14 @@
     display: table;
     clear: both;
   }
+}
+
+body {
+  background-color: $back;
+}
+
+html {
+  background-color: $back;
 }
 
 #main {
