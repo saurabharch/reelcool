@@ -9,9 +9,11 @@ var ffmpeg = require('fluent-ffmpeg');
 // express and models
 var router = require('express').Router();
 var Video = require('mongoose').model('Video');
+var Audio = require('mongoose').model('Audio');
 
 // file paths setup
 var filesPath = path.join(__dirname, "..", "..", "..", "files");
+var themesPath = path.join(filesPath, "themes");
 var userDir;
 var uploadedFilesPath;
 var stagingAreaPath;
@@ -87,8 +89,9 @@ function makeFilterString(filtArr){
     }).join(', ');
 }
 
-router.post('/makeit', function(req, res) {
-    let instructions = req.body;
+router.post('/makeit', function(req, res, next) {
+    let instructions = req.body.instructions;
+    let audio = req.body.audio;
     let vidsDone = 0;
     let mergedVideo = ffmpeg();
 
@@ -102,8 +105,8 @@ router.post('/makeit', function(req, res) {
         // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
         // That's why we currently force it to have grayscale if it doesn't already have a filter.
 
-        let filterCode = makeFilterString(instruction.filters) || "mp=eq2=1:1:0:1:1:1:1"; // the one on the right does nothing
-        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
+        let filterCode = makeFilterString(instruction.filters) || "hue=b=0"; // "mp=eq2=1:1:0:1:1:1:1"; // the one on the right does nothing
+        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', '-an', destVid, '-y']);
         filtersProc.on('error',function(err,stdout,stderr){
             console.error('Errored when attempting to convert this video. Details below.');
             console.error(err);
@@ -115,31 +118,78 @@ router.post('/makeit', function(req, res) {
             vidsDone++;
             if (vidsDone == instructions.length) {
                 console.log('Filters done, now merging.');
-                mergeVids(mergedVideo, createdFilePath, instructions);
+
+
+                // add custom audio, but only if mongoId given
+                if (audio.id !== "original_track") {
+                    Audio.findById(audio.id).then(function (audio) {
+                        let audioPath = (audio.theme ? themesPath : uploadedFilesPath) +
+                            "/" + (audio.theme ? audio.title : audio._id) + ".mp3";
+                            console.log("audioPath:", audioPath);
+                        mergeVids(mergedVideo, createdFilePath, instructions, audioPath);
+                        req.resume();
+                    }).then(null, next);
+                } else {
+                    mergeVids(mergedVideo, createdFilePath, instructions);
+                    req.resume();
+                }
+
+
             }
-            req.resume();
         });
     });
 
-    function mergeVids(mergedVideo, createdFilePath, instructions) {
-        let createdVidName = Date.now() + '.mp4';
+    function mergeVids(mergedVideo, createdFilePath, instructions, audioPath) {
+        // let createdVidName = Date.now() + '.mp4';
+        let createdVidName = 'temp.mp4';
         let mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
+
 
         // add inputs in the same order as they were in the instructions
         instructions.forEach(function (inst) {
             let filename = inst.id+'.mp4';
             let input = path.join(stagingAreaPath,filename);
-            mergedVideo.addInput(input);
+             mergedVideo.addInput(input);
         });
 
         mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
-            .on('error', function(err) {
-                console.log('Error ' + err.message);
+            .on('error', function(err,stdout,stderr) {
+                console.error('Error ' + err.message);
+                console.error(stdout);
+                console.error(stderr);
+                // Important! Send response on error!
+                res.status(500).send('Could not make the video due to an error when merging the clips.');
             })
             .on('end', function() {
-                console.log('Finished!');
-                deleteStagedFiles().then(() => res.status(201).send(createdVidName));
+                console.log('Finished merging!');
+                if (audioPath) {
+                    addAudio(mergedVideoDest, createdFilePath, audioPath);
+                }
+                else {
+                    deleteStagedFiles().then(() => res.status(201).send(createdVidName));
+                }
             });
+    }
+
+    function addAudio (tempVideoPath, createdFilePath, audioPath) {
+        let finalName = Date.now() + '.mp4';
+        let finalDestination = path.join(createdFilePath, finalName); 
+        let audioProc = spawn('ffmpeg', ['-i', tempVideoPath, '-i', audioPath, '-codec', 'copy', '-shortest', finalDestination]);
+        audioProc.on('error', function(err,stdout,stderr) {
+                console.error('Error ' + err.message);
+                console.error(stdout);
+                console.error(stderr);
+                // Important! Send response on error!
+                res.status(500).send('Could not make the video due to an error when adding the audio.');
+            })
+            .on('exit', function() {
+                console.log('Finished adding audio!');
+                deleteTempFile().then( () => deleteStagedFiles()).then(() => res.status(201).send(finalName));
+            });
+    }
+
+    function deleteTempFile () {
+        return fs.unlinkAsync(path.join(createdFilePath,'temp.mp4'));
     }
 
     function deleteStagedFiles () {

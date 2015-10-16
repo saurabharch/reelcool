@@ -1,16 +1,16 @@
 <div id="editvids">
-	<p class='section-title'>Cut Sequence</p>
-	<p ng-hide=videos.length>You haven't made any cuts yet. Make some in the Playground!</p>
-	<ul id="vidslist">
-		<li ng-repeat="video in videos">
-			<list-video video="video" type="'edited'"></list-video>
-		</li>
-	</ul>
-	<!-- <input type="file" style="display:none" id="videofileinput" accept="video/*" multiple> -->
-    <audio-selector></audio-selector>
-
-	<p><md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button></p>
-
-	<p><md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button></p>
-
+    <p class='section-title'>Reel</p>
+    <md-content class="md-padding" ng-hide=videos.length>
+        <p>You haven't made any cuts yet. Make some in the Studio!</p>
+    </md-content>
+    <md-virtual-repeat-container id="vidslist" style="height: 500px">
+        <div layout="row" ng-repeat="video in videos">
+            <list-video video="video" type="'edited'"></list-video>
+        </div>
+    </md-virtual-repeat-container>
+        <audio-selector></audio-selector>
+        <theme-selector></theme-selector>
+        <md-button class="md-primary md-raised" ng-click="generateThemedCuts()">Generate Random Cuts</md-button>
+        <md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button>
+        <md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button>
 </div>

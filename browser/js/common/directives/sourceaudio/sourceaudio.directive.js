@@ -43,9 +43,9 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				});
 			});
 
-			var putRemoteAudioOnScope = function (mediaData) {
+			var putRemoteAudioOnScope = function (mediaData, isTheme) {
 				var audioElement;
-				VideoFactory.addRemoteSource(mediaData._id, true).then(function (audioSource) {
+				VideoFactory.addRemoteSource(mediaData._id, true, isTheme).then(function (audioSource) {
 					audioElement = VideoFactory.createVideoElement(mediaData.title);
 					audioElement.addSource(audioSource);
 					AudioFactory.setAudioElement(audioElement);
@@ -69,12 +69,22 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 
 
 			var updateSourceAudio = function () {
-				console.log("UPDATESOURCEAUDIO");
 				VideoFactory.getPrevUploads(scope.audioTracks, true).then(function (mediaData) {
 					mediaData.forEach(putRemoteAudioOnScope);
 				});
 
 			};
+
+			var initThemeAudio = () => {
+				VideoFactory.getThemeAudio()
+				.then(mediaData => {
+					mediaData.forEach(data => {
+						putRemoteAudioOnScope(data, true);
+					})
+				})
+			}
+
+			setTimeout(initThemeAudio, 500);
 			setTimeout(updateSourceAudio,500);
 			setInterval(updateSourceAudio,20000); // polls the server every 20 seconds
 

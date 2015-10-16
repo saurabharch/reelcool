@@ -1,9 +1,9 @@
 <div id="sourceaudio">
-	<ul id="audiolist">
-		<li ng-repeat="audio in audioTracks | filter:{id: '!original_track'}">
+	<md-virtual-repeat-container id="audiolist" style="height: 75px">
+		<div layout="row" ng-repeat="audio in audioTracks" ng-hide="audio.videoSource.isTheme || audio.id==='original_track'"> <!--, videoSource.isTheme: true-->
 			<list-audio audio="audio"></list-audio>
-		</li>
-	</ul>
+		</div>
+	</md-virtual-repeat-container>
 	<input type="file" style="display:none" id="audiofileinput" accept=".mp3" multiple>
-	<p><button ng-click="selectAudioFile()">add audio track</button></p>
+	<md-button class="md-primary md-raised" ng-click="selectAudioFile()">Add Audio</md-button>
 </div>

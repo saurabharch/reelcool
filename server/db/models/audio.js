@@ -9,6 +9,11 @@ var schema = new mongoose.Schema({
     editor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    theme: {
+    	type: Boolean,
+    	required: true,
+    	default: false
     }
 });
 
