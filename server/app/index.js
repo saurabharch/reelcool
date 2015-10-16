@@ -30,7 +30,12 @@ app.use(function (req, res, next) {
 });
 
 app.get('/*', function (req, res) {
+  if(req.isAuthenticated()){
     res.sendFile(app.get('indexHTMLPath'));
+  }
+  else{
+    res.sendFile(app.get('splashHTMLPath'));
+  }
 });
 
 // Error catching endware.
