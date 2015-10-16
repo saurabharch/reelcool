@@ -7,6 +7,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVid
 
 			$scope.videos = [];
 			$scope.instructions = InstructionsFactory.get();
+			$scope.theme = RandomVideoGenerator.getThemes()[0];
 			//$scope.instructions = [];
 
 			var instructionsToVideoMap = {};
