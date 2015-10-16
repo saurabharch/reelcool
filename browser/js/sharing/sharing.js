@@ -20,34 +20,10 @@ app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFact
     'Instagram'
     ];
 
-    $scope.isOpen = false;
-    $scope.openDialog = function($event, item) {
+    $scope.requestDownload = () => {
       let instructions = InstructionsFactory.get();
       let audio = InstructionsFactory.getAudio();
       FilterFactory.addFiltersToAllInstructions(instructions);
-      console.log(instructions);
-      if (item==='Download') {
-        DownloadFactory.promisifiedDownload(instructions, audio);
-      }
-      else {
-        // Show the dialog
-        $mdDialog.show({
-          clickOutsideToClose: true,
-          controller: function($mdDialog) {
-            // Save the clicked item
-            this.item = item;
-            // Setup some handlers
-            this.close = function() {
-              $mdDialog.cancel();
-            };
-            this.submit = function() {
-              $mdDialog.hide();
-            };
-          },
-          controllerAs: 'dialog',
-          templateUrl: "js/common/directives/dialog/dialog.html",
-          targetEvent: $event
-        });
-      }
-    }
+      DownloadFactory.promisifiedDownload(instructions, audio);
+    };
 });
