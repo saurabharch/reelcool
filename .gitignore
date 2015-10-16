@@ -3,6 +3,7 @@ node_modules
 server/files/*
 !server/files/themes
 !server/files/anon
+!server/files/assets
 npm-debug.log
 public
 .DS_Store

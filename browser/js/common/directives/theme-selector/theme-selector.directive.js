@@ -8,6 +8,7 @@ app.directive("themeSelector", function (AudioFactory, InstructionsFactory, Rand
 			scope.audioConf = InstructionsFactory.getAudio();
 			scope.audioTracks = AudioFactory.getAudioElements();
       scope.themes = RandomVideoGenerator.getThemes();
+			scope.selectedTheme = scope.themes[0];
 
       scope.broadcastTheme = () => {
         $rootScope.$broadcast("changedTheme",scope.selectedTheme);
