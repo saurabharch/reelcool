@@ -8,6 +8,12 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 
 			scope.audioTracks = AudioFactory.getAudioElements();
 
+			scope.showAudio = function () {
+				var filtArr = scope.audioTracks.filter(el=> !el.videoSource.isTheme);
+				return filtArr.length - 1; // minus the original track
+			};
+
+
 			var fileInput = document.getElementById("audiofileinput");
 
 
