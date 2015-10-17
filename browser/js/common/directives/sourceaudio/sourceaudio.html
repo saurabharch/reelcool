@@ -1,5 +1,8 @@
 <div id="sourceaudio">
-    <md-content class="left-panel">
+    <md-content class="left-panel" style="min-height: 20px">
+        <md-content class="md-padding" ng-hide="audioTracks.filter(el=> !el.videoSource.isTheme).length">
+            <p>You haven't uploaded any audio yet Import some!</p>
+        </md-content>
         <md-virtual-repeat-container id="audiolist" style="height: 75px">
             <div layout="row" ng-repeat="audio in audioTracks" ng-hide="audio.videoSource.isTheme || audio.id==='original_track'">
                 <!--, videoSource.isTheme: true-->

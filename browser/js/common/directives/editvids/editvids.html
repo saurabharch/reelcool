@@ -4,17 +4,21 @@
         <md-content class="md-padding" ng-hide=videos.length>
             <p>You haven't made any cuts yet. Make some in the Studio!</p>
         </md-content>
-        <md-virtual-repeat-container id="vidslist" style="height: 500px">
+        <md-virtual-repeat-container id="vidslist" style="height: 400px">
             <div layout="row" ng-repeat="video in videos">
                 <list-video video="video" type="'edited'"></list-video>
             </div>
         </md-virtual-repeat-container>
     </md-content>
-    <md-content id="selectionpanel">
+    <br>
+    <div id="selectionpanel">
         <audio-selector></audio-selector>
         <theme-selector></theme-selector>
-        <md-button class="md-primary md-raised" ng-click="generateThemedCuts()">Generate Random Cuts</md-button>
+        <md-button class="md-primary md-raised" ng-click="generateThemedCuts()">Generate Random Movie</md-button>
+    </div>
+    <br>
+    <div>
         <md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button>
         <md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button>
-    </md-content>
+    </div>
 </div>

@@ -24,6 +24,9 @@ app.config(function($mdThemingProvider) {
     })
     .accentPalette('grey', {
         'default': '900'
+    })
+    .warnPalette('red', {
+        'default': '900'
     });
 });
 
