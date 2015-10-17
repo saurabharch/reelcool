@@ -4,6 +4,8 @@
   text-align: center;
   z-index: 5000;
   position: absolute;
+    margin-left: auto;
+  margin-right: auto;
 }
 
 #splash-background {
@@ -20,6 +22,8 @@
 }
 
 .splash-text{
+  margin: auto;
+
   .splash-title {
     font-size: 70px;
     font-style: bold;

@@ -1,7 +1,9 @@
+$back: #DDDDDD;
+
+
 * {
   box-sizing: border-box;
 }
-
 
 @mixin clearfix {
   &:after {
@@ -9,6 +11,15 @@
     display: table;
     clear: both;
   }
+}
+
+body {
+  background-color: $back;
+  font-family: 'Montserrat';
+}
+
+html {
+  background-color: $back;
 }
 
 #main {
@@ -19,7 +30,8 @@
 
 .section-title {
   text-align: center;
-  font-size: 30px;
+  font-family: 'Montserrat';
+  /*font-size: 30px;*/
 }
 .ng-modal-overlay {
   /* A dark translucent div that covers the whole screen */
@@ -67,9 +79,10 @@
 .brand {
   font-family: "Lobster";
   font-size: 48px;
+  margin-left: .5em;
 }
 
-.virtualRepeatdemoVerticalUsage #vertical-container {
+/*.virtualRepeatdemoVerticalUsage #vertical-container {
   height: 292px;
   width: 400px; }
 .virtualRepeatdemoVerticalUsage .repeated-item {
@@ -79,10 +92,30 @@
   padding-top: 10px; }
 .virtualRepeatdemoVerticalUsage md-content {
   margin: 16px; }
-.virtualRepeatdemoVerticalUsage md-virtual-repeat-container {
-  border: solid 1px grey; }
+md-virtual-repeat-container {
+  border: thin dashed grey; }
 .virtualRepeatdemoVerticalUsage .md-virtual-repeat-container .md-virtual-repeat-offsetter {
-  padding-left: 16px; }
+  padding-left: 16px; }*/
+
+// .left-panel {
+//   border: thin dashed grey;
+// }
+
+// .right-panel {
+//   border: thin dashed grey;
+// }
+
+#sourcevids {
+  margin-left: 2em;
+}
+
+#sourceaudio {
+  margin-left: 2em;
+}
+
+#editvids {
+  margin-right: 2em;
+}
 
 @import 'directives/main';
 @import 'home/main';

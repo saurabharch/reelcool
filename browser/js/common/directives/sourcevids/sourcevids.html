@@ -1,13 +1,15 @@
 <div id="sourcevids">
-    <p class='section-title'>Raw Videos</p>
-    <md-content class="md-padding" ng-hide="videos.length">
-        <p>You have no videos uploaded. Upload some!</p>
+    <h1 class='.md-display-2 section-title'>Raw Videos</h1>
+    <md-content class="left-panel">
+        <md-content class="md-padding" ng-hide="videos.length">
+            <p>You have no videos uploaded. Upload some!</p>
+        </md-content>
+        <md-virtual-repeat-container id="vidslist" style="height: 500px">
+            <div layout="row" ng-repeat="video in videos">
+                <list-video video="video" type="'source'"></list-video>
+            </div>
+        </md-virtual-repeat-container>
+        <input type="file" style="display:none" id="videofileinput" accept="video/*" d- multiple>
     </md-content>
-    <md-virtual-repeat-container id="vidslist" style="height: 500px">
-        <div layout="row" ng-repeat="video in videos">
-            <list-video video="video" type="'source'"></list-video>
-        </div>
-    </md-virtual-repeat-container>
-    <input type="file" style="display:none" id="videofileinput" accept="video/*" d- multiple>
-    <md-button class="md-primary md-raised" ng-click="selectVideoFile()">Add Videos</md-button>
+    <md-button class="md-primary md-raised addvideo" ng-click="selectVideoFile()">Add Videos</md-button>
 </div>
