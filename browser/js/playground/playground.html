@@ -1,9 +1,8 @@
 <div class="row">
     <div class="col-sm-12">
-        <p class='section-title'>Studio</p>
-        <md-content class="md-padding">
-            <video-player audioenabled="false" width="95" height="95" instructions="instructions" video-player-id="'editor'"></video-player>
-            <div ng-show="instructions.length" class="row">
+        <h1 class='.md-display-2 section-title'>Studio</h1>
+            <video-player audioenabled="false" width="100" height="100" instructions="instructions" video-player-id="'editor'"></video-player>
+            <div class="row">
                 <input type="text" ng-model="newStartTime"></input>
                 <input type="text" ng-model="newEndTime"></input>
                 <md-button class="md-primary md-raised" ng-click="updatedTimeRange()">
@@ -12,7 +11,7 @@
             </div>
             <div class="filter-buttons">
                 <div class="row" >
-                    <md-button ng-class="{'md-accent':filter.applied}" ng-repeat="filter in filters" ng-click="toggleFilter(filter)">
+                    <md-button ng-class="{'md-warn':filter.applied}" ng-repeat="filter in filters" ng-click="toggleFilter(filter)">
                         {{ filter.displayName }}
                     </md-button>
                     <!-- <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn filter-btn" ng-click="toggleFilter(filter)" ng-repeat="filter in filters">{{filter.displayName}}</button> -->
@@ -28,6 +27,5 @@
                     </md-button>
                 </div>
             </div>
-        </md-content>
     </div>
 </div>

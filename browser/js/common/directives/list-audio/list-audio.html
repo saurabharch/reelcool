@@ -1,5 +1,5 @@
-<div class="list-audio">
-    <img width="60px" ng-click="togglePlay()" src="http://researchradio.org/wp-content/uploads/2015/06/audio-icon.png" />
+<div class="list-audio" ng-click="togglePlay()">
+    <img width="30px" src="http://researchradio.org/wp-content/uploads/2015/06/audio-icon.png" />
     <audio ng-show="audio.sourceAttached" width="200px" height="75px" id="{{audio.id}}" loop></audio>
     <img width="100px" ng-hide="audio.sourceAttached" src="/images/spinner.gif" />
     <span>{{audio.fileName}} ({{audio.duration | duration}})</span>
@@ -7,7 +7,3 @@
         <i class="zmdi zmdi-delete"></i>
     </md-button>
 </div>
-<!-- <pre>
-{{audio}}
-</pre>
- -->
