@@ -3,12 +3,10 @@
         <md-content class="md-padding" ng-hide="showAudio()">
             <p>You haven't uploaded any audio yet Import some!</p>
         </md-content>
-        <md-virtual-repeat-container id="audiolist" style="height: 75px">
-            <div layout="row" ng-repeat="audio in audioTracks" ng-hide="audio.videoSource.isTheme || audio.id==='original_track'">
-                <!--, videoSource.isTheme: true-->
-                <list-audio audio="audio"></list-audio>
-            </div>
-        </md-virtual-repeat-container>
+        <div layout="row" ng-repeat="audio in audioTracks" ng-hide="audio.videoSource.isTheme || audio.id==='original_track'">
+            <!--, videoSource.isTheme: true-->
+            <list-audio audio="audio"></list-audio>
+        </div>
         <input type="file" style="display:none" id="audiofileinput" accept=".mp3" multiple>
     </md-content>
     <md-button class="md-primary md-raised addaudio" ng-click="selectAudioFile()">Add Audio</md-button>

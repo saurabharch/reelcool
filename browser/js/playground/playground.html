@@ -2,21 +2,24 @@
     <div class="col-sm-12">
         <h1 class='.md-display-2 section-title'>Studio</h1>
             <video-player audioenabled="false" width="100" height="100" instructions="instructions" video-player-id="'editor'"></video-player>
-            <div class="row">
+            <div>
                 <input type="text" ng-model="newStartTime"></input>
                 <input type="text" ng-model="newEndTime"></input>
                 <md-button class="md-primary md-raised" ng-click="updatedTimeRange()">
                         Update Times
                 </md-button>
-                <md-button class="md-primary md-raised pull-right cut-button" ng-click="cutToInstructions()">
-                Cut to Reel
-                </md-button>
+                <div class="pull-right cutter">
+                    <md-button style="width:100%; height:100%;"class="md-primary md-raised" ng-click="cutToInstructions()">
+                    Cut to Reel
+                    </md-button>
+                </div>
             </div>
             <div>
                 <div class="row">
                     <md-button class="filter-buttons" ng-class="{'md-warn':filter.applied}" ng-repeat="filter in filters" ng-click="toggleFilter(filter)">
                         {{ filter.displayName }}
                     </md-button>
+                    
                     <!-- <button ng-class="{'btn-success':filter.applied, 'btn-default': !filter.applied}" class="btn filter-btn" ng-click="toggleFilter(filter)" ng-repeat="filter in filters">{{filter.displayName}}</button> -->
                 </div>
                 <div class="col-sm-6" style="width: 600px" ng-repeat="filter in filters" ng-show="filter.applied && filter.max">
