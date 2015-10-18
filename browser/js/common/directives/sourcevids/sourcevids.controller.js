@@ -19,7 +19,10 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
     fileInput.addEventListener('change', function (e) {
         var filesArr = Array.prototype.slice.call(fileInput.files, 0);
-        filesArr.forEach(putVidOnScope);
+        filesArr.forEach(function (file) {
+            if (file.type!=="video/webm") VideoFactory.uploadUnattached(file);
+            else putVidOnScope(file);
+        });
     });
 
     var putVidOnScope = function(file) {

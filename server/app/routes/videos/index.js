@@ -89,11 +89,15 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
     var mongoId = parsedFile.name;
     var desiredExt = '.webm';
-    if (parsedFile.ext === desiredExt) res.status(201).send(parsedFile.name);
+    // if it was a webm file, send back the mongoId reference right away 
+    // so it can be attached to the video file awaiting in the client
+    if (parsedFile.ext===desiredExt) res.status(201).send(parsedFile.name);
     else {
-        ffmpegUtils.convertToWebm(req.file)
-            .then(updated => res.status(201).send(updated._id))
-            .catch(e => res.status(500).send(e));
+        // allow this conversion below to happen async. 
+        // don't wait for it to finish. the client will just get impatient 
+        // and request again.
+        ffmpegUtils.convertToWebm(req.file); 
+        res.status(201).send(); // don't send the filename/mongoId
     }
 });
 

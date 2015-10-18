@@ -14,20 +14,6 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         return $http.get(url).then(resp => resp.data);
     };
 
-
-
-    // vidFactory.getUserVideos = function() {
-    //     console.log('calling getUserVideos for user', userId);
-    //     let url = `/api/videos/byuser/${userId}`;
-    //     console.log(url);
-    //     return $http.get(url).then(resp => resp.data);
-    // };
-
-    // vidFactory.getUserAudio = function() {
-    //     let url = `/api/audio/byuser/${userId}`;
-    //     return $http.get(url).then(resp => resp.data);
-    // };
-
     var VideoElement = function() {
         this.id = IdGenerator();
         this.sourceAttached = false;
@@ -86,11 +72,32 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
 
         return $http.post(uploadPath, formData, options)
             .then(function(resp) {
+                console.log(resp.data);
                 // this if statement is for non-webm videos that haven't been added to the sourcevids yet
-                if (!videoSources[videoSrc.id]) videoSources[videoSrc.id] = videoSrc;
+                if (!videoSources[videoSrc.id]) {
+                    console.log('oh hi i am in the if block');
+                    videoSources[videoSrc.id] = videoSrc;
+                }
                 attachMongoId(resp.data, videoSrc.id);
                 return videoSrc;
             }).catch(err => console.error('something bad happened', err));
+    };
+
+    // This is the new way we upload non-webm files that will need to be converted
+    // We will not create a video source for them in anticipation of their conversion
+    // Instead we will let the long-polling discover them when they are ready.
+    vidFactory.uploadUnattached = function (file) {
+        var formData = new FormData();
+        formData.append("uploadedFile",file);
+        var options = {
+            withCredentials: false,
+            headers: {
+                'Content-Type': undefined
+            },
+            transformRequest: angular.identity
+        };
+        var uploadPath = apiPathByFileType(file.type) + "/upload";
+        return $http.post(uploadPath, formData, options);
     };
 
     var attachMongoId = function(mongoId, localId) {
