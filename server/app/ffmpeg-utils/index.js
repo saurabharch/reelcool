@@ -45,11 +45,11 @@ var filters = {
         translate: translateBrightness
     },
     "Contrast": {
-        command: ['mp=eq2=1:', ':0:1:1:1:1'],
+        command: ['eq=1:', ':0:1:1:1:1'],
         translate: translateContrast
     },
     "Saturation": {
-        command: ['mp=eq2=1:1:0:', ':1:1:1'],
+        command: ['eq=1:1:0:', ':1:1:1'],
         translate: translateSaturation
     },
     "Hue": {

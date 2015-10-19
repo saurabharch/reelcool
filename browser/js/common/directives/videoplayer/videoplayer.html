@@ -1,6 +1,6 @@
 <div width="{{width}}%" class="row">
   <div width="{{width}}%" id="{{videoContainerId}}">
-  	<div class="emptyVideo" style="width: {{width}}%; height: 626px;" ng-hide="instructions.length"></div>
+  	<div class="emptyVideo" style="width: {{width}}%; min-height: 400px; max-height: 40%;" ng-hide="instructions.length"></div>
     <div ng-repeat="instruction in instructions" class="playingVideo" ng-show="currentClip===$index">
       <video width="{{width}}%" height="550px" id="{{getIdForVideo(instruction.id)}}" class='box playgroundvid' style="-webkit-filter: {{instruction.filterString}}" preload>
       </video>
