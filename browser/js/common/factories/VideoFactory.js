@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthService, InstructionsFactory) {
+app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, AuthService, InstructionsFactory) {
 
     var vidFactory = {},
         videoSources = {};
@@ -8,9 +8,8 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     AuthService.getLoggedInUser().then(user => userId = user ? user._id : 'anon');
 
     var getUserMedia = function(type) {
-        console.log('calling getUserMedia for user', userId);
+        // console.log('calling getUserMedia for user', userId);
         let url = `/api/${type}/byuser/${userId}`;
-        console.log(url);
         return $http.get(url).then(resp => resp.data);
     };
 
@@ -33,8 +32,8 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     };
     VideoSource.prototype.addUrl = function(mongoId, userId) {
         var media = (this.mimeType &&
-                this.mimeType.indexOf("video") === -1 ) ? "audio" : "videos";
-        this.url = 'api/' +media+ '/getconverted/' + userId + '/' + mongoId;
+            this.mimeType.indexOf("video") === -1) ? "audio" : "videos";
+        this.url = 'api/' + media + '/getconverted/' + userId + '/' + mongoId;
     };
     VideoSource.prototype.addMongoId = function(mongoId) {
         this.mongoId = mongoId;
@@ -86,9 +85,10 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     // This is the new way we upload non-webm files that will need to be converted
     // We will not create a video source for them in anticipation of their conversion
     // Instead we will let the long-polling discover them when they are ready.
-    vidFactory.uploadUnattached = function (file) {
+    vidFactory.uploadUnattached = function(file) {
+        console.log('uploading unattached');
         var formData = new FormData();
-        formData.append("uploadedFile",file);
+        formData.append("uploadedFile", file);
         var options = {
             withCredentials: false,
             headers: {
@@ -97,8 +97,24 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
             transformRequest: angular.identity
         };
         var uploadPath = apiPathByFileType(file.type) + "/upload";
-        return $http.post(uploadPath, formData, options);
+        // $mdToast.show($mdToast.simple().content('Hello!'));
+        var toast1 = $mdToast.simple().content(`Uploading ${file.name}.`);
+        var uploadSuccess = $mdToast.simple().content('Your video will be back when it has been converted.').hideDelay(3000);
+        var uploadFail = $mdToast.simple().content(`${file.name} failed to upload. Please try again later.`).hideDelay(3000);
+        return $mdToast.show(toast1)
+            .then( () => $http.post(uploadPath, formData, options))
+            .then( 
+                (resp) => {
+                    if (resp.status===201) $mdToast.show(uploadSuccess);
+                    else $mdToast.show(uploadFail);
+                },
+                () => $mdToast.show(uploadFail)
+                );
     };
+
+    function showToast () {
+        $mdToast.show($mdToast.show($mdToast.simple().content('Hello!')));
+    }
 
     var attachMongoId = function(mongoId, localId) {
         // Just in case, wait for videoSources[localId] to be available (per above comments).
@@ -123,7 +139,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
     vidFactory.createVideoElement = function(fileName) {
         var newElement = new VideoElement();
         newElement.fileName = fileName;
-        console.log("created new video element", newElement);
+        //console.log("created new video element", newElement);
         return newElement;
     };
 
@@ -133,14 +149,13 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
             videoSrc.mongoId = mongoId;
             videoSrc.mimeType = isAudio ? "audio/mp3" : "video/webm";
             videoSrc.isTheme = isTheme;
-            if(isTheme){
-              videoSrc.url = `/api/audio/themes/${mongoId}`;
-            }
-            else {
-              videoSrc.addUrl(mongoId, userId);
+            if (isTheme) {
+                videoSrc.url = `/api/audio/themes/${mongoId}`;
+            } else {
+                videoSrc.addUrl(mongoId, userId);
             }
             videoSources[videoSrc.id] = videoSrc;
-            console.log('addRemoteVideoSource', videoSrc);
+            // console.log('addRemoteVideoSource', videoSrc);
             resolve(videoSrc);
         });
     };
@@ -257,7 +272,7 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         }
     };
 
-    var apiPathByFileType = function (type) {
+    var apiPathByFileType = function(type) {
         if (type.indexOf("video") === -1) {
             return "/api/audio";
         } else {
@@ -265,11 +280,11 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         }
     };
 
-    var deleteFromServer = function (mongoId, fileType) {
+    var deleteFromServer = function(mongoId, fileType) {
         var apiPath = apiPathByFileType(fileType);
-        $http.delete(apiPath + '/' + mongoId).then(function (resp) {
-            if (resp.status===200) console.log('Successfully deleted', resp.data._id);
-            else console.log('Server responded with ', resp.status); // should be 404 if video was not found
+        $http.delete(apiPath + '/' + mongoId).then(function(resp) {
+            if (resp.status === 200) console.log('Successfully deleted', resp.data._id);
+            else console.error('Server responded with ', resp.status); // should be 404 if video was not found
         });
     };
 
@@ -282,7 +297,6 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
         console.log("Video source terminated locally.");
 
         if (videoSource.mongoId) {
-            console.log(videoSource.mongoId);
             console.log('Requesting deletion from server.');
             deleteFromServer(videoSource.mongoId, videoSource.mimeType);
         }
@@ -293,21 +307,20 @@ app.factory("VideoFactory", function ($rootScope, $http, IdGenerator, AuthServic
 
 
     vidFactory.getPrevUploads = function(mediaElements, isAudio) {
-        let existingVids = mediaElements.filter( vid => vid.videoSource && vid.videoSource.mongoId ).map( vid => vid.videoSource.mongoId);
+        let existingVids = mediaElements.filter(vid => vid.videoSource && vid.videoSource.mongoId).map(vid => vid.videoSource.mongoId);
         // var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
         var media = isAudio ? "audio" : "videos";
         return getUserMedia(media)
-            .then(function (mediaData) {
-                return mediaData.filter(media => existingVids.indexOf(media._id)===-1);
+            .then(function(mediaData) {
+                return mediaData.filter(media => existingVids.indexOf(media._id) === -1);
             });
     };
 
-    vidFactory.getThemeAudio = () =>  {
-      console.log("VIDEO FACTORY ")
-      let url = `/api/audio/themes`;
-      return $http.get(url).then(resp => resp.data);
-    }
-
+    vidFactory.getThemeAudio = () => {
+        // console.log("VIDEO FACTORY ")
+        let url = `/api/audio/themes`;
+        return $http.get(url).then(resp => resp.data);
+    };
 
     return vidFactory;
 });

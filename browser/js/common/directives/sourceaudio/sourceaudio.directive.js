@@ -36,7 +36,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 						scope.$digest();
 						return VideoFactory.attachVideoSource(audioSource, audioElement.id);
 					}).then(function () {
-						console.log("the track seems to be attached");
+						// console.log("the track seems to be attached");
 						var audioDomElement = document.getElementById(audioElement.id);
 						audioElement.domElement = audioDomElement;
 						audioElement.duration = audioDomElement.duration;
@@ -58,7 +58,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 					scope.$digest();
 					return VideoFactory.attachVideoSource(audioSource, audioElement.id);
 				}).then(function () {
-					console.log("the track seems to be attached");
+					// console.log("the track seems to be attached");
 					var audioDomElement = document.getElementById(audioElement.id);
 					audioElement.domElement = audioDomElement;
 					audioElement.duration = audioDomElement.duration;
