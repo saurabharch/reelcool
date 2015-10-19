@@ -2,6 +2,7 @@
 var mongoose = require('mongoose');
 require('../../../server/db/models');
 var User = mongoose.model('User');
+var remUserDir = require("../../helper/remUserDir");
 
 var expect = require('chai').expect;
 
@@ -17,6 +18,10 @@ describe('Members Route', function () {
 		if (mongoose.connection.db) return done();
 		mongoose.connect(dbURI, done);
 	});
+
+    afterEach("Remove user directories", function () {
+        return remUserDir();
+    });
 
 	afterEach('Clear test database', function (done) {
 		clearDB(done);
