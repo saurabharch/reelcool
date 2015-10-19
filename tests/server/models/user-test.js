@@ -4,6 +4,7 @@ var clearDB = require('mocha-mongoose')(dbURI);
 var sinon = require('sinon');
 var expect = require('chai').expect;
 var mongoose = require('mongoose');
+var remUserDir = require("../../helper/remUserDir");
 
 // Require in all models.
 require('../../../server/db/models');
@@ -17,9 +18,14 @@ describe('User model', function () {
         mongoose.connect(dbURI, done);
     });
 
+    afterEach("Remove user directories", function () {
+        return remUserDir();
+    });
+
     afterEach('Clear test database', function (done) {
         clearDB(done);
     });
+
 
     it('should exist', function () {
         expect(User).to.be.a('function');
