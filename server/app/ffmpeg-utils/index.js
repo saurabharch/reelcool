@@ -45,11 +45,11 @@ var filters = {
         translate: translateBrightness
     },
     "Contrast": {
-        command: ['mp=eq2=1:', ':0:1:1:1:1'],
+        command: 'eq=contrast=',
         translate: translateContrast
     },
     "Saturation": {
-        command: ['mp=eq2=1:1:0:', ':1:1:1'],
+        command: 'eq=saturation=',
         translate: translateSaturation
     },
     "Hue": {
@@ -66,11 +66,11 @@ function translateBrightness(command, val) {
 }
 
 function translateContrast(command, val) {
-    return command[0] + val.toString() + command[1];
+    return command + val.toString();
 }
 
 function translateSaturation(command, val) {
-    return command[0] + val.toString() + command[1];
+    return command + val.toString();
 }
 
 function translateHue(command, val) {
