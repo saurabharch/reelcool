@@ -34,7 +34,7 @@ html {
 
 .section-title {
   text-align: center;
-  /*font-family: 'Cinzel';*/
+  font-family: 'Montserrat';
   /*font-size: 30px;*/
 }
 .ng-modal-overlay {
@@ -82,8 +82,9 @@ html {
 
 .brand {
   font-family: "Lobster";
-  font-size: 24px;
-  margin-left: 2em;
+  font-size: 38px;
+  margin-left: 0;
+  text-transform: none !important;
 }
 
 /*.virtualRepeatdemoVerticalUsage #vertical-container {
