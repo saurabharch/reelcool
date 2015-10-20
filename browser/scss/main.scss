@@ -34,12 +34,22 @@ $backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/
 
 .mb-ul-section {
   text-align: center;
+
   button {
     font-size: 4em;
     background-color: black;
     color: white;
     margin: 0 auto;
   }
+
+  h1 {
+    font-size: 3em;
+  }
+
+  div {
+    padding: 50px;
+  }
+
 }
 
 
