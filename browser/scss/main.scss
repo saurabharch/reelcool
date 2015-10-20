@@ -1,5 +1,5 @@
 $back: #DDDDDD;
-$backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/fresh_snow.png');
+$backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/dark_embroidery.png');
 
 
 * {
@@ -40,10 +40,14 @@ $backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/
     background-color: black;
     color: white;
     margin: 0 auto;
+    font-family: 'Montserrat';
+    border-radius: 15px;
+    text-transform: uppercase;
+    padding: 15px 35px;
   }
 
   h1 {
-    font-size: 3em;
+    font-size: 4em;
   }
 
   div {
@@ -54,16 +58,11 @@ $backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/
 
 
 body {
-  background-image: $backURL;
-  background-repeat: true;
+  // background-image: $backURL;
+  // background-repeat: true;
   font-family: 'Montserrat';
 }
 
-html {
-  background-image: $backURL;
-  background-repeat: true;
-  background-color: $back;
-}
 
 #main {
   padding-top: 60px;
@@ -73,7 +72,7 @@ html {
 
 .section-title {
   text-align: center;
-  font-family: 'Cinzel';
+  font-family: 'Montserrat';
   /*font-size: 30px;*/
 }
 .ng-modal-overlay {
@@ -120,9 +119,10 @@ html {
 }
 
 .brand {
-  font-family: "Cinzel";
-  font-size: 48px;
-  margin-left: .5em;
+  font-family: "Lobster";
+  font-size: 38px;
+  margin-left: 0;
+  text-transform: none !important;
 }
 
 /*.virtualRepeatdemoVerticalUsage #vertical-container {
