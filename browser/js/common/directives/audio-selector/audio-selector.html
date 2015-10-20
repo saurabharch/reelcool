@@ -1,5 +1,5 @@
-<md-input-container>
+<md-input-container style="display: inline-block;">
   <md-select aria-label="audio select" ng-model="audioConf.id">
-    <md-option selected="" ng-value="audio.videoSource.mongoId" ng-repeat="audio in audioTracks">{{ audio.fileName }}</md-option>
+    <md-option ng-value="audio.videoSource.mongoId" ng-repeat="audio in audioTracks">{{ audio.fileName }}</md-option>
   </md-select>
 </md-input-container>
