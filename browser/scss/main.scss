@@ -32,6 +32,16 @@ $backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/
   }
 }
 
+.mb-ul-section {
+  text-align: center;
+  button {
+    font-size: 4em;
+    background-color: black;
+    color: white;
+    margin: 0 auto;
+  }
+}
+
 
 body {
   background-image: $backURL;
