@@ -23,6 +23,16 @@ $backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/
   }
 }
 
+@media (min-width: 1025px) {
+  .desktop {
+    display: block;
+  }
+  .mobile {
+    display: none;
+  }
+}
+
+
 body {
   background-image: $backURL;
   background-repeat: true;
