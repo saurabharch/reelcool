@@ -1,6 +1,6 @@
 <navbar></navbar>
 
-<div class="row desktop">
+<div ng-if="desktopScreen" class="row">
     <div class="col-sm-2">
         <sourcevids></sourcevids>
         <sourceaudio></sourceaudio>
@@ -17,7 +17,7 @@
 
 </div>
 
-<div class="row mobile">
+<div ng-if="mobileScreen" class="row">
   <div class="col-sm-12 mb-ul-section">
     <div>
       <sourcevids></sourcevids>
