@@ -2,7 +2,7 @@
 Reel Cool is an in-browser video editor. We set out to make a video editing tool that would be fun to use and wouldn't require a powerful computer to run. Visit us at [www.reelcool.co](www.reelcool.co) to try it out!
 
 # Browser compatibility
-Reel Cool uses the the [MediaSource Web API](https://developer.mozilla.org/en-US/docs/Web/API/MediaSource) to read buffers directly into the video elements. To view and edit videos, you'll need to use a browser that supports MediaSources.
+Reel Cool uses the [MediaSource Web API](https://developer.mozilla.org/en-US/docs/Web/API/MediaSource) to read buffers directly into the video elements. To view and edit videos, you'll need to use a browser that supports MediaSources.
 
 On the desktop, the MediaSource API is supported in Chrome v23+ by default. Firefox v25+ also supports MediaSource, but the user has to switch it on first. IE v11+ supports MediaSource on Windows v8+.
 
