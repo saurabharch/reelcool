@@ -14,17 +14,55 @@ $backURL: url('http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/
   }
 }
 
+@media (max-width: 1024px) {
+  .desktop {
+    display: none;
+  }
+  .mobile {
+    display: block;
+  }
+}
+
+@media (min-width: 1025px) {
+  .desktop {
+    display: block;
+  }
+  .mobile {
+    display: none;
+  }
+}
+
+.mb-ul-section {
+  text-align: center;
+
+  button {
+    font-size: 4em;
+    background-color: black;
+    color: white;
+    margin: 0 auto;
+    font-family: 'Montserrat';
+    border-radius: 15px;
+    text-transform: uppercase;
+    padding: 15px 35px;
+  }
+
+  h1 {
+    font-size: 4em;
+  }
+
+  div {
+    padding: 50px;
+  }
+
+}
+
+
 body {
   // background-image: $backURL;
   // background-repeat: true;
   font-family: 'Montserrat';
 }
 
-html {
-  // background-image: $backURL;
-  // background-repeat: true;
-  background-color: $back;
-}
 
 #main {
   padding-top: 60px;

@@ -38,16 +38,16 @@ app.factory("FilterFactory", () => {
         default:1,
         applied: false
     },
-    {
-        code: ["contrast(",")"],
-        displayName: "Contrast",
-        primary: false,
-        min:1,
-        max:5,
-        val:1,
-        default:1,
-        applied: false
-    },
+    // {
+    //     code: ["contrast(",")"],
+    //     displayName: "Contrast",
+    //     primary: false,
+    //     min:1,
+    //     max:5,
+    //     val:1,
+    //     default:1,
+    //     applied: false
+    // },
     {
         code: ["hue-rotate(","deg)"],
         displayName: "Hue",
@@ -57,16 +57,16 @@ app.factory("FilterFactory", () => {
         val:0,
         default:0,
         applied: false
-    },
-    {
-        code: ["saturate(",")"],
-        displayName: "Saturation",
-        primary: false,
-        min:0,
-        max:10,
-        val:1,
-        default:1,
-        applied: false
+    // },
+    // {
+    //     code: ["saturate(",")"],
+    //     displayName: "Saturation",
+    //     primary: false,
+    //     min:0,
+    //     max:10,
+    //     val:1,
+    //     default:1,
+    //     applied: false
     }
 
   ];

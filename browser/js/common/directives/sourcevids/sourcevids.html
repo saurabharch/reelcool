@@ -1,6 +1,6 @@
 <div id="sourcevids">
-    <h1 class='md-display-1 section-title'>Uploads</h1>
-    <md-content class="left-panel">
+    <h1 class='desktop md-display-1 section-title'>Uploads</h1>
+    <md-content class="left-panel desktop">
         <md-content class="md-padding" ng-hide="videos.length">
             <p>You have no videos uploaded. Upload some!</p>
         </md-content>
@@ -11,5 +11,6 @@
         </md-virtual-repeat-container>
         <input type="file" style="display:none" id="videofileinput" accept="video/*" d- multiple>
     </md-content>
-    <md-button class="md-primary md-raised addvideo" ng-click="selectVideoFile()">Add Videos</md-button>
+    <md-button class="desktop md-primary md-raised addvideo" ng-click="selectVideoFile()">Add Videos</md-button>
+    <button ng-click="selectVideoFile()" class="mobile"><span>Upload Videos</span></button>
 </div>
