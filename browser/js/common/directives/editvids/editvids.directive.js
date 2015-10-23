@@ -48,28 +48,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVid
 				$scope.instructions.forEach(function (i) {
 					addClip(i);
 				});
-				// let phase = $rootScope.$$phase;
-				// if (phase !== "apply" && phase !=="digest") $scope.$digest();
-// =======
-// 				var index = getVideoIndexByInstructionsId(instructions.id);
-// 				var instCopy = InstructionsFactory.makeUniqueInstructions(instructions);
-// 				console.log('instructions after', instCopy);
-// 				if(index> -1){
-// 					//clip was previously added to list
-// 					_.assign($scope.videos[index].instructions, instCopy);
-// 				}
-// 				else{
-// 					//clip is not already there, add it to the end
-// 					var updatedVideoElement = VideoFactory.createVideoElement();
-// 					updatedVideoElement.addSource(instCopy.videoSource, instCopy);
-// 					$scope.videos.push(updatedVideoElement);
-
-// 					setTimeout(()=> {
-// 						attachSourceToVideo(updatedVideoElement, instCopy);
-// 					}, 0);
-// 				}
-// 				updateInstructions($scope.videos);
-// >>>>>>> master
 			});
 
 			$scope.$on('unstageClip', (e, clip)=> {
@@ -123,9 +101,9 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVid
 			};
 
 			$scope.showPreviewModal = ($event) => {
-				console.log('showing preview modal, time to update instructions')
+				console.log('showing preview modal, time to update instructions');
 				updateInstructions($scope.videos);
-				console.log('instructions are updated')
+				console.log('instructions are updated');
 				console.log('from InstructionsFactory',InstructionsFactory.get());
 				console.log('from the $scope',$scope.instructions);
 				$rootScope.$broadcast('toggleModal', {show: true});

@@ -25,6 +25,9 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				fileInput.click();
 			};
 
+			// The 'change' we're listening for is emitted when the user
+			// has selected files for upload. It's emitted from the fileInput element
+			// that we grabbed above on line 17.
 			fileInput.addEventListener('change', function(e) {
 				var filesArr = Array.prototype.slice.call(fileInput.files, 0);
 				filesArr.forEach(function (file) {
@@ -49,6 +52,13 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				});
 			});
 
+			// This function is for audio elements that need to be on the page but 
+			// are not being uploaded by the user during the current session. 
+			// Instead they are being retrieved from the server. It re-uses a number
+			// of functions from the VideoFactory.
+			// There's a similar function in the sourcevids directive. Both of them 
+			// reuse methods from VideoFactory. We might consider refactoring to 
+			// avoid this repetition. 
 			var putRemoteAudioOnScope = function (mediaData, isTheme) {
 				var audioElement;
 				VideoFactory.addRemoteSource(mediaData._id, true, isTheme).then(function (audioSource) {
@@ -68,17 +78,13 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 					//TODO show error on video tag
 					console.error("Error occured when attaching video source", error);
 				});
-
-
 			};
-
 
 
 			var updateSourceAudio = function () {
 				VideoFactory.getPrevUploads(scope.audioTracks, true).then(function (mediaData) {
 					mediaData.forEach(putRemoteAudioOnScope);
 				});
-
 			};
 
 			var initThemeAudio = () => {
@@ -86,16 +92,16 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory) {
 				.then(mediaData => {
 					mediaData.forEach(data => {
 						putRemoteAudioOnScope(data, true);
-					})
-				})
-			}
+					});
+				});
+			};
 
 			setTimeout(initThemeAudio, 500);
 			setTimeout(updateSourceAudio,500);
 			setInterval(updateSourceAudio,20000); // polls the server every 20 seconds
 
 
-		}// link end
+		} // link end
 	};
 
 });

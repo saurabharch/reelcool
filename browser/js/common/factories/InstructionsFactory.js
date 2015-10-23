@@ -1,4 +1,6 @@
+// solid factory 
 app.factory('InstructionsFactory',function (IdGenerator) {
+	//love the closure
 	var instructions = [];
 	var audio = {
 			id: "original_track", // "original_track" or mongoID
@@ -10,6 +12,7 @@ app.factory('InstructionsFactory',function (IdGenerator) {
 		// add: (instruction) => {
 		// 	instructions.push(instruction);
 		// },
+		// love the getter
 		get: () => {
 			return instructions;
 		},
