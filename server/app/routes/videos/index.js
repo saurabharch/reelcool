@@ -1,17 +1,18 @@
 // utilities
-var spawn = require('child_process').spawn;
 var Promise = require('bluebird');
 var fs = require('fs');
 Promise.promisifyAll(fs);
 var path = require('path');
-var ffmpeg = require('fluent-ffmpeg');
+var ffmpegUtils = require('../../ffmpeg-utils');
 
 // express and models
 var router = require('express').Router();
 var Video = require('mongoose').model('Video');
+var Audio = require('mongoose').model('Audio');
 
 // file paths setup
 var filesPath = path.join(__dirname, "..", "..", "..", "files");
+var themesPath = path.join(filesPath, "themes");
 var userDir;
 var uploadedFilesPath;
 var stagingAreaPath;
@@ -51,102 +52,23 @@ var upload = multer({
     storage: storage
 });
 
-var filters = {
-    "Grayscale": 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3',
-    "Sepia": 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-    "Invert": 'lutrgb=r=maxval+minval-val:g=maxval+minval-val:b=maxval+minval-val',
-    "Brightness": {command:'hue=b=', translate: translateBrightness},
-    "Contrast": {command:['mp=eq2=1:',':0:1:1:1:1'], translate: translateContrast},
-    "Saturation": {command: ['mp=eq2=1:1:0:',':1:1:1'],translate: translateSaturation},
-    "Hue": {command:'hue=h=', translate: translateHue},
-};
-
-function translateBrightness(command,val){
-    let newVal;
-    if(val<=1) newVal = (1-val)*10*-1;
-    else newVal = (val-1)*4;
-    return command+newVal.toString();
-}
-function translateContrast(command,val){
-    return command[0]+val.toString()+command[1];
-}
-function translateSaturation(command,val){
-    return command[0]+val.toString()+command[1];
-}
-function translateHue(command,val){
-    return command+val.toString();
-}
-function makeFilterString(filtArr){
-    if(filtArr==[]) return;
-    return filtArr.filter(el => el.applied).map(filt=>{
-        let filterKey = filters[filt.displayName];
-        if (filterKey.translate){
-            return filterKey.translate(filterKey.command, filt.val);
-        }
-        else return filterKey;
-    }).join(', ');
-}
-
-router.post('/makeit', function(req, res) {
-    let instructions = req.body;
-    let vidsDone = 0;
-    let mergedVideo = ffmpeg();
-
-    instructions.forEach(function(instruction, ind) {
-        let vid = instruction.videoSource.mongoId;
-        let sourceVid = uploadedFilesPath + '/' + vid + '.webm';
-        let destVid = stagingAreaPath + '/' + instruction.id + '.mp4';
-        let startTime = instruction.startTime;
-        let duration = (Number(instruction.endTime) - Number(startTime)).toString();
-        // TODO: Need an option for "no filter" that doesn't break the child process
-        // (which expects a filter). If instruction.filter is left "undefined", the proc breaks.
-        // That's why we currently force it to have grayscale if it doesn't already have a filter.
-
-        let filterCode = makeFilterString(instruction.filters) || "mp=eq2=1:1:0:1:1:1:1"; // the one on the right does nothing
-        let filtersProc = spawn('ffmpeg', ['-ss', startTime, '-i', sourceVid, '-t', duration, '-filter_complex', filterCode, '-strict', 'experimental', '-preset', 'ultrafast', '-vcodec', 'libx264', destVid, '-y']);
-        filtersProc.on('error',function(err,stdout,stderr){
-            console.error('Errored when attempting to convert this video. Details below.');
-            console.error(err);
-            console.error(stdout);
-            console.error(stderr);
-        });
-        filtersProc.on('exit', function(code, signal) {
-            console.log('Filtered and converted', vid);
-            vidsDone++;
-            if (vidsDone == instructions.length) {
-                console.log('Filters done, now merging.');
-                mergeVids(mergedVideo, createdFilePath, instructions);
-            }
-            req.resume();
-        });
-    });
-
-    function mergeVids(mergedVideo, createdFilePath, instructions) {
-        let createdVidName = Date.now() + '.mp4';
-        let mergedVideoDest = path.join(createdFilePath,createdVidName); // name of file based on Date.now(). file is already located in the user's created folder so it we would be able to pull it up
-
-        // add inputs in the same order as they were in the instructions
-        instructions.forEach(function (inst) {
-            let filename = inst.id+'.mp4';
-            let input = path.join(stagingAreaPath,filename);
-            mergedVideo.addInput(input);
-        });
-
-        mergedVideo.mergeToFile(mergedVideoDest, tempFilePath)
-            .on('error', function(err) {
-                console.log('Error ' + err.message);
-            })
-            .on('end', function() {
-                console.log('Finished!');
-                deleteStagedFiles().then(() => res.status(201).send(createdVidName));
-            });
-    }
-
-    function deleteStagedFiles () {
-        return fs.readdirAsync(stagingAreaPath)
-            .then(arrayOfFiles => Promise.map(arrayOfFiles, function (file) { return fs.unlinkAsync(path.join(stagingAreaPath, file)); }));
-    }
-
+router.post('/makeit', function(req, res, next) {
+    let instructions = req.body.instructions;
+    let audio = req.body.audio;
+    ffmpegUtils
+        .makeIt(
+            instructions, 
+            audio, 
+            themesPath, 
+            uploadedFilesPath, 
+            stagingAreaPath, 
+            tempFilePath, 
+            createdFilePath
+            )
+        .then(
+            finalName => res.status(201).send(finalName), 
+            err => res.status(500).send(err)
+            );
 });
 
 router.get('/getconverted/:userId/:videoId',function (req,res){
@@ -167,24 +89,15 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
     var mongoId = parsedFile.name;
     var desiredExt = '.webm';
-    if (parsedFile.ext === desiredExt) res.status(201).send(parsedFile.name);
+    // if it was a webm file, send back the mongoId reference right away 
+    // so it can be attached to the video file awaiting in the client
+    if (parsedFile.ext===desiredExt) res.status(201).send(parsedFile.name);
     else {
-        var dest = req.file.destination + '/' + parsedFile.name + '.webm';
-        var ffmpeg = spawn('ffmpeg', ['-i', req.file.path, '-c:v', 'libvpx', '-crf', '10', '-b:v', '1M', '-c:a', 'libvorbis', dest, '-y']);
-        ffmpeg.on('message', function(msg) {
-            console.log(msg);
-        });
-        ffmpeg.on('error', function(err) {
-            console.error(err);
-            res.status(500).send();
-        });
-        ffmpeg.on('exit', function(code, signal) {
-            fs.unlinkAsync(req.file.path)
-                .then(function () {
-                    return Video.findByIdAndUpdate(mongoId, { ext: desiredExt }, {new: true});
-                })
-                .then(updated => res.status(201).send(updated._id));
-        });
+        // allow this conversion below to happen async. 
+        // don't wait for it to finish. the client will just get impatient 
+        // and request again.
+        ffmpegUtils.convertToWebm(req.file); 
+        res.status(201).send(); // don't send the filename/mongoId
     }
 });
 

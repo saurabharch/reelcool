@@ -17,6 +17,19 @@ app.config(function ($urlRouterProvider, $locationProvider) {
     $urlRouterProvider.otherwise('/');
 });
 
+app.config(function($mdThemingProvider) {
+  $mdThemingProvider.theme('default')
+    .primaryPalette('grey', {
+        'default': '900'
+    })
+    .accentPalette('grey', {
+        'default': '900'
+    })
+    .warnPalette('red', {
+        'default': '900'
+    });
+});
+
 // This app.run is for controlling access to specific states.
 app.run(function ($rootScope, AuthService, $state) {
 

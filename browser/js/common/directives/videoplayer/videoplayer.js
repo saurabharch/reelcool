@@ -30,6 +30,10 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
   $scope.instructions = $scope.instructions || [];
   $scope.videoContainerId = "video-container" + IdGenerator();
 
+  $scope.vidsUploaded = function() {
+    $scope.x = InstructionsFactory.get();
+  };
+
   $scope.prepareVideoElements = function() {
     if (!$scope.instructions.length) {
       return;

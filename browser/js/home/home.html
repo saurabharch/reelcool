@@ -1,13 +1,29 @@
-<div class="row">
-  <div class="col-sm-3">
-    <sourcevids></sourcevids>
-    <sourceaudio></sourceaudio>
-  </div>
-  <div class="col-sm-6">
-    <playground instructions="instructions"></playground>
-  </div>
-  <div class="col-sm-3">
-    <editvids></editvids>
-    <sharing></sharing>
+<navbar></navbar>
+
+<div ng-if="desktopScreen" class="row">
+    <div class="col-sm-2">
+        <sourcevids></sourcevids>
+        <sourceaudio></sourceaudio>
+    </div>
+
+    <div class="col-sm-8">
+        <playground instructions="instructions"></playground>
+    </div>
+
+    <div class="col-sm-2">
+        <editvids></editvids>
+        <sharing></sharing>
+    </div>
+
+</div>
+
+<div ng-if="mobileScreen" class="row">
+  <div class="col-sm-12 mb-ul-section">
+    <div>
+      <sourcevids></sourcevids>
+    </div>
+    <div>
+      <h1>Upload your videos here and visit us using Chrome on your desktop to create a movie masterpiece!</h1>
+    </div>
   </div>
 </div>

@@ -1,11 +1,9 @@
-<div class="list-audio">
-	<img width="60px" ng-click="togglePlay()" src="http://researchradio.org/wp-content/uploads/2015/06/audio-icon.png" />
-	<audio ng-show="audio.sourceAttached" width="200px" height="150px" id="{{audio.id}}" loop></audio>
-	<div>{{audio.fileName}} ({{audio.duration | duration}})</div>
-	<img width="100px" ng-hide="audio.sourceAttached" src="/images/spinner.gif" />
-	<button ng-click="remove(audio.videoSource.id)">delete</button>
+<div class="list-audio" ng-click="togglePlay()">
+    <img width="30px" src="http://researchradio.org/wp-content/uploads/2015/06/audio-icon.png" />
+    <audio ng-show="audio.sourceAttached" width="200px" height="75px" id="{{audio.id}}" loop></audio>
+    <img width="100px" ng-hide="audio.sourceAttached" src="/images/spinner.gif" />
+    <span>{{audio.fileName | shorten}} ({{audio.duration | duration}})</span>
+    <md-button class="md-icon-button" style="line-height:100%;height:12px" aria-label="Delete" ng-click="remove(audio.videoSource.id)">
+        <i class="zmdi zmdi-delete"></i>
+    </md-button>
 </div>
-<!-- <pre>
-{{audio}}
-</pre>
- -->

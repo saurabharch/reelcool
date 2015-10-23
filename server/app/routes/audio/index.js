@@ -104,10 +104,19 @@ router.get('/byuser/:userId',function (req,res) {
 });
 
 
+router.get("/themes", function (req, res, next) {
+        Audio.find({theme: true}).select('_id title')
+        .then(audioFiles => {
+            res.send(audioFiles);
+        });
+});
 
-
+router.get("/themes/:audioId", function (req, res, next) {
+    Audio.findById(req.params.audioId).exec().then(function (theme) {
+        var pathToVid = path.join(filesPath, 'themes', theme.title + ".mp3");
+        fs.createReadStream(pathToVid).pipe(res);
+    }).then(null, next);
+});
 
 
 module.exports = router;
-
-

@@ -1,21 +1,23 @@
 // solid factory 
 app.factory('InstructionsFactory',function (IdGenerator) {
 	//love the closure
-	var instructions = [],
-		audio = {
+	var instructions = [];
+	var audio = {
 			id: "original_track", // "original_track" or mongoID
-			fadeIn: false,
 			fadeOut: true
 		};
+	var sourceVideos = [];
 
 	return {
-		//love the setter
-		add: (instruction) => {
-			instructions.push(instruction);
-		},
-		//love the getter
+		// add: (instruction) => {
+		// 	instructions.push(instruction);
+		// },
+		// love the getter
 		get: () => {
 			return instructions;
+		},
+		getSourceVideos: () => {
+			return sourceVideos;
 		},
 		generate: (videoSource, endTime, edited) => {
 			return {

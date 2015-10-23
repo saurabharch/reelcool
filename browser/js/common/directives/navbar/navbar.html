@@ -1,17 +1,12 @@
-<nav class="navbar navbar-static-top">
-    <div class="container">
-        <div class="navbar-header">
-            <fullstack-logo></fullstack-logo>
-        </div>
-        <ul class="nav navbar-nav">
-            <li ng-repeat="item in items" ng-show="!item.auth || isLoggedIn()">
-                <a ui-sref-active="active" ui-sref="{{ item.state }}">{{ item.label }}</a>
-            </li>
-        </ul>
-        <button ng-show="!user" ui-sref="login" class="btn login-button">Login</button>
-        <div ng-show="user" class="welcome">
-            <span>Welcome, {{ user.email }}!</span>
-            <a ng-click="logout()">Logout</a>
-        </div>
-    </div>
-</nav>
+<md-toolbar layout="row" layout-align="space-between left" class="ReelCoolNavbar">
+    <md-toolbar-filler layout flex layout-align="left">
+        <md-menu-bar>
+            <div class="brand">
+                Reel Cool
+            </div>
+        </md-menu-bar>
+    </md-toolbar-filler>
+    <md-menu-bar>
+        <user></user>
+    </md-menu-bar>
+</md-toolbar>

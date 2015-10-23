@@ -1,7 +1,17 @@
-<div class="list-video">
-		<video style="-webkit-filter: {{video.instructions.filterString}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="200px" height="150px" id="{{video.id}}" loop muted></video>
-		<div>{{video.fileName}} ({{video.instructions.endTime - video.instructions.startTime | duration}})</div>
-		<img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
-		<md-button class="md-warn" ng-if="type==='source'" ng-click="removeSource(video.videoSource.id)">delete</md-button>
-		<md-button class="md-warn" ng-if="type==='edited'" ng-click="unstageClip(video)">delete</md-button>
-</div>
+<md-content>
+    <div class="list-video sourcevid">
+        <md-card>
+            <video class="md-card-video sourceviditem" style="-webkit-filter: {{video.instructions.filterString}}" ng-mouseleave="pause()" ng-mouseover="play()" ng-click="sendToPlayground()" ng-show="video.sourceAttached" width="100%" id="{{video.id}}" loop muted></video>
+                <img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
+                <span>
+                	<span class="vid-name">{{video.fileName | shorten}} ({{video.instructions.endTime - video.instructions.startTime | duration}})</span>
+                <md-button class="md-icon-button pull-right" style="line-height:100%;height:12px" aria-label="Delete" ng-if="type==='source'" ng-click="removeSource(video.videoSource.id)">
+                	<i class="zmdi zmdi-delete"></i>
+                </md-button>
+                <md-button class="md-icon-button pull-right" style="line-height:100%;height:12px" aria-label="Delete" ng-if="type==='edited'" ng-click="unstageClip(video)">
+                	<i class="zmdi zmdi-eject"></i>
+                </md-button>
+                </span>
+        </md-card>
+    </div>
+</md-content>

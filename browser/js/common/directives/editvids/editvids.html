@@ -1,16 +1,22 @@
 <div id="editvids">
-	<p class='section-title'>Cut Sequence</p>
-	<p ng-hide=videos.length>You haven't made any cuts yet. Make some in the Playground!</p>
-	<ul id="vidslist">
-		<li ng-repeat="video in videos">
-			<list-video video="video" type="'edited'"></list-video>
-		</li>
-	</ul>
-	<!-- <input type="file" style="display:none" id="videofileinput" accept="video/*" multiple> -->
-    <audio-selector></audio-selector>
-
-	<p><md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button></p>
-
-	<p><md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button></p>
-
+    <h1 class='md-display-1 section-title'>Reel</h1>
+    <md-content class="right-panel editVidContainer">
+        <div class="md-padding" ng-hide=videos.length>
+            <p>You haven't made any cuts yet. Make some in the Studio!</p>
+        </div>
+        <div layout="row" ng-repeat="video in videos">
+            <list-video video="video" type="'edited'"></list-video>
+        </div>
+    </md-content>
+    <br>
+    <div id="selectionpanel">
+        <i class="fa fa-music" style="display: inline-block;"></i> <audio-selector></audio-selector><br>
+        <i class="fa fa-paint-brush" style="display: inline-block;"></i> <theme-selector style="display: inline-block;"></theme-selector>
+        <md-button style="display: inline-block;" class="md-primary md-raised" ng-click="generateThemedCuts()">Generate <i class="fa fa-magic" style="display: inline-block;"></i></md-button>
+    </div>
+    <br>
+    <div>
+        <md-button class="md-primary md-raised" ng-show="videos.length" class="btn btn-default" ng-click="showPreviewModal($event)">Preview Video</md-button>
+        <md-button class="md-primary md-raised" ng-show="videos.length > 1" class="btn btn-default" ng-click="removeAll()">Delete all</md-button>
+    </div>
 </div>

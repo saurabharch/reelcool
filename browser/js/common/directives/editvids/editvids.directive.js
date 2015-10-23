@@ -1,6 +1,4 @@
-
-
-app.directive("editvids", function (VideoFactory, InstructionsFactory) {
+app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVideoGenerator) {
 	return {
 		restrict: "E",
 		scope: {},
@@ -9,6 +7,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 
 			$scope.videos = [];
 			$scope.instructions = InstructionsFactory.get();
+			$scope.theme = RandomVideoGenerator.getThemes()[0];
 			//$scope.instructions = [];
 
 			var instructionsToVideoMap = {};
@@ -36,6 +35,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 			    }
 			}
 
+
 			$scope.removeAll = function () {
 				$scope.videos = [];
 				$scope.instructions = [];
@@ -48,28 +48,6 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				$scope.instructions.forEach(function (i) {
 					addClip(i);
 				});
-				// let phase = $rootScope.$$phase;
-				// if (phase !== "apply" && phase !=="digest") $scope.$digest();
-// =======
-// 				var index = getVideoIndexByInstructionsId(instructions.id);
-// 				var instCopy = InstructionsFactory.makeUniqueInstructions(instructions);
-// 				console.log('instructions after', instCopy);
-// 				if(index> -1){
-// 					//clip was previously added to list
-// 					_.assign($scope.videos[index].instructions, instCopy);
-// 				}
-// 				else{
-// 					//clip is not already there, add it to the end
-// 					var updatedVideoElement = VideoFactory.createVideoElement();
-// 					updatedVideoElement.addSource(instCopy.videoSource, instCopy);
-// 					$scope.videos.push(updatedVideoElement);
-
-// 					setTimeout(()=> {
-// 						attachSourceToVideo(updatedVideoElement, instCopy);
-// 					}, 0);
-// 				}
-// 				updateInstructions($scope.videos);
-// >>>>>>> master
 			});
 
 			$scope.$on('unstageClip', (e, clip)=> {
@@ -110,10 +88,22 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory) {
 				$scope.instructions = InstructionsFactory.update(newInstructions);
 			}
 
+			$scope.$on('changedTheme', (e, theme) => {
+				$scope.theme = theme;
+			});
+
+			$scope.generateThemedCuts = () => {
+					var cutsNumber = 3;
+					var cutLength = 2;
+					var randomInstructions = RandomVideoGenerator.createVideo(InstructionsFactory.getSourceVideos(), cutsNumber, cutLength, $scope.theme.filters);
+					InstructionsFactory.update(randomInstructions);
+					$rootScope.$broadcast("randomVidGenerated");
+			};
+
 			$scope.showPreviewModal = ($event) => {
-				console.log('showing preview modal, time to update instructions')
+				console.log('showing preview modal, time to update instructions');
 				updateInstructions($scope.videos);
-				console.log('instructions are updated')
+				console.log('instructions are updated');
 				console.log('from InstructionsFactory',InstructionsFactory.get());
 				console.log('from the $scope',$scope.instructions);
 				$rootScope.$broadcast('toggleModal', {show: true});

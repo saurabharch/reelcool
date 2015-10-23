@@ -11,6 +11,7 @@ app.directive('playground', () => {
 app.controller('PlaygroundCtrl', ($scope, FilterFactory, InstructionsFactory, $rootScope ) => {
 
   var video, $video, videoPlayerId;
+  $scope.filters = FilterFactory.filters;
 
   $scope.$on("videosource-deleted", function (event, videoSourceId) {
     if (video && (video.reelCoolVideoSourceId === videoSourceId)) {
