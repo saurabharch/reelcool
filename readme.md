@@ -2,9 +2,9 @@
 Reel Cool is an in-browser video editor. We set out to make a video editing tool that would be fun to use and wouldn't require a powerful computer to run. Visit us at [www.reelcool.co](www.reelcool.co) to try it out!
 
 ## Screenshots
-![Splash Page](https://raw.githubusercontent.com/reelcool/reelcool/screenshots/server/files/assets/ReelCoolScreenshot1.png)
-![Making Movies](https://raw.githubusercontent.com/reelcool/reelcool/screenshots/server/files/assets/ReelCoolScreenshot2.png)
-![Real-Time Preview Player](https://raw.githubusercontent.com/reelcool/reelcool/screenshots/server/files/assets/ReelCoolScreenshot3.png)
+![Splash Page](https://raw.githubusercontent.com/reelcool/reelcool/master/server/files/assets/ReelCoolScreenshot1.png)
+![Making Movies](https://raw.githubusercontent.com/reelcool/reelcool/master/server/files/assets/ReelCoolScreenshot2.png)
+![Real-Time Preview Player](https://raw.githubusercontent.com/reelcool/reelcool/master/server/files/assets/ReelCoolScreenshot3.png)
 
 ## Contributors
 We are proud to have made Reel Cool as our capstone project at [Fullstack Academy](http://www.fullstackacademy.com/)!
