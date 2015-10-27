@@ -1,19 +1,11 @@
 /*
 
-This seed file is only a placeholder. It should be expanded and altered
-to fit the development of your application.
-
-It uses the same file the server uses to establish
+This seed file uses the same file the server uses to establish
 the database connection:
 --- server/db/index.js
 
-The name of the database used is set in your environment files:
+The name of the database used is set in the env files:
 --- server/env/*
-
-This seed file has a safety check to see if you already have users
-in the database. If you are developing multiple applications with the
-fsg scaffolding, keep in mind that fsg always uses the same database
-name in the environment files.
 
 */
 
@@ -44,16 +36,18 @@ var fs = require("fs");
 
 
 var seedThemes = function () {
-    // var themes = [{title: "highballstepper", theme: true}];
     var themes = [];
 
     var fileNames = fs.readdirSync(__dirname + "/server/files/themes");
 
     fileNames.forEach(function (fileName) {
-        themes.push({
-            title: fileName.split(".")[0],
-            theme: true
-        });
+        var title = fileName.split(".")[0];
+        if (title) {
+            themes.push({
+                title: title,
+                theme: true
+            });            
+        }
     });
 
     return Audio.remove({theme: true}).then(function () {
