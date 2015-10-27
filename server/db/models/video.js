@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var path = require('path');
 
 var schema = new mongoose.Schema({
     title: {

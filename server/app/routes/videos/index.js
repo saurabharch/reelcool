@@ -8,7 +8,6 @@ var ffmpegUtils = require('../../ffmpeg-utils');
 // express and models
 var router = require('express').Router();
 var Video = require('mongoose').model('Video');
-var Audio = require('mongoose').model('Audio');
 
 // file paths setup
 var filesPath = path.join(__dirname, "..", "..", "..", "files");
@@ -67,7 +66,7 @@ router.post('/makeit', function(req, res, next) {
             )
         .then(
             finalName => res.status(201).send(finalName), 
-            err => res.status(500).send(err)
+            err => next(err)
             );
 });
 
@@ -91,7 +90,7 @@ router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var desiredExt = '.webm';
     // if it was a webm file, send back the mongoId reference right away 
     // so it can be attached to the video file awaiting in the client
-    if (parsedFile.ext===desiredExt) res.status(201).send(parsedFile.name);
+    if (parsedFile.ext===desiredExt) res.status(201).send(mongoId);
     else {
         // allow this conversion below to happen async. 
         // don't wait for it to finish. the client will just get impatient 

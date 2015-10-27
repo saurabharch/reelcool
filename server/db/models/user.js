@@ -70,8 +70,12 @@ schema.post('save',function (user) {
     var makeSubDirs;
     fs.statAsync(pathToUserDir) // will err if the directory doesn't exist
         .then(function (stats) {
+            // Don't need to do anything with stats, 
+            // but just the fact that we got it back means we're on the success track.
             console.log('user dir already exists');
         }, function (err) {
+                // Gulp's linter expects us to "handle" the error, 
+                // but we're already doing exactly what we want with it.
                 makeSubDirs=true;
                 return fs.mkdirAsync(pathToUserDir);
             } // will create the user's directory
