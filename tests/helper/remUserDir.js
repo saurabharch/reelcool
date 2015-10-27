@@ -1,14 +1,16 @@
 var mongoose = require('mongoose');
 require('../../server/db/models');
 var User = mongoose.model('User');
-var rimraf = require("rimraf");
+var Promise = require('bluebird');
+var rimrafAsync = Promise.promisify(require("rimraf"));
 var path = require("path");
 
 var removeUserDir = function (userMongoId) {
 	return User.find({}).exec().then(function (users) {
-		users.forEach(function (user) {
-			rimraf.sync(path.join(__dirname, "../../server/files/" + user._id));
-		});
+		return Promise.map(
+			users, 
+			u => rimrafAsync(path.join(__dirname,"../../server/files/"+u._id))
+			);
 	});
 };
 

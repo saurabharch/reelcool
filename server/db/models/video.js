@@ -12,6 +12,7 @@ var schema = new mongoose.Schema({
     },
     editor: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true, 
         ref: 'User'
     }
 });
