@@ -95,3 +95,86 @@ describe('Video model', function () {
     });
 
 });
+
+
+var audioObj1 = {title: "closetoyou"};
+
+describe('Audio model', function () {
+
+    beforeEach('Establish DB connection', function (done) {
+        if (mongoose.connection.db) return done();
+        mongoose.connect(dbURI, done);
+    });
+
+    beforeEach('Create a user', function (done) {
+        User.create(userObj)
+        	.then(
+        		user => {
+        			userId = user._id;
+        			audioObj1.editor = userId;
+        			setTimeout(function() {
+        				done();
+        			}, 500); // TODO: Need a better way to make sure the post-save hook has time to run.
+        		}
+        	);
+    });
+
+    afterEach("Remove user directories", function () {
+        return remUserDir();
+    });
+
+    afterEach('Clear test database', function (done) {
+        clearDB(done);
+    });
+
+    it('should exist', function () {
+        expect(Audio).to.be.a('function');
+    });
+
+    it('should have a title, a theme (boolean), and a user reference (editor field)', function (done) {
+    	Audio.create(audioObj1)
+    		.then( audio => {
+    			expect(audio.title).to.be.a('string');
+    			expect(audio.theme).to.be.a('boolean');
+    			expect(audio.editor).to.be.an('object');
+    			done();
+    			});
+    });
+
+    it('should require a title', function (done) {
+    	Audio.create({}).then(null,
+			function (e) {
+				expect( e.message ).to.equal( 'Audio validation failed' );
+				expect( e.errors.title.message ).to.equal("Path `title` is required.");
+				done();
+			});
+    });
+
+    it('should not belong to a theme unless otherwise stated', function (done) {
+    	Audio.create(audioObj1).then( audio => {
+    		expect(audio.theme).to.be.false;
+    		done();
+    		});
+    });
+
+    it('can belong to a theme if explicitly stated (as done in the seed file)', function (done) {
+    	audioObj1.theme = true;
+    	Audio.create(audioObj1).then( audio => {
+    		expect(audio.theme).to.be.true;
+    		done();
+    		}, e => {console.error(e); done(); });
+    });
+
+    it('should not require an editor', function (done) {
+    	// Unlike with the Video model, we don't necessarily want every Audio document to 
+    	// belong to a specific user. Some audio files are included with Reel Cool as part 
+    	// of the built-in themes.
+    	delete audioObj1.theme;
+    	delete audioObj1.editor;
+    	Audio.create(audioObj1).then( audio => {
+    		expect(audio).to.exist;
+    		done();
+    		}, e => {console.error(e); done(); });
+    });
+
+});
