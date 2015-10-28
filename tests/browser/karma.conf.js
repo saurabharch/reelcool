@@ -4,6 +4,7 @@ module.exports = function (config) {
 
     var filesCollection = [
         'node_modules/lodash/index.js',
+        'node_modules/babel-core/browser-polyfill.js',
         'node_modules/angular/angular.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
         'node_modules/angular-bootstrap/ui-bootstrap.js',

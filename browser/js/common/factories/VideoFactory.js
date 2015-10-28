@@ -71,10 +71,8 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
 
         return $http.post(uploadPath, formData, options)
             .then(function(resp) {
-                console.log(resp.data);
                 // this if statement is for non-webm videos that haven't been added to the sourcevids yet
                 if (!videoSources[videoSrc.id]) {
-                    console.log('oh hi i am in the if block');
                     videoSources[videoSrc.id] = videoSrc;
                 }
                 attachMongoId(resp.data, videoSrc.id);

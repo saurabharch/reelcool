@@ -74,6 +74,7 @@
     "supertest": "^0.15.0"
   },
   "devDependencies": {
+    "babel-core": "^5.8.30",
     "rimraf": "^2.4.3",
     "supertest-as-promised": "^2.0.2"
   }
