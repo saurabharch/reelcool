@@ -11,18 +11,17 @@ function convertToWebm(file) {
     return new Promise(function(resolve, reject) {
         let parsedFile = path.parse(file.filename);
         let mongoId = parsedFile.name;
-        let currExt = parsedFile.ext;
         let desiredExt = ".webm";
         let dest = file.destination + '/' + parsedFile.name + '.webm';
-        let ffmpeg = spawn('ffmpeg', ['-i', file.path, '-c:v', 'libvpx', '-crf', '10', '-b:v', '1M', '-c:a', 'libvorbis', dest, '-y']);
-        ffmpeg.on('message', function(msg) {
+        let convertProc = spawn('ffmpeg', ['-i', file.path, '-c:v', 'libvpx', '-crf', '10', '-b:v', '1M', '-c:a', 'libvorbis', dest, '-y']);
+        convertProc.on('message', function(msg) {
             console.log(msg);
         });
-        ffmpeg.on('error', function(err) {
+        convertProc.on('error', function(err) {
             console.error(err);
             reject(err);
         });
-        ffmpeg.on('exit', function(code, signal) {
+        convertProc.on('exit', function(code, signal) {
             fs.unlinkAsync(file.path)
                 .then(function() {
                     return Video.findByIdAndUpdate(mongoId, {
@@ -34,6 +33,25 @@ function convertToWebm(file) {
                 .then(updated => resolve(updated));
         });
     });
+}
+
+function translateBrightness(command, val) {
+    let newVal;
+    if (val <= 1) newVal = (1 - val) * 10 * -1;
+    else newVal = (val - 1) * 4;
+    return command + newVal.toString();
+}
+
+function translateContrast(command, val) {
+    return command[0] + val.toString() + command[1];
+}
+
+function translateSaturation(command, val) {
+    return command[0] + val.toString() + command[1];
+}
+
+function translateHue(command, val) {
+    return command + val.toString();
 }
 
 var filters = {
@@ -58,27 +76,8 @@ var filters = {
     },
 };
 
-function translateBrightness(command, val) {
-    let newVal;
-    if (val <= 1) newVal = (1 - val) * 10 * -1;
-    else newVal = (val - 1) * 4;
-    return command + newVal.toString();
-}
-
-function translateContrast(command, val) {
-    return command[0] + val.toString() + command[1];
-}
-
-function translateSaturation(command, val) {
-    return command[0] + val.toString() + command[1];
-}
-
-function translateHue(command, val) {
-    return command + val.toString();
-}
-
 function makeFilterString(filtArr) {
-    if (filtArr == []) return;
+    if (filtArr === []) return;
     return filtArr.filter(el => el.applied).map(filt => {
         let filterKey = filters[filt.displayName];
         if (filterKey.translate) {
@@ -87,46 +86,31 @@ function makeFilterString(filtArr) {
     }).join(', ');
 }
 
-function makeIt(instructions, audio, themesPath, uploadedFilesPath, stagingAreaPath, tempFilePath, createdFilePath) {
-    instructions.map(function(inst) {
-    	inst.audio = audio;
-        inst.themesPath = themesPath;
-        inst.uploadedFilesPath = uploadedFilesPath;
-        inst.stagingAreaPath = stagingAreaPath;
-        inst.tempFilePath = tempFilePath;
-        inst.createdFilePath = createdFilePath;
-    });
-    let mergedVideo = ffmpeg();
+function deleteStagedFiles(stagingAreaPath) {
+    return fs.readdirAsync(stagingAreaPath)
+        .then(arrayOfFiles => Promise.map(arrayOfFiles, function(file) {
+            return fs.unlinkAsync(path.join(stagingAreaPath, file));
+        }));
+}
+
+function deleteTempFile(tempVideoLocation) {
+    return fs.unlinkAsync(tempVideoLocation);
+}
+
+function addAudio(tempFilePath, createdFilePath, audioPath) {
+    let tempVideoName = 'temp.mp4';
+    let tempVideoLocation = path.join(createdFilePath,tempVideoName);
     return new Promise(function(resolve, reject) {
-        Promise.map(instructions, cutAndFilter)
-            .then(function(vids) {
-                if (audio.id !== "original_track") {
-                    return Audio.findById(audio.id)
-                        .then(audio => {
-                            let audioPath =
-                                (audio.theme ? themesPath : uploadedFilesPath) +
-                                "/" + (audio.theme ? audio.title : audio._id) + ".mp3";
-                            return audioPath;
-                        });
-                } else return ''; // falsey 
+        let finalName = String(Date.now()) + '.mp4';
+        let finalDestination = path.join(createdFilePath, finalName);
+        let audioProc = spawn('ffmpeg', ['-i', tempVideoLocation, '-i', audioPath, '-codec', 'copy', '-shortest', finalDestination]);
+        audioProc.on('error', function(err, stdout, stderr) {
+                console.error(err, stdout, stderr);
+                reject(err);
             })
-            .then(audioPath => mergeVids(mergedVideo, instructions, audioPath, tempFilePath, createdFilePath, stagingAreaPath))
-            .then(function(mergedVideoInfo) {
-                let mergedVideoDest = mergedVideoInfo.mergedVideoDest;
-                let createdFilePath = mergedVideoInfo.createdFilePath;
-                let audioPath = mergedVideoInfo.audioPath;
-                if (audioPath) return addAudio(tempFilePath, createdFilePath, audioPath);
-                else {
-                    let finalName = String(Date.now()) + '.mp4';
-                    let finalDestination = path.join(createdFilePath, finalName);
-                    return fs.renameAsync(mergedVideoDest, finalDestination)
-                        .then(() => finalName);
-                }
-            })
-            .then(finalName => deleteStagedFiles(stagingAreaPath).then(() => resolve(finalName)))
-            .catch(e => {
-                console.error(e);
-                reject(e);
+            .on('exit', function() {
+                deleteTempFile(tempVideoLocation)
+                    .then(() => resolve(finalName));
             });
     });
 }
@@ -190,33 +174,50 @@ function mergeVids(mergedVideo, instructions, audioPath, tempFilePath, createdFi
     });
 }
 
-function addAudio(tempFilePath, createdFilePath, audioPath) {
-    let tempVideoName = 'temp.mp4';
-    let tempVideoLocation = path.join(createdFilePath,tempVideoName);
+function makeIt(instructions, audio, themesPath, uploadedFilesPath, stagingAreaPath, tempFilePath, createdFilePath) {
+    instructions.map(function(inst) {
+    	inst.audio = audio;
+        inst.themesPath = themesPath;
+        inst.uploadedFilesPath = uploadedFilesPath;
+        inst.stagingAreaPath = stagingAreaPath;
+        inst.tempFilePath = tempFilePath;
+        inst.createdFilePath = createdFilePath;
+    });
+    let mergedVideo = ffmpeg();
     return new Promise(function(resolve, reject) {
-        let finalName = String(Date.now()) + '.mp4';
-        let finalDestination = path.join(createdFilePath, finalName);
-        let audioProc = spawn('ffmpeg', ['-i', tempVideoLocation, '-i', audioPath, '-codec', 'copy', '-shortest', finalDestination]);
-        audioProc.on('error', function(err, stdout, stderr) {
-                reject(e);
+        Promise.map(instructions, cutAndFilter)
+            .then(function(vids) {
+                if (audio.id !== "original_track") {
+                    return Audio.findById(audio.id)
+                        .then(audio => {
+                            let audioPath =
+                                (audio.theme ? themesPath : uploadedFilesPath) +
+                                "/" + (audio.theme ? audio.title : audio._id) + ".mp3";
+                            return audioPath;
+                        });
+                } else return ''; // falsey 
             })
-            .on('exit', function() {
-                deleteTempFile(tempVideoLocation)
-                    .then(() => resolve(finalName));
+            .then(audioPath => mergeVids(mergedVideo, instructions, audioPath, tempFilePath, createdFilePath, stagingAreaPath))
+            .then(function(mergedVideoInfo) {
+                let mergedVideoDest = mergedVideoInfo.mergedVideoDest;
+                let createdFilePath = mergedVideoInfo.createdFilePath;
+                let audioPath = mergedVideoInfo.audioPath;
+                if (audioPath) return addAudio(tempFilePath, createdFilePath, audioPath);
+                else {
+                    let finalName = String(Date.now()) + '.mp4';
+                    let finalDestination = path.join(createdFilePath, finalName);
+                    return fs.renameAsync(mergedVideoDest, finalDestination)
+                        .then(() => finalName);
+                }
+            })
+            .then(finalName => deleteStagedFiles(stagingAreaPath).then(() => resolve(finalName)))
+            .catch(e => {
+                console.error(e);
+                reject(e);
             });
     });
 }
 
-function deleteTempFile(tempVideoLocation) {
-    return fs.unlinkAsync(tempVideoLocation);
-}
-
-function deleteStagedFiles(stagingAreaPath) {
-    return fs.readdirAsync(stagingAreaPath)
-        .then(arrayOfFiles => Promise.map(arrayOfFiles, function(file) {
-            return fs.unlinkAsync(path.join(stagingAreaPath, file));
-        }));
-}
 
 module.exports = {
     convertToWebm: convertToWebm,

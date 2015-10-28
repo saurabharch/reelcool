@@ -12,17 +12,11 @@ var Audio = require('mongoose').model('Audio');
 var filesPath = path.join(__dirname, "..", "..", "..", "files");
 var userDir;
 var uploadedFilesPath;
-var stagingAreaPath;
-var createdFilePath;
-var tempFilePath;
 
 router.use(function (req,res,next) {
     // all this has to be inside of router.use (or at least the userDir part) so that we have access to req
     userDir = req.user ? req.user._id.toString() : 'anon'; // to prevent errors/crashes in case we somehow fail to enforce login
     uploadedFilesPath = path.join(filesPath,userDir,"uploaded");
-    stagingAreaPath = path.join(filesPath,userDir,"staging");
-    createdFilePath = path.join(filesPath,userDir,"created");
-    tempFilePath = path.join(filesPath,userDir,"temp");
     next();
 });
 
@@ -105,10 +99,11 @@ router.get('/byuser/:userId',function (req,res) {
 
 
 router.get("/themes", function (req, res, next) {
-        Audio.find({theme: true}).select('_id title')
-        .then(audioFiles => {
-            res.send(audioFiles);
-        });
+    Audio.find({theme: true}).select('_id title')
+        .then(
+            audioFiles => res.send(audioFiles), 
+            err => next(err)
+        );
 });
 
 router.get("/themes/:audioId", function (req, res, next) {

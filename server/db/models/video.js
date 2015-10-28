@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var path = require('path');
 
 var schema = new mongoose.Schema({
     title: {
@@ -12,6 +11,7 @@ var schema = new mongoose.Schema({
     },
     editor: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true, 
         ref: 'User'
     }
 });
