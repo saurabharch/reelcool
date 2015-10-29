@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, AuthService, InstructionsFactory) {
+app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, AuthService, InstructionsFactory, UploadFactory) {
 
     var vidFactory = {},
         videoSources = {};
@@ -6,12 +6,6 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
     // We'll need to have the user id on hand to figure out the path to uploaded videos in the event of non-webm uploads
     var userId;
     AuthService.getLoggedInUser().then(user => userId = user ? user._id : 'anon');
-
-    var getUserMedia = function(type) {
-        // console.log('calling getUserMedia for user', userId);
-        let url = `/api/${type}/byuser/${userId}`;
-        return $http.get(url).then(resp => resp.data);
-    };
 
     var VideoElement = function() {
         this.id = IdGenerator();
@@ -51,66 +45,37 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
     };
 
     var uploadToServer = function(file, videoSrc) {
-        var uploadPath;
-        var formData = new FormData();
-        formData.append("uploadedFile", file);
-        var options = {
-            withCredentials: false,
-            // We set Content-Type to undefined because that way the browser automatically fills in 'multipart/form-data'.
-            // If we manually set it to 'multipart/form-data', it will error because it expects to be told the boundary.
-            headers: {
-                'Content-Type': undefined
-            },
-            // The line below overrides Angular's default transformRequest function,
-            // which would try to serialize our form data. We want it left intact.
-            transformRequest: angular.identity
-        };
-
-
-        uploadPath = apiPathByFileType(file.type) + "/upload";
-
-        return $http.post(uploadPath, formData, options)
+        return UploadFactory.uploadFile(file)
             .then(function(resp) {
                 // this if statement is for non-webm videos that haven't been added to the sourcevids yet
                 if (!videoSources[videoSrc.id]) {
                     videoSources[videoSrc.id] = videoSrc;
                 }
-                attachMongoId(resp.data, videoSrc.id);
+                attachMongoId(resp.data, videoSrc.id); // where resp.data is the mongoId of the newly uploaded video
                 return videoSrc;
-            }).catch(err => console.error('something bad happened', err));
+            })
+            .catch(err => console.error('something bad happened', err));
     };
 
     // This is the new way we upload non-webm files that will need to be converted
     // We will not create a video source for them in anticipation of their conversion
     // Instead we will let the long-polling discover them when they are ready.
     vidFactory.uploadUnattached = function(file) {
-        console.log('uploading unattached');
-        var formData = new FormData();
-        formData.append("uploadedFile", file);
-        var options = {
-            withCredentials: false,
-            headers: {
-                'Content-Type': undefined
-            },
-            transformRequest: angular.identity
-        };
-        var uploadPath = apiPathByFileType(file.type) + "/upload";
-        // $mdToast.show($mdToast.simple().content('Hello!'));
         var toast1 = $mdToast.simple().content(`Uploading ${file.name}.`);
         var uploadSuccess = $mdToast.simple().content('Your video will be back when it has been converted.').hideDelay(3000);
         var uploadFail = $mdToast.simple().content(`${file.name} failed to upload. Please try again later.`).hideDelay(3000);
         return $mdToast.show(toast1)
-            .then( () => $http.post(uploadPath, formData, options))
-            .then( 
+            .then(() => UploadFactory.uploadFile(file)
+            .then(
                 (resp) => {
-                    if (resp.status===201) $mdToast.show(uploadSuccess);
+                    if (resp.status === 201) $mdToast.show(uploadSuccess);
                     else $mdToast.show(uploadFail);
-                },
+                }, 
                 () => $mdToast.show(uploadFail)
-                );
+            ));
     };
 
-    function showToast () {
+    function showToast() {
         $mdToast.show($mdToast.show($mdToast.simple().content('Hello!')));
     }
 
@@ -130,14 +95,13 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
         } else {
             // If videoSource still not available after 10s, figure it must have been deleted locally by user.
             console.log('I could not find a videoSource to attach this mongoId to. Deleting from server.');
-            deleteFromServer(mongoId);
+            UploadFactory.deleteFromServer(mongoId);
         }
     };
 
     vidFactory.createVideoElement = function(fileName) {
         var newElement = new VideoElement();
         newElement.fileName = fileName;
-        //console.log("created new video element", newElement);
         return newElement;
     };
 
@@ -153,7 +117,6 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
                 videoSrc.addUrl(mongoId, userId);
             }
             videoSources[videoSrc.id] = videoSrc;
-            // console.log('addRemoteVideoSource', videoSrc);
             resolve(videoSrc);
         });
     };
@@ -260,7 +223,7 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
                         }
                     }
                 };
-                
+
                 xhr.send();
             });
             var objUrl = window.URL.createObjectURL(mediaSource);
@@ -280,22 +243,6 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
         }
     };
 
-    var apiPathByFileType = function(type) {
-        if (type.indexOf("video") === -1) {
-            return "/api/audio";
-        } else {
-            return "/api/videos";
-        }
-    };
-
-    var deleteFromServer = function(mongoId, fileType) {
-        var apiPath = apiPathByFileType(fileType);
-        $http.delete(apiPath + '/' + mongoId).then(function(resp) {
-            if (resp.status === 200) console.log('Successfully deleted', resp.data._id);
-            else console.error('Server responded with ', resp.status); // should be 404 if video was not found
-        });
-    };
-
     vidFactory.deleteVideoSource = function(videoSourceId) {
         var videoSource = videoSources[videoSourceId];
         $rootScope.$broadcast("videosource-deleted", videoSourceId);
@@ -306,7 +253,7 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
 
         if (videoSource.mongoId) {
             console.log('Requesting deletion from server.');
-            deleteFromServer(videoSource.mongoId, videoSource.mimeType);
+            UploadFactory.deleteFromServer(videoSource.mongoId, videoSource.mimeType);
         }
         // Else do nothing. If the videoSource doesn't have a mongoId yet, then the
         // delete request will be sent when the mongoId comes in
@@ -318,16 +265,10 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
         let existingVids = mediaElements.filter(vid => vid.videoSource && vid.videoSource.mongoId).map(vid => vid.videoSource.mongoId);
         // var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
         var media = isAudio ? "audio" : "videos";
-        return getUserMedia(media)
+        return UploadFactory.getUserMedia(media, userId)
             .then(function(mediaData) {
                 return mediaData.filter(media => existingVids.indexOf(media._id) === -1);
             });
-    };
-
-    vidFactory.getThemeAudio = () => {
-        // console.log("VIDEO FACTORY ")
-        let url = `/api/audio/themes`;
-        return $http.get(url).then(resp => resp.data);
     };
 
     return vidFactory;

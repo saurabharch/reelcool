@@ -41,12 +41,12 @@ describe('VideoFactory', function () {
     		var formData = new FormData();
         	formData.append("uploadedFile", file);
 
-    		$httpBackend.expectGET('/session').respond(200,{});
+    		//$httpBackend.expectGET('/session').respond(200,{});
             $httpBackend.expectPOST('/api/videos/upload', formData).respond(201, {});
-            $httpBackend.expectGET('js/home/home.html').respond(200,{});
+            //$httpBackend.expectGET('js/home/home.html').respond(200,{});
 
-            VideoFactory.addVideoSource(file);
-            done();
+            VideoFactory.addVideoSource(file).then(function () {done(); });
+            //done();
             $httpBackend.flush();
             
     	});
