@@ -17,7 +17,7 @@
     "angular": "^1.4.0",
     "angular-animate": "^1.4.7",
     "angular-aria": "^1.4.7",
-    "angular-bootstrap": "^0.12.0",
+    "angular-bootstrap": "^0.12.2",
     "angular-material": "^0.11.2",
     "angular-messages": "^1.4.7",
     "angular-mocks": "^1.4.0",
@@ -74,6 +74,7 @@
     "supertest": "^0.15.0"
   },
   "devDependencies": {
+    "babel-core": "^5.8.30",
     "rimraf": "^2.4.3",
     "supertest-as-promised": "^2.0.2"
   }
