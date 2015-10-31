@@ -18,10 +18,6 @@ app.factory("AudioFactory", function ($rootScope) {
 		return originalTrack;
 	};
 
-	// audioFactory.getAudioElementForTheme = (theme) => {
-	//
-	// }
-
 	audioFactory.setAudioElement = function (audioElement) {
 		tracks.push(audioElement);
 		$rootScope.$broadcast("audioTracks changed");

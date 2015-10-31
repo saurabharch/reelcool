@@ -7,7 +7,7 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
         });
     };
 
-    let promisifiedDownload = (instructions, audio) => {
+    let createReelVideo = (instructions, audio) => {
         var downloadInitiating =
             $mdToast
             .simple()
@@ -36,6 +36,7 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
                     // this "append" is what actually causes the video file to download to the user's computer
                     $mdToast.show(downloadSuccess)
                         .then(() => $("body").append("<iframe src=" + url + " style='display: none;' ></iframe>"));
+                    return resp;
                 } else {
                     $mdToast.show(downloadFail);
                     console.error('The server responded with status', resp.status);
@@ -45,12 +46,25 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
               console.log('in the fail chain');
               console.error(err);
               $mdToast.show(downloadFail);
+              return resp;
              }
             );
     };
 
-    return {
-        requestReelVideo: requestReelVideo,
-        promisifiedDownload: promisifiedDownload
+    let getUserMedia = function(type, userId) {
+        let url = `/api/${type}/byuser/${userId}`;
+        return $http.get(url).then(resp => resp.data);
     };
+
+    let getThemeAudio = function () {
+        let url = `/api/audio/themes`;
+        return $http.get(url).then(resp => resp.data);
+    };
+
+    return {
+        createReelVideo: createReelVideo, 
+        getUserMedia: getUserMedia, 
+        getThemeAudio: getThemeAudio
+    };
+    
 });

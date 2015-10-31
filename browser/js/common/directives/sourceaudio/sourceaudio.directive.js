@@ -1,4 +1,4 @@
-app.directive("sourceaudio", function (VideoFactory, AudioFactory, UploadFactory) {
+app.directive("sourceaudio", function (VideoFactory, AudioFactory, DownloadFactory) {
 
 	return {
 		restrict: "E",
@@ -88,7 +88,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory, UploadFactory
 			};
 
 			var initThemeAudio = () => {
-				UploadFactory.getThemeAudio()
+				DownloadFactory.getThemeAudio()
 				.then(mediaData => {
 					mediaData.forEach(data => {
 						putRemoteAudioOnScope(data, true);

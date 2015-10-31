@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, AuthService, InstructionsFactory, UploadFactory) {
+app.factory("VideoFactory", function ($rootScope, $http, $mdToast, IdGenerator, AuthService, InstructionsFactory, UploadFactory, DownloadFactory) {
 
     var vidFactory = {},
         videoSources = {};
@@ -265,7 +265,7 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
         let existingVids = mediaElements.filter(vid => vid.videoSource && vid.videoSource.mongoId).map(vid => vid.videoSource.mongoId);
         // var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
         var media = isAudio ? "audio" : "videos";
-        return UploadFactory.getUserMedia(media, userId)
+        return DownloadFactory.getUserMedia(media, userId)
             .then(function(mediaData) {
                 return mediaData.filter(media => existingVids.indexOf(media._id) === -1);
             });

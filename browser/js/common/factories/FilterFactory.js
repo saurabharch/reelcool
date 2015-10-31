@@ -85,7 +85,7 @@ app.factory("FilterFactory", () => {
         if(filtInd>-1){
             if(el=="hue-rotate"){
                 newFilters[ind].val=str.split('deg')[0].split('(').slice(-1);
-                console.log('yooooo', newFilters[ind]);
+                // console.log('filter', newFilters[ind]);
                 newFilters[ind].applied = true;
             }
             else{
