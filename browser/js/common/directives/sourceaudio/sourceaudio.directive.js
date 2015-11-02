@@ -1,4 +1,4 @@
-app.directive("sourceaudio", function (VideoFactory, AudioFactory, DownloadFactory) {
+app.directive("sourceaudio", function (VideoFactory, AudioFactory, AVFactory, DownloadFactory) {
 
 	return {
 		restrict: "E",
@@ -9,7 +9,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory, DownloadFacto
 			scope.audioTracks = AudioFactory.getAudioElements();
 
 			scope.showAudio = function () {
-				var filtArr = scope.audioTracks.filter(el=> !el.videoSource.isTheme);
+				var filtArr = scope.audioTracks.filter(el=> !el.AVsource.isTheme);
 				return filtArr.length - 1; // minus the original track
 			};
 
@@ -33,13 +33,12 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory, DownloadFacto
 				filesArr.forEach(function (file) {
 					var audioElement;
 					VideoFactory.addVideoSource(file).then(function (audioSource) {
-						audioElement = VideoFactory.createVideoElement(file.name);
+						audioElement = new AVFactory.AVElement(file.name);
 						audioElement.addSource(audioSource);
 						AudioFactory.setAudioElement(audioElement);
 						scope.$digest();
 						return VideoFactory.attachVideoSource(audioSource, audioElement.id);
 					}).then(function () {
-						// console.log("the track seems to be attached");
 						var audioDomElement = document.getElementById(audioElement.id);
 						audioElement.domElement = audioDomElement;
 						audioElement.duration = audioDomElement.duration;
@@ -62,7 +61,7 @@ app.directive("sourceaudio", function (VideoFactory, AudioFactory, DownloadFacto
 			var putRemoteAudioOnScope = function (mediaData, isTheme) {
 				var audioElement;
 				VideoFactory.addRemoteSource(mediaData._id, true, isTheme).then(function (audioSource) {
-					audioElement = VideoFactory.createVideoElement(mediaData.title);
+					audioElement = new AVFactory.AVElement(mediaData.title);
 					audioElement.addSource(audioSource);
 					AudioFactory.setAudioElement(audioElement);
 					scope.$digest();

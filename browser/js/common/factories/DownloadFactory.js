@@ -36,7 +36,6 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
                     // this "append" is what actually causes the video file to download to the user's computer
                     $mdToast.show(downloadSuccess)
                         .then(() => $("body").append("<iframe src=" + url + " style='display: none;' ></iframe>"));
-                    return resp;
                 } else {
                     $mdToast.show(downloadFail);
                     console.error('The server responded with status', resp.status);
@@ -46,7 +45,6 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
               console.log('in the fail chain');
               console.error(err);
               $mdToast.show(downloadFail);
-              return resp;
              }
             );
     };
@@ -62,6 +60,7 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
     };
 
     return {
+        requestReelVideo: requestReelVideo, 
         createReelVideo: createReelVideo, 
         getUserMedia: getUserMedia, 
         getThemeAudio: getThemeAudio

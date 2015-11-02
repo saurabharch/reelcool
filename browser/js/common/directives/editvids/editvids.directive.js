@@ -1,4 +1,4 @@
-app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVideoGenerator) {
+app.directive("editvids", function (AVFactory, VideoFactory, InstructionsFactory, RandomVideoGenerator) {
 	return {
 		restrict: "E",
 		scope: {},
@@ -25,7 +25,7 @@ app.directive("editvids", function (VideoFactory, InstructionsFactory, RandomVid
 			        _.assign($scope.videos[index].instructions, instructions);
 			    } else {
 			        //clip is not already there, add it to the end
-			        var updatedVideoElement = VideoFactory.createVideoElement();
+			        var updatedVideoElement = new AVFactory.AVElement();
 			        updatedVideoElement.addSource(instructions.videoSource, instructions);
 			        $scope.videos.push(updatedVideoElement);
 

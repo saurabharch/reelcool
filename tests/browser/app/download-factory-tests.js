@@ -3,9 +3,11 @@ describe('DownloadFactory', function() {
 
     var $httpBackend;
     var $rootScope;
-    beforeEach('Get tools', inject(function(_$httpBackend_, _$rootScope_) {
+    
+    beforeEach('Get tools', inject(function (_$httpBackend_, _$rootScope_) {
         $httpBackend = _$httpBackend_;
         $rootScope = _$rootScope_;
+        
     }));
 
     var DownloadFactory;
@@ -68,7 +70,7 @@ describe('DownloadFactory', function() {
             $httpBackend.expectGET("/api/audio/themes").respond(200, {});
             $httpBackend.expectGET('js/home/home.html').respond(200, {});
 
-            DownloadFactory.getThemeAudio().then(function(audios) {
+            DownloadFactory.getThemeAudio().then(function() {
                 done();
             });
 
@@ -76,4 +78,29 @@ describe('DownloadFactory', function() {
             
         });
     });
+
+    describe("requestReelVideo sends instructions to the server so it can encode a real mp4 file", function() {
+        afterEach(function() {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+
+        it("makes a POST request to the correct route", function(done) {
+            // dummy data for payload
+            var instructions = {};
+            var audio = {};
+            var payload = {instructions: instructions, audio: audio};
+
+            $httpBackend.expectPOST("/api/videos/makeit", payload).respond(201, {});
+            $httpBackend.expectGET('js/home/home.html').respond(200, {});
+
+            DownloadFactory.requestReelVideo(instructions, audio).then(function() {
+                done();
+            });
+
+            $httpBackend.flush();
+            
+        });
+    });
+
 });

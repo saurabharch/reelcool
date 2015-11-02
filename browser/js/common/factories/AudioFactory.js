@@ -4,7 +4,7 @@ app.factory("AudioFactory", function ($rootScope) {
 		originalTrack = {	// fake object representing the orignal audio track of the vide
 			id: "original_track",
 			fileName: "Original Track",
-			videoSource: {
+			AVsource: {
 				mongoId: "original_track"
 			},
 			domElement: {
@@ -27,11 +27,10 @@ app.factory("AudioFactory", function ($rootScope) {
 		return tracks;
 	};
 
-
 	audioFactory.getAudioElementByMongoId = function (mongoId) {
 		var audioElement;
 		tracks.some(function (track) {
-			if (track.videoSource.mongoId === mongoId) {
+			if (track.AVsource.mongoId === mongoId) {
 				audioElement = track;
 				return true;
 			}
@@ -39,17 +38,14 @@ app.factory("AudioFactory", function ($rootScope) {
 		return audioElement;
 	};
 
-
 	audioFactory.removeAudioElement = function (audioSourceId) {
 		tracks.some(function (audioElement, index) {
-			if (audioElement.videoSource.id === audioSourceId) {
+			if (audioElement.AVsource.id === audioSourceId) {
 				tracks.splice(index, 1);
 				return true;
 			}
 		});
 	};
-
-
 
 	return audioFactory;
 });

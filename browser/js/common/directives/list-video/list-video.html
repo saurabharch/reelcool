@@ -5,7 +5,7 @@
                 <img width="100px" ng-hide="video.sourceAttached" src="/images/spinner.gif" />
                 <span>
                 	<span class="vid-name">{{video.fileName | shorten}} ({{video.instructions.endTime - video.instructions.startTime | duration}})</span>
-                <md-button class="md-icon-button pull-right" style="line-height:100%;height:12px" aria-label="Delete" ng-if="type==='source'" ng-click="removeSource(video.videoSource.id)">
+                <md-button class="md-icon-button pull-right" style="line-height:100%;height:12px" aria-label="Delete" ng-if="type==='source'" ng-click="removeSource(video.AVsource.id)">
                 	<i class="zmdi zmdi-delete"></i>
                 </md-button>
                 <md-button class="md-icon-button pull-right" style="line-height:100%;height:12px" aria-label="Delete" ng-if="type==='edited'" ng-click="unstageClip(video)">
