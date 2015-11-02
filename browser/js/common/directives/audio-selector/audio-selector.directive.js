@@ -16,7 +16,7 @@ app.directive("audioSelector", function (AudioFactory, InstructionsFactory) {
 					return track.fileName === newTheme.audioTitle;
 				});
 				if(matchingTracks.length){
-					scope.audioConf.id = matchingTracks[0].videoSource.mongoId;
+					scope.audioConf.id = matchingTracks[0].AVsource.mongoId;
 				}
 			});
 		}

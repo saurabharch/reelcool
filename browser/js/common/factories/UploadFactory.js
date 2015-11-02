@@ -33,21 +33,9 @@ app.factory('UploadFactory', function ($http) {
         	});
     };
 
-    var getUserMedia = function(type, userId) {
-        let url = `/api/${type}/byuser/${userId}`;
-        return $http.get(url).then(resp => resp.data);
-    };
-
-    var getThemeAudio = function () {
-        let url = `/api/audio/themes`;
-        return $http.get(url).then(resp => resp.data);
-    };
-
     return {
     	uploadFile: uploadFile,
-    	deleteFromServer: deleteFromServer, 
-    	getUserMedia: getUserMedia, 
-    	getThemeAudio: getThemeAudio
+    	deleteFromServer: deleteFromServer
     };
 
 });

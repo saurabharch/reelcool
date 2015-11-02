@@ -338,7 +338,7 @@ app.controller('VideoPlayerCtrl', ($scope, VideoFactory, IdGenerator, AudioFacto
       $scope.currentAudio = newValue;
     }
 
-    InstructionsFactory.getAudio().id = newValue.videoSource.mongoId;
+    InstructionsFactory.getAudio().id = newValue.AVsource.mongoId;
 
 
     if (newValue.id === "original_track") {

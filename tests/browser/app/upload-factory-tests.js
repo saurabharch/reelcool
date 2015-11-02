@@ -19,16 +19,14 @@ describe('UploadFactory', function () {
     });
 
     describe('methods', function () {
-    	it('should have methods to manage video elements and their sources', function () {
+    	it('should have methods to upload and delete media on the server', function () {
     		expect(UploadFactory.uploadFile).to.be.a('function');
     		expect(UploadFactory.deleteFromServer).to.be.a('function');
-    		expect(UploadFactory.getUserMedia).to.be.a('function');
-    		expect(UploadFactory.getThemeAudio).to.be.a('function');
     	});
 
     });
 
-    describe('video uploads', function () {
+    describe('video and audio uploads', function () {
     	afterEach(function () {
                 $httpBackend.verifyNoOutstandingExpectation();
                 $httpBackend.verifyNoOutstandingRequest();
@@ -40,31 +38,56 @@ describe('UploadFactory', function () {
         	formData.append("uploadedFile", file);
 
     		$httpBackend.expectPOST('/api/videos/upload', formData).respond(201, {});
-            $httpBackend.expectGET('js/home/home.html').respond(200,{}); // first request always loads the main page
+            $httpBackend.expectGET('js/home/home.html').respond(200,{}); 
 
             UploadFactory.uploadFile(file).then(function () {done(); });
             $httpBackend.flush();
-            
     	});
+
+        it('makes a POST request to the appropriate route to upload audio',function (done) {
+            var file = {contents: "stuff", type: "audio/mp3"};
+            var formData = new FormData();
+            formData.append("uploadedFile", file);
+
+            $httpBackend.expectPOST('/api/audio/upload', formData).respond(201, {});
+            $httpBackend.expectGET('js/home/home.html').respond(200,{}); 
+
+            UploadFactory.uploadFile(file).then(function () {done(); });
+            $httpBackend.flush(); 
+        });
+
     });
 
-    describe('video deletion', function () {
+    describe('deletion of media stored on the server', function () {
+
     	afterEach(function () {
                 $httpBackend.verifyNoOutstandingExpectation();
                 $httpBackend.verifyNoOutstandingRequest();
             });
 
     	it('makes a DELETE request to the appropriate route to delete videos',function (done) {
-    		var fakeMongoId = 't9384yntv3not3023y';
-    		var fileType = 'video/webm'; //'audio/mp3'
+    		var fakeMongoId = 'somePlaceholderMongoId';
+    		var fileType = 'video/webm';
 
     		$httpBackend.expectDELETE('/api/videos/'+fakeMongoId).respond(200, {});
-            $httpBackend.expectGET('js/home/home.html').respond(200,{}); // first request always loads the main page
+            $httpBackend.expectGET('js/home/home.html').respond(200,{}); 
 
             UploadFactory.deleteFromServer(fakeMongoId, fileType).then(function () {done(); });
             $httpBackend.flush();
             
     	});
+
+        it('makes a DELETE request to the appropriate route to delete videos',function (done) {
+            var fakeMongoId = 'somePlaceholderMongoId';
+            var fileType = 'audio/mp3';
+
+            $httpBackend.expectDELETE('/api/audio/'+fakeMongoId).respond(200, {});
+            $httpBackend.expectGET('js/home/home.html').respond(200,{}); 
+
+            UploadFactory.deleteFromServer(fakeMongoId, fileType).then(function () {done(); });
+            $httpBackend.flush();
+            
+        });
     });
 
 });

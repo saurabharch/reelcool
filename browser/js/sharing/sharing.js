@@ -24,6 +24,6 @@ app.controller('ShareCtrl', function ($http, $scope, $mdDialog, InstructionsFact
       let instructions = InstructionsFactory.get();
       let audio = InstructionsFactory.getAudio();
       FilterFactory.addFiltersToAllInstructions(instructions);
-      DownloadFactory.promisifiedDownload(instructions, audio);
+      DownloadFactory.createReelVideo(instructions, audio);
     };
 });

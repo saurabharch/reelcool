@@ -1,5 +1,5 @@
 // stronger, more readable 
-app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator) {
+app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator, AVFactory) {
 
     $scope.videos = InstructionsFactory.getSourceVideos();
 
@@ -11,7 +11,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
 
     $scope.$on("videosource-deleted", function(event, videoSourceId) {
         $scope.videos.some(function(videoElement, index) {
-            if (videoElement.videoSource.id === videoSourceId) {
+            if (videoElement.AVsource.id === videoSourceId) {
                 $scope.videos.splice(index, 1);
                 return true;
             }
@@ -27,7 +27,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
     });
 
     var putVidOnScope = function(file) {
-        var videoElement = VideoFactory.createVideoElement();
+        var videoElement = new AVFactory.AVElement(file.name);
         $scope.videos.push(videoElement);
         VideoFactory.addVideoSource(file)
             .then(function(videoSource) {
@@ -53,7 +53,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
     };
 
     var putRemoteVidOnScope = function (mediaData) {
-        var videoElement = VideoFactory.createVideoElement(mediaData.title);
+        var videoElement = new AVFactory.AVElement(mediaData.title);
         $scope.videos.push(videoElement);
         VideoFactory.addRemoteSource(mediaData._id)
             .then(function (videoSource) {
@@ -65,7 +65,7 @@ app.controller("SourceVidsCtrl", function($rootScope, $scope, VideoFactory, Inst
             .then(function () {
                 videoElement.sourceAttached = true;
                 var duration = document.getElementById(videoElement.id).duration;
-                // videoElement.duration = duration;
+                
                 videoElement.instructions.endTime = duration;
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();

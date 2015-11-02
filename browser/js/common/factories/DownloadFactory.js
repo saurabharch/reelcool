@@ -7,7 +7,7 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
         });
     };
 
-    let promisifiedDownload = (instructions, audio) => {
+    let createReelVideo = (instructions, audio) => {
         var downloadInitiating =
             $mdToast
             .simple()
@@ -49,8 +49,21 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
             );
     };
 
-    return {
-        requestReelVideo: requestReelVideo,
-        promisifiedDownload: promisifiedDownload
+    let getUserMedia = function(type, userId) {
+        let url = `/api/${type}/byuser/${userId}`;
+        return $http.get(url).then(resp => resp.data);
     };
+
+    let getThemeAudio = function () {
+        let url = `/api/audio/themes`;
+        return $http.get(url).then(resp => resp.data);
+    };
+
+    return {
+        requestReelVideo: requestReelVideo, 
+        createReelVideo: createReelVideo, 
+        getUserMedia: getUserMedia, 
+        getThemeAudio: getThemeAudio
+    };
+    
 });

@@ -22,7 +22,7 @@ app.directive("listAudio", function (VideoFactory, InstructionsFactory) {
 			};
 
 			scope.remove = function (audioSourceId) {
-				var delAudioMongoId = scope.audio.videoSource.mongoId;
+				var delAudioMongoId = scope.audio.AVsource.mongoId;
 				VideoFactory.deleteVideoSource(audioSourceId);
 				var audio = InstructionsFactory.getAudio();
 				if (delAudioMongoId === audio.id) {

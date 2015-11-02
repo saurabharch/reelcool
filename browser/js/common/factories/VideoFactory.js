@@ -1,4 +1,4 @@
-app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, AuthService, InstructionsFactory, UploadFactory) {
+app.factory("VideoFactory", function ($rootScope, $mdToast, AuthService, UploadFactory, DownloadFactory, AVFactory) {
 
     var vidFactory = {},
         videoSources = {};
@@ -6,43 +6,6 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
     // We'll need to have the user id on hand to figure out the path to uploaded videos in the event of non-webm uploads
     var userId;
     AuthService.getLoggedInUser().then(user => userId = user ? user._id : 'anon');
-
-    var VideoElement = function() {
-        this.id = IdGenerator();
-        this.sourceAttached = false;
-    };
-    VideoElement.prototype.addSource = function(videoSource, instructions) {
-        this.videoSource = videoSource;
-        this.instructions = instructions || InstructionsFactory.generate(this.videoSource);
-    };
-
-    var VideoSource = function(fileName, mimeType, arrayBuffer) {
-        this.id = IdGenerator();
-        this.fileName = fileName;
-        this.mimeType = mimeType;
-        this.arrayBuffer = arrayBuffer;
-        this.objUrls = [];
-        // this.mongoId to be assigned after receiving server response
-    };
-    VideoSource.prototype.addUrl = function(mongoId, userId) {
-        var media = (this.mimeType &&
-            this.mimeType.indexOf("video") === -1) ? "audio" : "videos";
-        this.url = 'api/' + media + '/getconverted/' + userId + '/' + mongoId;
-    };
-    VideoSource.prototype.addMongoId = function(mongoId) {
-        this.mongoId = mongoId;
-        if (!this.arrayBuffer) {
-            // if no arrayBuffer, must be a converted file we've just gotten back
-            // it must need a mimeType and a URL too
-            this.mimeType = "video/webm";
-            this.addUrl(mongoId, userId); // var userId is defined early on in the controller
-        }
-    };
-    VideoSource.prototype.startReading = function(fileName, mimeType, arrayBuffer) {
-        this.fileName = fileName;
-        this.mimeType = mimeType;
-        this.arrayBuffer = arrayBuffer;
-    };
 
     var uploadToServer = function(file, videoSrc) {
         return UploadFactory.uploadFile(file)
@@ -75,10 +38,6 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
             ));
     };
 
-    function showToast() {
-        $mdToast.show($mdToast.show($mdToast.simple().content('Hello!')));
-    }
-
     var attachMongoId = function(mongoId, localId) {
         // Just in case, wait for videoSources[localId] to be available (per above comments).
         // It's always possible that the user has already changed their mind and deleted the
@@ -99,15 +58,9 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
         }
     };
 
-    vidFactory.createVideoElement = function(fileName) {
-        var newElement = new VideoElement();
-        newElement.fileName = fileName;
-        return newElement;
-    };
-
     vidFactory.addRemoteSource = function(mongoId, isAudio, isTheme) {
         return new Promise(function(resolve, reject) {
-            var videoSrc = new VideoSource();
+            var videoSrc = new AVFactory.AVSource();
             videoSrc.mongoId = mongoId;
             videoSrc.mimeType = isAudio ? "audio/mp3" : "video/webm";
             videoSrc.isTheme = isTheme;
@@ -149,7 +102,7 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
     vidFactory.addVideoSource = function(file) {
         // instantiate videoSrc here, add name and contents later
         // depending on when they're actually available.
-        var videoSrc = new VideoSource();
+        var videoSrc = new AVFactory.AVSource();
         if (mimeTypes[file.type]) return addWebmVideoSource(file, videoSrc);
         else return addOtherVideoSource(file, videoSrc);
     };
@@ -262,10 +215,9 @@ app.factory("VideoFactory", function($rootScope, $http, $mdToast, IdGenerator, A
 
 
     vidFactory.getPrevUploads = function(mediaElements, isAudio) {
-        let existingVids = mediaElements.filter(vid => vid.videoSource && vid.videoSource.mongoId).map(vid => vid.videoSource.mongoId);
-        // var getMediaFunc = isAudio ? vidFactory.getUserAudio : vidFactory.getUserVideos;
+        var existingVids = mediaElements.filter(vid => vid.AVsource && vid.AVsource.mongoId).map(vid => vid.AVsource.mongoId);
         var media = isAudio ? "audio" : "videos";
-        return UploadFactory.getUserMedia(media, userId)
+        return DownloadFactory.getUserMedia(media, userId)
             .then(function(mediaData) {
                 return mediaData.filter(media => existingVids.indexOf(media._id) === -1);
             });
