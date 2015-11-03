@@ -7,7 +7,6 @@ describe('DownloadFactory', function() {
     beforeEach('Get tools', inject(function (_$httpBackend_, _$rootScope_) {
         $httpBackend = _$httpBackend_;
         $rootScope = _$rootScope_;
-        
     }));
 
     var DownloadFactory;
@@ -33,29 +32,25 @@ describe('DownloadFactory', function() {
             $httpBackend.verifyNoOutstandingRequest();
         });
 
-        it("makes a GET request to the appropriate route to get the user's uploaded videos", function(done) {
+        it("makes a GET request to the appropriate route to get the user's uploaded videos", function () {
             var type = "videos";
             var userId = "somePlaceholderUserMongoId";
 
             $httpBackend.expectGET("/api/videos/byuser/" + userId).respond(200, {});
             $httpBackend.expectGET('js/home/home.html').respond(200, {});
 
-            DownloadFactory.getUserMedia(type, userId).then(function() {
-                done();
-            });
+            DownloadFactory.getUserMedia(type, userId);
             $httpBackend.flush();
         });
 
-        it("makes a GET request to the appropriate route to get the user's uploaded audio", function(done) {
+        it("makes a GET request to the appropriate route to get the user's uploaded audio", function () {
             var type = "audio";
             var userId = "somePlaceholderUserMongoId";
 
             $httpBackend.expectGET("/api/audio/byuser/" + userId).respond(200, {});
             $httpBackend.expectGET('js/home/home.html').respond(200, {});
 
-            DownloadFactory.getUserMedia(type, userId).then(function() {
-                done();
-            });
+            DownloadFactory.getUserMedia(type, userId);
             $httpBackend.flush();
         });
     });
@@ -66,13 +61,11 @@ describe('DownloadFactory', function() {
             $httpBackend.verifyNoOutstandingRequest();
         });
 
-        it("makes a GET request to the correct route", function(done) {
+        it("makes a GET request to the correct route", function () {
             $httpBackend.expectGET("/api/audio/themes").respond(200, {});
             $httpBackend.expectGET('js/home/home.html').respond(200, {});
 
-            DownloadFactory.getThemeAudio().then(function() {
-                done();
-            });
+            DownloadFactory.getThemeAudio();
 
             $httpBackend.flush();
             
@@ -85,7 +78,7 @@ describe('DownloadFactory', function() {
             $httpBackend.verifyNoOutstandingRequest();
         });
 
-        it("makes a POST request to the correct route", function(done) {
+        it("makes a POST request to the correct route", function () {
             // dummy data for payload
             var instructions = {};
             var audio = {};
@@ -94,9 +87,7 @@ describe('DownloadFactory', function() {
             $httpBackend.expectPOST("/api/videos/makeit", payload).respond(201, {});
             $httpBackend.expectGET('js/home/home.html').respond(200, {});
 
-            DownloadFactory.requestReelVideo(instructions, audio).then(function() {
-                done();
-            });
+            DownloadFactory.requestReelVideo(instructions, audio);
 
             $httpBackend.flush();
             
