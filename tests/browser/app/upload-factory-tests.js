@@ -14,18 +14,6 @@ describe('UploadFactory', function () {
         UploadFactory = _UploadFactory_;
     }));
 
-    it('should be an object', function () {
-        expect(UploadFactory).to.be.an('object');
-    });
-
-    describe('methods', function () {
-    	it('should have methods to upload and delete media on the server', function () {
-    		expect(UploadFactory.uploadFile).to.be.a('function');
-    		expect(UploadFactory.deleteFromServer).to.be.a('function');
-    	});
-
-    });
-
     describe('video and audio uploads', function () {
     	afterEach(function () {
                 $httpBackend.verifyNoOutstandingExpectation();

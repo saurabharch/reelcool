@@ -14,18 +14,6 @@ describe('DownloadFactory', function() {
         DownloadFactory = _DownloadFactory_;
     }));
 
-    it('should be an object', function() {
-        expect(DownloadFactory).to.be.an('object');
-    });
-
-    describe('methods', function() {
-        it('should have methods to upload and delete media on the server', function() {
-            expect(DownloadFactory.getUserMedia).to.be.a('function');
-            expect(DownloadFactory.getThemeAudio).to.be.a('function');
-            expect(DownloadFactory.createReelVideo).to.be.a('function');
-        });
-    });
-
     describe("getUserMedia fetches a user's saved media so that it can be automatically loaded on the page", function() {
         afterEach(function() {
             $httpBackend.verifyNoOutstandingExpectation();

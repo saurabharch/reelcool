@@ -15,17 +15,6 @@ describe('AVFactory', function () {
         AVFactory = _AVFactory_;
     }));
 
-    it('should be an object', function() {
-        expect(AVFactory).to.be.an('object');
-    });
-
-    describe('should have methods for containing audio and video content', function() {
-        it('should have methods ', function() {
-            expect(AVFactory.AVSource).to.be.a('function');
-            expect(AVFactory.AVElement).to.be.a('function');
-        });
-    });
-
     describe('AVSource and the source objects it creates', function () {
     	var exampleSource;
 
