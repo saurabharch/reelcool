@@ -8,10 +8,9 @@ app.directive("editvids", function (AVFactory, VideoFactory, InstructionsFactory
 			$scope.videos = [];
 			$scope.instructions = InstructionsFactory.get();
 			$scope.theme = RandomVideoGenerator.getThemes()[0];
-			//$scope.instructions = [];
 
 			var instructionsToVideoMap = {};
-			//$scope.instructions= Pedit reel got instructions"reviewFactory.instructions;
+
 			$scope.$on('sendClipToReel', (e, instructions) => {
 				addClip(instructions);
 				updateInstructions($scope.videos);
@@ -35,20 +34,11 @@ app.directive("editvids", function (AVFactory, VideoFactory, InstructionsFactory
 			    }
 			}
 
-
 			$scope.removeAll = function () {
 				$scope.videos = [];
 				$scope.instructions = [];
 				InstructionsFactory.update($scope.instructions);
 			};
-
-			$scope.$on("randomVidGenerated", function (event){
-				$scope.videos = [];
-				$scope.instructions = InstructionsFactory.get();
-				$scope.instructions.forEach(function (i) {
-					addClip(i);
-				});
-			});
 
 			$scope.$on('unstageClip', (e, clip)=> {
 				var index = getVideoIndexByInstructionsId(clip.instructions.id);
@@ -97,7 +87,11 @@ app.directive("editvids", function (AVFactory, VideoFactory, InstructionsFactory
 					var cutLength = 2;
 					var randomInstructions = RandomVideoGenerator.createVideo(InstructionsFactory.getSourceVideos(), cutsNumber, cutLength, $scope.theme.filters);
 					InstructionsFactory.update(randomInstructions);
-					$rootScope.$broadcast("randomVidGenerated");
+					$scope.videos = [];
+					$scope.instructions = InstructionsFactory.get();
+					$scope.instructions.forEach(function (i) {
+						addClip(i);
+					});
 			};
 
 			$scope.showPreviewModal = ($event) => {
