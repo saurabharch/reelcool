@@ -59,7 +59,7 @@ describe('AVFactory', function () {
 		var mimeType = 'video/webm';
     	var arrayBuffer = new ArrayBuffer(); // for our test this is just an empty buffer	
 
-    	it('is a constructor function that returns an audio or video source', function () {
+    	it('is a constructor function that returns an audio or video element', function () {
     		exampleElement = new AVFactory.AVElement(fileName);
     		expect(exampleElement).to.be.an('object');
     	});
