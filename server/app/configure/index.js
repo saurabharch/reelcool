@@ -15,7 +15,7 @@ module.exports = function (app) {
     require('./parsing-middleware')(app);
 
     // Logging middleware, set as application
-    // variable inside of server/app/configure/app-variables.js
+    // variable inside of server/app/conf igure/app-variables.js
     app.use(app.getValue('log'));
 
     require('./authentication')(app);
