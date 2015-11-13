@@ -3,6 +3,10 @@
     <md-content class="left-panel desktop">
         <md-content class="md-padding" ng-hide="videos.length">
             <p>You have no videos uploaded. Upload some!</p>
+            <br>
+            <br>
+            <p>Or, use our sample videos.</p>
+            <p><md-button class="desktop md-accent md-raised" ng-click="getSampleVideos()">I want samples</md-button></p>
         </md-content>
         <md-virtual-repeat-container id="vidslist" style="height: 500px">
             <div layout="row" ng-repeat="video in videos">

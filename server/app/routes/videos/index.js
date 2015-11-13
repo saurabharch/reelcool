@@ -1,6 +1,6 @@
 // utilities
 var Promise = require('bluebird');
-var fs = require('fs');
+var fs = require('fs.extra');
 Promise.promisifyAll(fs);
 var path = require('path');
 var ffmpegUtils = require('../../ffmpeg-utils');
@@ -17,6 +17,7 @@ var uploadedFilesPath;
 var stagingAreaPath;
 var createdFilePath;
 var tempFilePath;
+var sampleVideosPath = path.join(__dirname,"..","..","..","files/samples");
 
 router.use(function (req,res,next) {
     // all this has to be inside of router.use (or at least the userDir part) so that we have access to req
@@ -56,16 +57,16 @@ router.post('/makeit', function(req, res, next) {
     let audio = req.body.audio;
     ffmpegUtils
         .makeIt(
-            instructions, 
-            audio, 
-            themesPath, 
-            uploadedFilesPath, 
-            stagingAreaPath, 
-            tempFilePath, 
+            instructions,
+            audio,
+            themesPath,
+            uploadedFilesPath,
+            stagingAreaPath,
+            tempFilePath,
             createdFilePath
             )
         .then(
-            finalName => res.status(201).send(finalName), 
+            finalName => res.status(201).send(finalName),
             err => next(err)
             );
 });
@@ -86,18 +87,60 @@ router.get('/download/:videoId',function (req,res) {
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
+    console.log("parsedFile", parsedFile);
     var mongoId = parsedFile.name;
+    console.log("mongoId", mongoId);
     var desiredExt = '.webm';
-    // if it was a webm file, send back the mongoId reference right away 
+    // if it was a webm file, send back the mongoId reference right away
     // so it can be attached to the video file awaiting in the client
     if (parsedFile.ext===desiredExt) res.status(201).send(mongoId);
     else {
-        // allow this conversion below to happen async. 
-        // don't wait for it to finish. the client will just get impatient 
+        // allow this conversion below to happen async.
+        // don't wait for it to finish. the client will just get impatient
         // and request again.
-        ffmpegUtils.convertToWebm(req.file); 
+        ffmpegUtils.convertToWebm(req.file);
         res.status(201).send(); // don't send the filename/mongoId
     }
+});
+
+router.get('/samples', function(req, res){
+  //for each of the sample videos, create a new record in the database linking them to current user
+  //make copies of the videos in the sample folder (mongoId as name), and put them in the user's folder.
+  //then they will be brought to the user via the regular polling for uploaded files.
+
+  fs.readdirAsync(sampleVideosPath)
+  .then(filenames => {
+    let promisedCopies = [];
+    filenames.forEach(filename => {
+      let parsedFilename = path.parse(filename);
+      let name = parsedFilename.name;
+      let ext = parsedFilename.ext;
+      if(ext === '.webm'){
+        //make a record in the db for the user and then copy the file for them
+        let video = {
+          title: name,
+          editor: req.user._id,
+          ext: '.webm'
+        };
+        let sharedFilepath = sampleVideosPath + '/' + filename;
+        let copyFilepath;
+        let promisedCopy = Video.create(video)
+        .then(createdVideo => {
+          copyFilepath = uploadedFilesPath + '/' + createdVideo.id + ext;
+          return fs.copyAsync(sharedFilepath, copyFilepath);
+        });
+        promisedCopies.push(promisedCopy);
+      }
+    });
+
+    Promise.all(promisedCopies)
+    .then(copies => {
+      res.sendStatus(201);
+    })
+    .catch(err => {
+      res.sendStatus(err.statusCode);
+    });
+  });
 });
 
 router.get('/byuser/:userId',function (req,res) {
@@ -141,5 +184,4 @@ router.delete('/:videoId', function (req,res) {
         });
 
 });
-
 module.exports = router;

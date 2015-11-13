@@ -40,7 +40,7 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
                     $mdToast.show(downloadFail);
                     console.error('The server responded with status', resp.status);
                 }
-            }, 
+            },
              function (err) {
               console.log('in the fail chain');
               console.error(err);
@@ -59,11 +59,17 @@ app.factory("DownloadFactory", ($http, $mdToast) => {
         return $http.get(url).then(resp => resp.data);
     };
 
-    return {
-        requestReelVideo: requestReelVideo, 
-        createReelVideo: createReelVideo, 
-        getUserMedia: getUserMedia, 
-        getThemeAudio: getThemeAudio
+    let getSampleVideos = () => {
+        let url = `/api/videos/samples`;
+        return $http.get(url).then(resp => resp.data);
     };
-    
+
+    return {
+        requestReelVideo: requestReelVideo,
+        createReelVideo: createReelVideo,
+        getUserMedia: getUserMedia,
+        getThemeAudio: getThemeAudio,
+        getSampleVideos: getSampleVideos
+    };
+
 });
