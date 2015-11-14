@@ -3,23 +3,9 @@
   	<div class="emptyVideo" style="width: {{width}}%; min-height: 400px; max-height: 40%;" ng-hide="instructions.length">
     </div>
     <div ng-repeat="instruction in instructions" class="playingVideo" ng-show="currentClip===$index">
-      <video width="{{width}}%" height="550px" id="{{getIdForVideo(instruction.id)}}" class='box playgroundvid' style="-webkit-filter: {{instruction.filterString}}" preload>
+      <video width="{{width}}%" id="{{getIdForVideo(instruction.id)}}" class='box playgroundvid' style="-webkit-filter: {{instruction.filterString}}" preload>
       </video>
     </div>
-
-<!-- <pre>
-audio config:
-{{audioObj}}
-
-currentAudio:
-{{currentAudio}}
-{{currentAudio.domElement.volume}}
-instructions: {{instructions | json}}
-totalEndTime: {{totalEndTime}}
-totalCurrentTime: {{totalCurrentTime}}
-</pre> -->
-
-
     <time-slider ng-show="instructions.length" id="slider" moving-time="totalCurrentTime" start-time="getCurrentStartTime()" end-time="totalEndTime" width="width"></time-slider>
   </div>
 

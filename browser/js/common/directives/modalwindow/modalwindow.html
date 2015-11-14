@@ -1,11 +1,9 @@
-<div class='ng-modal' ng-if='show'>
-  <div class='ng-modal-overlay' ng-click='hideModal()'></div>
-  <div class='ng-modal-dialog' ng-style='dialogStyle'>
-    <div class='ng-modal-close' ng-click='hideModal()'><i class="zmdi zmdi-close "></i></div>
-    <div class='ng-modal-dialog-content'>
-        <div class="col-sm-12">
-          <video-player audioenabled="true" width="100" height="100" instructions="instructions" video-player-id="'previewer'" style="display:inline-block"></video-player>
-        </div>
-    </div>
+<div class='ng-modal-overlay' ng-click='hideModal()' ng-if='show'></div>
+<div class='ng-modal-dialog' ng-style='dialogStyle' ng-if='show'>
+  <div class='ng-modal-close' ng-click='hideModal()'><i class="zmdi zmdi-close "></i></div>
+  <div class='ng-modal-dialog-content'>
+      <div class="col-sm-12">
+        <video-player audioenabled="true" width="100" height="100" instructions="instructions" video-player-id="'previewer'" style="display:inline-block"></video-player>
+      </div>
   </div>
 </div>
