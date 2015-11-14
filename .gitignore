@@ -4,6 +4,7 @@ server/files/*
 !server/files/themes
 !server/files/anon
 !server/files/assets
+!server/files/samples
 npm-debug.log
 public
 .DS_Store
