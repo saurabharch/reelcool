@@ -87,9 +87,7 @@ router.get('/download/:videoId',function (req,res) {
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
-    console.log("parsedFile", parsedFile);
     var mongoId = parsedFile.name;
-    console.log("mongoId", mongoId);
     var desiredExt = '.webm';
     // if it was a webm file, send back the mongoId reference right away
     // so it can be attached to the video file awaiting in the client
