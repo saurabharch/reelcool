@@ -137,7 +137,7 @@ router.get('/samples', function(req, res){
     .then(copies => {
       res.sendStatus(201);
     })
-    .catch(err => {
+    .then(null, err => {
       res.sendStatus(err.statusCode);
     });
   });
