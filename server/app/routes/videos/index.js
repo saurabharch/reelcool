@@ -87,9 +87,7 @@ router.get('/download/:videoId',function (req,res) {
 
 router.post('/upload', upload.single('uploadedFile'), function(req, res) {
     var parsedFile = path.parse(req.file.filename);
-    console.log("parsedFile", parsedFile);
     var mongoId = parsedFile.name;
-    console.log("mongoId", mongoId);
     var desiredExt = '.webm';
     // if it was a webm file, send back the mongoId reference right away
     // so it can be attached to the video file awaiting in the client
@@ -137,7 +135,7 @@ router.get('/samples', function(req, res){
     .then(copies => {
       res.sendStatus(201);
     })
-    .catch(err => {
+    .then(null, err => {
       res.sendStatus(err.statusCode);
     });
   });
@@ -154,7 +152,7 @@ router.get('/byuser/:userId',function (req,res) {
                 // var vidIds = videos.map(vid => vid._id);
                 res.send(videos);
             })
-            .catch(e => {
+            .then(null, e => {
                 let msg = `Unable to find videos for ${userId}`;
                 console.error(msg);
                 console.error(e);

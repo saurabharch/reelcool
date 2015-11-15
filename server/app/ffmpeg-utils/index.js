@@ -211,7 +211,7 @@ function makeIt(instructions, audio, themesPath, uploadedFilesPath, stagingAreaP
                 }
             })
             .then(finalName => deleteStagedFiles(stagingAreaPath).then(() => resolve(finalName)))
-            .catch(e => {
+            .then(null, e => {
                 console.error(e);
                 reject(e);
             });

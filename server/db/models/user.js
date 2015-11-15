@@ -90,7 +90,7 @@ schema.post('save',function (user) {
                 console.error(err);
             }
         )
-        .catch(function (err) {
+        .then(null, function (err) {
             console.error(err);
         });
 });
