@@ -12,7 +12,6 @@ app.directive("modalDialog", () => {
       $scope.$on('toggleModal', (e, args) => {
         //this should be the only place where "show" is toggled
         //only the modal directly affects whether it should be shown
-        console.log("modal toggles itself to", args.show)
         $scope.show = args.show;
         $scope.instructions = InstructionsFactory.get();
       })

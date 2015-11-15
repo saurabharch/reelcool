@@ -1,10 +1,14 @@
 <div id="sourcevids">
     <h1 class='desktop md-display-1 section-title'>Uploads</h1>
     <md-content class="left-panel desktop">
-        <md-content class="md-padding" ng-hide="videos.length">
+        <md-content class="md-padding" ng-if="videos.length<1" style="height: 500px">
             <p>You have no videos uploaded. Upload some!</p>
+            <br>
+            <br>
+            <p>Or, use our sample videos.</p>
+            <p><md-button class="desktop md-accent" ng-click="getSampleVideos()">I want samples</md-button></p>
         </md-content>
-        <md-virtual-repeat-container id="vidslist" style="height: 500px">
+        <md-virtual-repeat-container ng-if="videos.length" id="vidslist" style="height: 500px">
             <div layout="row" ng-repeat="video in videos">
                 <list-video video="video" type="'source'"></list-video>
             </div>

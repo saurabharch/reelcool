@@ -1,5 +1,5 @@
-// stronger, more readable 
-app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, InstructionsFactory, $state, RandomVideoGenerator, AVFactory) {
+// stronger, more readable
+app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, InstructionsFactory, $state, DownloadFactory, RandomVideoGenerator, AVFactory) {
 
     $scope.videos = InstructionsFactory.getSourceVideos();
 
@@ -8,6 +8,13 @@ app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, Ins
     $scope.selectVideoFile = function() {
         fileInput.click();
     };
+
+    $scope.getSampleVideos = () => {
+      DownloadFactory.getSampleVideos()
+      .then(() => {
+        updateSourceVids();
+      })
+    }
 
     $scope.$on("videosource-deleted", function(event, videoSourceId) {
         $scope.videos.some(function(videoElement, index) {
@@ -65,7 +72,7 @@ app.controller("SourceVidsCtrl", function ($rootScope, $scope, VideoFactory, Ins
             .then(function () {
                 videoElement.sourceAttached = true;
                 var duration = document.getElementById(videoElement.id).duration;
-                
+
                 videoElement.instructions.endTime = duration;
                 let phase = $rootScope.$$phase;
                 if (phase !== "$apply" && phase !== "$digest") $scope.$digest();

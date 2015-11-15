@@ -128,7 +128,7 @@ function cutAndFilter(instruction) {
         let muteFlag = '-an';
         let muteFlagIdx = command.length-2; // third to last
         if (instruction.audio.id!=="original_track") command.splice(muteFlagIdx, 0, muteFlag);
-        
+
         let filtersProc = spawn('ffmpeg', command);
         filtersProc.on('error', function(err, stdout, stderr) {
             console.error('Errored when attempting to convert this video. Details below.');
@@ -176,7 +176,7 @@ function mergeVids(mergedVideo, instructions, audioPath, tempFilePath, createdFi
 
 function makeIt(instructions, audio, themesPath, uploadedFilesPath, stagingAreaPath, tempFilePath, createdFilePath) {
     instructions.map(function(inst) {
-    	inst.audio = audio;
+    	 inst.audio = audio;
         inst.themesPath = themesPath;
         inst.uploadedFilesPath = uploadedFilesPath;
         inst.stagingAreaPath = stagingAreaPath;
@@ -195,7 +195,7 @@ function makeIt(instructions, audio, themesPath, uploadedFilesPath, stagingAreaP
                                 "/" + (audio.theme ? audio.title : audio._id) + ".mp3";
                             return audioPath;
                         });
-                } else return ''; // falsey 
+                } else return ''; // falsey
             })
             .then(audioPath => mergeVids(mergedVideo, instructions, audioPath, tempFilePath, createdFilePath, stagingAreaPath))
             .then(function(mergedVideoInfo) {

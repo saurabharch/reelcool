@@ -2,7 +2,7 @@
 window.app = angular.module('FullstackGeneratedApp',
       ['ui.router',
       'ui.bootstrap',
-      'fsaPreBuilt', 
+      'fsaPreBuilt',
       'ngMaterial']);
 
 app.config(function ($urlRouterProvider, $locationProvider) {
@@ -23,7 +23,7 @@ app.config(function($mdThemingProvider) {
         'default': '900'
     })
     .accentPalette('grey', {
-        'default': '900'
+        'default': '600'
     })
     .warnPalette('red', {
         'default': '900'
