@@ -111,7 +111,7 @@ router.get('/byuser/:userId',function (req,res) {
                 // var vidIds = videos.map(vid => vid._id);
                 res.send(videos);
             })
-            .catch(e => {
+            .then(null, e => {
                 let msg = `Unable to find videos for ${userId}`;
                 console.error(msg);
                 console.error(e);

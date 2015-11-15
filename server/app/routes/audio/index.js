@@ -88,7 +88,7 @@ router.get('/byuser/:userId',function (req,res) {
                 // var audioIds = audioFiles.map(audio => audio._id);
                 res.send(audioFiles);
             })
-            .catch(e => {
+            .then(null, e => {
                 let msg = `Unable to find audio files for ${userId}`;
                 console.error(msg);
                 console.error(e);

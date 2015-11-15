@@ -66,7 +66,7 @@ connectToDb.then(function () {
     seedThemes().then(function () {
         console.log(chalk.green('Seed successful!'));
         process.kill(0);
-    }).catch(function (err) {
+    }).then(null, function (err) {
         console.error(err);
         process.kill(1);
     });
