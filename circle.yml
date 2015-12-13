@@ -1,0 +1,4 @@
+test:
+  override:
+    - gulp testServerJS
+    - gulp testBrowserJS
