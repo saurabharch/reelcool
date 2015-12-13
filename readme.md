@@ -1,6 +1,8 @@
 # Reel Cool
 Reel Cool is an in-browser video editor. We set out to make a video editing tool that would be fun to use and wouldn't require a powerful computer to run. Visit us at [www.reelcool.co](www.reelcool.co) to try it out!
 
+![CircleCI](https://circleci.com/gh/reelcool/reelcool/tree/master.svg?style=shield&circle-token=30d83c9eb20e0f9d19c242321de5389ab5a7c37f)
+
 ## Screenshots
 ![Splash Page](https://raw.githubusercontent.com/reelcool/reelcool/master/server/files/assets/ReelCoolScreenshot1.png)
 ![Making Movies](https://raw.githubusercontent.com/reelcool/reelcool/master/server/files/assets/ReelCoolScreenshot2.png)
