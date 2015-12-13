@@ -15,6 +15,7 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
+var exit = require('gulp-exit');
 var karma = require('karma').server;
 var istanbul = require('gulp-istanbul');
 
@@ -49,11 +50,12 @@ gulp.task('buildJS', ['lintJS'], function () {
         .pipe(gulp.dest('./public'));
 });
 
-gulp.task('testServerJS', function () {
+gulp.task('testServerJS', function (done) {
     require('babel/register');
 	return gulp.src('./tests/server/**/*.js', {
 		read: false
-	}).pipe(mocha({ reporter: 'spec' }));
+	}).pipe(mocha({ reporter: 'spec' }))
+    .pipe(exit());
 });
 
 gulp.task('testServerJSWithCoverage', function (done) {
